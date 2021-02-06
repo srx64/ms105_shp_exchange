@@ -1,0 +1,6 @@
+# Engine
+Django==3.1.6
+
+# Documentation
+Sphinx==3.4.3
+sphinx-rtd-theme==0.5.1

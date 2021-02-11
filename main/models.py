@@ -7,7 +7,7 @@ class User(AbstractUser):
 
 
 class UserSettings(models.Model):
-    user = models.ForeignKey(to=User, on_delete=models.CASCADE)
+    user_id = models.ForeignKey(to=User, on_delete=models.CASCADE)
     avatar = models.FileField(null=True, blank=True)
 
 
@@ -20,9 +20,9 @@ class TypeActives(models.Model):
 
 
 class Actives(models.Model):
-    avg_price = models.FloatField()
-    description = models.CharField()
     name = models.CharField(max_length=255)
+    avg_price = models.FloatField()
+    description = models.CharField(max_length=255)
     is_active = models.BooleanField()
     type = models.ForeignKey(to=TypeActives, on_delete=models.CASCADE)
 

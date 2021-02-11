@@ -11,6 +11,7 @@ class OffersType(models.Model):
     name = models.CharField(max_length=255)
 
 
+
 class TypeActives(models.Model):
     name = models.CharField(max_length=255)
 

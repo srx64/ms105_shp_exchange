@@ -4,12 +4,15 @@ from django.db import models
 
 class User(AbstractUser):
     status = models.CharField(max_length=255)
-    avatar = models.URLField()
+
+
+class UserSettings(models.Model):
+    user = models.ForeignKey(to=User, on_delete=models.CASCADE)
+    avatar = models.FileField(null=True, blank=True)
 
 
 class OffersType(models.Model):
     name = models.CharField(max_length=255)
-
 
 
 class TypeActives(models.Model):

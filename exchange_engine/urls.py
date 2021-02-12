@@ -16,6 +16,9 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
+from main.views import OfferListView
+
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('shares_list/', OfferListView.as_view())
 ]

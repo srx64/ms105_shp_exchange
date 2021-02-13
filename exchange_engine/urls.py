@@ -15,7 +15,11 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-
+from main import views
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('actives/', views.ActivesListView.as_view()),
+    path('active/<int:pk>/', views.ActiveDetailView.as_view()),
+    path('offers/', views.OffersView.as_view()),
+    path('portfolio/<int:pk>', views.PortfolioUserView.as_view())
 ]

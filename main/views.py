@@ -2,23 +2,23 @@ from django.shortcuts import render
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from main.models import Actives, Offers, Portfolio
+from main.models import Stocks, Offers, Portfolio
 from main import serializers
 
 
-class ActivesListView(APIView):
-    """Список активов"""
+class StocksListView(APIView):
+    """Список акций"""
     def get(self, request):
-        actives = Actives.objects.filter(is_active=True)
-        serializer = serializers.ActivesSerializer(actives, many=True)
+        stocks = Stocks.objects.filter(is_active=True)
+        serializer = serializers.StocksSerializer(stocks, many=True)
         return Response(serializer.data)
 
 
-class ActiveDetailView(APIView):
-    """Информация об активе"""
+class StockDetailView(APIView):
+    """Информация об акции"""
     def get(self, request, pk):
-        active = Actives.objects.get(id=pk)
-        serializer = serializers.ActiveDetailSerializer(active)
+        stock = Stocks.objects.get(id=pk)
+        serializer = serializers.StockDetailSerializer(stock)
         return Response(serializer.data)
 
 
@@ -31,7 +31,7 @@ class OffersView(APIView):
 
 
 class PortfolioUserView(APIView):
-    """Все заявки"""
+    """Портфолио пользователя"""
     def get(self, request, pk):
         portfolio = Portfolio.objects.filter(user_id=pk)
         serializer = serializers.PortfolioUserSerializer(portfolio, many=True)

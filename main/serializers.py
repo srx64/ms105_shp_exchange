@@ -1,33 +1,32 @@
 from rest_framework import serializers
-from main.models import Actives, Offers, Portfolio
+from main.models import Stocks, Offers, Portfolio
 
 
-class ActivesSerializer(serializers.ModelSerializer):
-    """ Краткая информация об активе"""
+class StocksSerializer(serializers.ModelSerializer):
+    """ Список всех акций"""
     class Meta:
-        model = Actives
-        fields = ("name", "avg_price", "type")
+        model = Stocks
+        fields = '__all__'
 
 
-class ActiveDetailSerializer(serializers.ModelSerializer):
-    """ Детальная информация об активе"""
-    type = serializers.SlugRelatedField(slug_field="name", read_only=True)
+class StockDetailSerializer(serializers.ModelSerializer):
+    """ Детальная информация об акции"""
     class Meta:
-        model = Actives
+        model = Stocks
         fields = '__all__'
 
 
 class OffersSerializer(serializers.ModelSerializer):
     """Заявки на покупку/продажу"""
-    type = serializers.SlugRelatedField(slug_field="name", read_only=True)
-    active = serializers.SlugRelatedField(slug_field="name", read_only=True)
+    stock = serializers.SlugRelatedField(slug_field="name", read_only=True)
     class Meta:
         model = Offers
         fields = '__all__'
 
 
 class PortfolioUserSerializer(serializers.ModelSerializer):
-    active = serializers.SlugRelatedField(slug_field="name", read_only=True)
+    """Портфолио"""
+    stock = serializers.SlugRelatedField(slug_field="name", read_only=True)
     class Meta:
         model = Portfolio
         fields = '__all__'

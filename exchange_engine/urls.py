@@ -14,7 +14,9 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
+from django_registration.backends.one_step.views import RegistrationView
+from main.forms import CustomRegistrationForm
 
 from main.views import StocksListView, StockDetailView, OffersView, PortfolioUserView, ProfileDetailView
 
@@ -26,4 +28,12 @@ urlpatterns = [
     path('offers/', OffersView.as_view()),
     path('portfolio/<int:pk>', PortfolioUserView.as_view()),
     path('profile/', ProfileDetailView.as_view()),
+    path('accounts/register/',
+         RegistrationView.as_view(
+             form_class=CustomRegistrationForm
+         ),
+         name='django_registration_register',
+         ),
+    path('accounts/', include('django_registration.backends.activation.urls')),
+
 ]

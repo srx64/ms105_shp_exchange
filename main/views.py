@@ -1,8 +1,9 @@
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from main.models import Stocks, Offers, Portfolio
+from main.models import Stocks, Offers, Portfolio, User
 from main import serializers
 
 
@@ -19,6 +20,14 @@ class StockDetailView(APIView):
     def get(self, request, pk):
         stock = Stocks.objects.get(id=pk)
         serializer = serializers.StockDetailSerializer(stock)
+        return Response(serializer.data)
+
+
+class ProfileDetailView(APIView):
+    """Информация об акции"""
+    def get(self, request):
+        user = User.objects.get(id=1)
+        serializer = serializers.ProfileDetailSerializer(user)
         return Response(serializer.data)
 
 

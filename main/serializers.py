@@ -19,6 +19,7 @@ class StockDetailSerializer(serializers.ModelSerializer):
 class OffersSerializer(serializers.ModelSerializer):
     """Заявки на покупку/продажу"""
     stock = serializers.SlugRelatedField(slug_field="name", read_only=True)
+
     class Meta:
         model = Offers
         fields = '__all__'
@@ -27,6 +28,7 @@ class OffersSerializer(serializers.ModelSerializer):
 class PortfolioUserSerializer(serializers.ModelSerializer):
     """Портфолио"""
     stock = serializers.SlugRelatedField(slug_field="name", read_only=True)
+
     class Meta:
         model = Portfolio
         fields = '__all__'

@@ -21,7 +21,7 @@ class Stocks(models.Model):
 class Offers(models.Model):
     user = models.ForeignKey(to=User, on_delete=models.CASCADE)
     stock = models.ForeignKey(to=Stocks, on_delete=models.CASCADE)
-    type = models.BooleanField() # покупка - 0; продажа - 1
+    type = models.BooleanField()  # покупка - 0; продажа - 1
     price = models.FloatField()
     is_closed = models.BooleanField()
 

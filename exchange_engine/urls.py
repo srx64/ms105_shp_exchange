@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-
+from main import views
 from main.views import StocksListView, StockDetailView, OffersView, PortfolioUserView, ProfileDetailView
 
 urlpatterns = [
@@ -26,4 +26,6 @@ urlpatterns = [
     path('offers/', OffersView.as_view()),
     path('portfolio/<int:pk>', PortfolioUserView.as_view()),
     path('profile/', ProfileDetailView.as_view()),
+    path('login/', views.LoginView.as_view(), name='login'),
+
 ]

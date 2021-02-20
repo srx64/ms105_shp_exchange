@@ -1,4 +1,3 @@
-
 from django.contrib.auth.views import SuccessURLAllowedHostsMixin
 
 from rest_framework.response import Response
@@ -7,12 +6,10 @@ from rest_framework.views import APIView
 from main.models import Stocks, Offers, Portfolio, User
 from main import serializers
 
-
 from django.conf import settings
 
 from django.contrib.auth import (
     REDIRECT_FIELD_NAME, login as auth_login,
-
 )
 
 from django.contrib.auth.forms import (
@@ -32,7 +29,6 @@ from django.utils.http import (
 from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.debug import sensitive_post_parameters
-
 from django.views.generic.edit import FormView
 
 

@@ -17,7 +17,8 @@ from django.contrib import admin
 from main import views
 from django.urls import path, include
 from django_registration.backends.one_step.views import RegistrationView
-from main.forms import CustomRegistrationForm
+from main.forms import CustomRegistrationForm, EmailValidationOnForgotPassword
+from django.contrib.auth import views as auth_views
 from main.views import StocksListView, StockDetailView, OffersView, PortfolioUserView, ProfileDetailView
 
 urlpatterns = [
@@ -36,4 +37,6 @@ urlpatterns = [
          name='django_registration_register',
          ),
     path('accounts/', include('django_registration.backends.activation.urls')),
+    path('reset_password/', auth_views.PasswordResetView.as_view(template_name='password/password_reset.html', form_class=EmailValidationOnForgotPassword), name='reset_password'),
+
 ]

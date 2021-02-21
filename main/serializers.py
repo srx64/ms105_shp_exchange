@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from main.models import Stocks, Offers, Portfolio, User
+from main.models import Stocks, Offers, Portfolio, User, UserSettings
 
 
 class StocksSerializer(serializers.ModelSerializer):
@@ -38,4 +38,12 @@ class PortfolioUserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Portfolio
+        fields = '__all__'
+
+class ProfileUserAvatarSerializer(serializers.ModelSerializer):
+    """Аватарка"""
+    field = serializers.SlugRelatedField(slug_field="avatar", read_only=True)
+
+    class Meta:
+        model = UserSettings
         fields = '__all__'

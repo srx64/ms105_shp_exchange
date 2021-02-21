@@ -1,10 +1,9 @@
-from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import SuccessURLAllowedHostsMixin
 
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from main.models import Stocks, Offers, Portfolio, User
+from main.models import Stocks, Offers, Portfolio, User, UserSettings
 from main import serializers
 
 from django.conf import settings
@@ -30,7 +29,7 @@ from django.utils.http import (
 from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.debug import sensitive_post_parameters
-from django.views.generic.edit import FormView, UpdateView
+from django.views.generic.edit import FormView
 from main.forms import ProfileEditingForm
 
 
@@ -118,11 +117,16 @@ class StockDetailView(APIView):
 
 
 class ProfileDetailView(APIView):
-    """Информация об акции"""
+    """Информация о пользователе"""
     def get(self, request):
         user = User.objects.get(id=request.user.pk)
-        serializer = serializers.ProfileDetailSerializer(user)
-        return Response(serializer.data)
+        user_avatar = UserSettings.objects.get(user_id=user.id)
+        return Response(
+            {
+                'profile': serializers.ProfileDetailSerializer(user).data,
+                'avatar': serializers.ProfileUserAvatarSerializer(user_avatar).data,
+            }
+        )
 
 
 class OffersView(APIView):
@@ -144,12 +148,14 @@ class PortfolioUserView(APIView):
 class ProfileEditingView(APIView):
     def get(self, request):
         user = User.objects.get(id=request.user.pk)
+        user_avatar = UserSettings.objects.get(user_id=user.id).avatar
         form = ProfileEditingForm(
             initial={
                 'username': user.username,
                 'first_name': user.first_name,
                 'last_name': user.last_name,
-                'email': user.email
+                'email': user.email,
+                'avatar': user_avatar,
             }
         )
         context = {
@@ -161,11 +167,14 @@ class ProfileEditingView(APIView):
         form = ProfileEditingForm(request.POST)
         if form.is_valid():
             user = User.objects.get(id=request.user.pk)
+            user_avatar = UserSettings.objects.get(user_id=user.id)
             user.username = form.data['username']
             user.first_name = form.data['first_name']
             user.last_name = form.data['last_name']
             user.email = form.data['email']
+            user_avatar.avatar = form.data['avatar']
             user.save()
+            user_avatar.save()
             return HttpResponseRedirect("/profile/")
         else:
             return HttpResponseRedirect("/profile/editing/")

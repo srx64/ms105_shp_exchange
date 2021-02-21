@@ -16,3 +16,4 @@ class ProfileEditingForm(forms.Form):
     first_name = forms.CharField(label='Редактировать имя:', max_length=150, required=False)
     last_name = forms.CharField(label='Редактировать фамилию:', max_length=150, required=False)
     email = forms.EmailField(label='Редактировать email:', required=True)
+    avatar = forms.URLField(label='Редактировать аватар:', required=False)

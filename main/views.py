@@ -143,30 +143,29 @@ class PortfolioUserView(APIView):
 
 class ProfileEditingView(APIView):
     def get(self, request):
-            user = User.objects.get(id=request.user.pk)
-            form = ProfileEditingForm(
-                initial={
-                    'username': user.username,
-                    'first_name': user.first_name,
-                    'last_name': user.last_name,
-                    'email': user.email
-                }
-            )
-            context = {
-                'form': form,
+        user = User.objects.get(id=request.user.pk)
+        form = ProfileEditingForm(
+            initial={
+                'username': user.username,
+                'first_name': user.first_name,
+                'last_name': user.last_name,
+                'email': user.email
             }
-            return render(request, 'profile/profile_editing.html', context)
+        )
+        context = {
+            'form': form,
+        }
+        return render(request, 'profile/profile_editing.html', context)
 
     def post(self, request):
-            form = ProfileEditingForm(request.POST)
-            if form.is_valid():
-                user = User.objects.get(id=request.user.pk)
-                user.username = form.data['username']
-                user.first_name = form.data['first_name']
-                user.last_name = form.data['last_name']
-                user.email = form.data['email']
-                user.save()
-                return HttpResponseRedirect("/profile/")
-            else:
-                return HttpResponseRedirect("/profile/editing/")
-
+        form = ProfileEditingForm(request.POST)
+        if form.is_valid():
+            user = User.objects.get(id=request.user.pk)
+            user.username = form.data['username']
+            user.first_name = form.data['first_name']
+            user.last_name = form.data['last_name']
+            user.email = form.data['email']
+            user.save()
+            return HttpResponseRedirect("/profile/")
+        else:
+            return HttpResponseRedirect("/profile/editing/")

@@ -1,3 +1,4 @@
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import SuccessURLAllowedHostsMixin
 
 from rest_framework.response import Response
@@ -19,7 +20,7 @@ from django.contrib.auth.forms import (
 from django.contrib.sites.shortcuts import get_current_site
 
 from django.http import HttpResponseRedirect
-from django.shortcuts import resolve_url
+from django.shortcuts import resolve_url, render
 
 from django.utils.decorators import method_decorator
 from django.utils.http import (
@@ -29,7 +30,8 @@ from django.utils.http import (
 from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.debug import sensitive_post_parameters
-from django.views.generic.edit import FormView
+from django.views.generic.edit import FormView, UpdateView
+from main.forms import ProfileEditingForm
 
 
 class LoginView(SuccessURLAllowedHostsMixin, FormView):
@@ -118,7 +120,7 @@ class StockDetailView(APIView):
 class ProfileDetailView(APIView):
     """Информация об акции"""
     def get(self, request):
-        user = User.objects.get(id=1)
+        user = User.objects.get(id=request.user.pk)
         serializer = serializers.ProfileDetailSerializer(user)
         return Response(serializer.data)
 
@@ -137,3 +139,34 @@ class PortfolioUserView(APIView):
         portfolio = Portfolio.objects.filter(user_id=pk)
         serializer = serializers.PortfolioUserSerializer(portfolio, many=True)
         return Response(serializer.data)
+
+
+class ProfileEditingView(APIView):
+    def get(self, request):
+            user = User.objects.get(id=request.user.pk)
+            form = ProfileEditingForm(
+                initial={
+                    'username': user.username,
+                    'first_name': user.first_name,
+                    'last_name': user.last_name,
+                    'email': user.email
+                }
+            )
+            context = {
+                'form': form,
+            }
+            return render(request, 'profile/profile_editing.html', context)
+
+    def post(self, request):
+            form = ProfileEditingForm(request.POST)
+            if form.is_valid():
+                user = User.objects.get(id=request.user.pk)
+                user.username = form.data['username']
+                user.first_name = form.data['first_name']
+                user.last_name = form.data['last_name']
+                user.email = form.data['email']
+                user.save()
+                return HttpResponseRedirect("/profile/")
+            else:
+                return HttpResponseRedirect("/profile/editing/")
+

@@ -30,7 +30,7 @@ from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.debug import sensitive_post_parameters
 from django.views.generic.edit import FormView
-from main.forms import ProfileEditingForm
+from main.forms import ProfileEditingForm, PasswordEditingForm
 
 
 class LoginView(SuccessURLAllowedHostsMixin, FormView):
@@ -178,3 +178,38 @@ class ProfileEditingView(APIView):
             return HttpResponseRedirect("/profile/")
         else:
             return HttpResponseRedirect("/profile/editing/")
+
+
+class PasswordEditingView(APIView):
+    def get(self, request):
+        form = PasswordEditingForm()
+        context = {
+            'form': form,
+        }
+        return render(request, 'profile/password_editing.html', context)
+
+    def post(self, request):
+        form = PasswordEditingForm(request.POST)
+        if form.is_valid():
+            context = {
+                'form': form,
+                'is_old_password_wrong': True,
+                'is_new_password_wrong': True,
+                'is_repeat_password_wrong': True,
+            }
+            user = User.objects.get(id=request.user.pk)
+            password = form.data['old_password']
+            if user.check_password(password):
+                new_password = form.data['new_password']
+                repeat_new_password = form.data['repeat_new_password']
+                context['is_old_password_wrong'] = False
+                if new_password == repeat_new_password:
+                    context['is_repeat_password_wrong'] = False
+                    if len(new_password) > 7 and len(repeat_new_password) > 7:
+                        context['is_new_password_wrong'] = False
+                        user.set_password(new_password)
+                        user.save()
+                        return HttpResponseRedirect("/profile/")
+            return render(request, 'profile/password_editing.html', context)
+        else:
+            return HttpResponseRedirect("profile/editing/change_password/")

@@ -39,4 +39,5 @@ urlpatterns = [
          ),
     path('accounts/', include('django_registration.backends.activation.urls')),
     path('profile/editing/', login_required(views.ProfileEditingView.as_view()), name='profile_editing'),
+    path('profile/editing/change_password/', login_required(views.PasswordEditingView.as_view()), name='change_password')
 ]

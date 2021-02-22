@@ -1,20 +1,14 @@
-from django.contrib.auth.views import SuccessURLAllowedHostsMixin
-
-from rest_framework.response import Response
-from rest_framework.views import APIView
-
 from main.models import Stocks, Offers, Portfolio, User, UserSettings
-from main import serializers
 
 from django.conf import settings
 
 from django.contrib.auth import (
-    REDIRECT_FIELD_NAME, login as auth_login,
+    REDIRECT_FIELD_NAME, login as auth_login
 )
-
 from django.contrib.auth.forms import (
     AuthenticationForm
 )
+from django.contrib.auth.views import SuccessURLAllowedHostsMixin
 
 from django.contrib.sites.shortcuts import get_current_site
 
@@ -23,14 +17,20 @@ from django.shortcuts import resolve_url, render
 
 from django.utils.decorators import method_decorator
 from django.utils.http import (
-    url_has_allowed_host_and_scheme,
+    url_has_allowed_host_and_scheme
 )
 
 from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.debug import sensitive_post_parameters
+
 from django.views.generic.edit import FormView
 from main.forms import ProfileEditingForm, PasswordEditingForm
+from rest_framework.response import Response
+from rest_framework.views import APIView
+
+from main.models import Stocks, Offers, Portfolio, User
+from main import serializers
 
 
 class LoginView(SuccessURLAllowedHostsMixin, FormView):

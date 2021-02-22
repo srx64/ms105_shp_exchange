@@ -19,7 +19,8 @@ from django.contrib.auth.decorators import login_required
 from main import views
 from django.urls import path, include
 from django_registration.backends.one_step.views import RegistrationView
-from main.forms import CustomRegistrationForm
+from main.forms import CustomRegistrationForm, EmailValidationOnForgotPassword
+from django.contrib.auth import views as auth_views
 from main.views import StocksListView, StockDetailView, OffersView, PortfolioUserView, ProfileDetailView
 
 urlpatterns = [
@@ -39,5 +40,17 @@ urlpatterns = [
          ),
     path('accounts/', include('django_registration.backends.activation.urls')),
     path('profile/editing/', login_required(views.ProfileEditingView.as_view()), name='profile_editing'),
-    path('profile/editing/change_password/', login_required(views.PasswordEditingView.as_view()), name='change_password')
+    path('profile/editing/change_password/', login_required(views.PasswordEditingView.as_view()), name='change_password'),
+    path('reset_password/', auth_views.PasswordResetView.as_view(template_name='password/password_reset.html',
+                                                                 form_class=EmailValidationOnForgotPassword),
+         name='reset_password'),
+    path('reset_password_sent/',
+         auth_views.PasswordResetDoneView.as_view(template_name='password/password_reset_sent.html'),
+         name='password_reset_done'),
+    path('reset/<uidb64>/<token>/',
+         auth_views.PasswordResetConfirmView.as_view(template_name='password/password_reset_form.html'),
+         name='password_reset_confirm'),
+    path('reset_password_complete/',
+         auth_views.PasswordResetCompleteView.as_view(template_name='password/password_reset_complete.html'),
+         name='password_reset_complete'),
 ]

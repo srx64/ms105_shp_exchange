@@ -25,3 +25,5 @@ pip install -r requirements.txt
 ./manage.py runserver
 ```
 
+При необходимости вы можете использовать уже заполненную базу данных: https://gitlab.informatics.ru/2020-2021/mytischi/s105/exchange_engine/-/wikis/DB
+

@@ -1,0 +1,215 @@
+/**********************************************************/
+/* Этот файл обеспечивает работоспособность шаблона 			*/
+/* Лучше не лезть сюда ручками и ничего не менять здесь 	*/
+/* Для ваших стилей есть файл style.css 									*/
+/**********************************************************/
+
+
+body{
+  margin: 0;
+	padding-top: 85px;
+  font-family: 'Arial', sans-serif;
+}
+
+*{
+  box-sizing: border-box;
+}
+
+h2{
+  font-size: 36px;
+  font-weight: 700;
+  margin: 0 0 40px;
+  position: relative;
+}
+h2:after{
+  content: ' ';
+  display: block;
+  position: absolute;
+  width: 300px;
+  height: 3px;
+  background-color: #E22122;
+  top: 50px;
+  left: 0;
+}
+
+h3{
+  font-size: 24px;
+  font-weight: 400;
+  margin: 10px 0 20px;
+}
+
+h4{
+	font-size: 18px;
+	font-weight: 700;
+}
+
+p{
+  font-size: 18px;
+  line-height: 30px;
+}
+
+section{
+  padding: 50px 0;
+	position: relative;
+  width: 700px;
+  margin: auto;
+}
+
+.mainheader{
+  background-color: grey;
+  padding: 16px 0;
+	position: fixed;
+	width: 100%;
+	top: 0;
+	left: 0;
+	z-index: 1;
+}
+
+.container{
+  width: 900px;
+  margin: auto;
+}
+
+
+
+
+.mainheader>.container{
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+.mainnav>ul{
+	display: flex;
+	list-style: none;
+	width: 770px;
+	justify-content: space-between;
+	align-items: center;
+	font-weight: 700;
+}
+.mainnav>ul li a{
+	font-size: 18px;
+	font-weight: 700;
+	color: #000;
+	text-decoration: none;
+}
+.mainnav>ul li a:hover{
+	text-decoration: underline;
+}
+.mainnav>ul li.active a{
+	text-decoration: underline;
+	color: #E22122;
+}
+
+.mainnav>ul li img{
+	vertical-align: middle;
+}
+
+
+
+
+.kit_slides_wrapper{
+	position: relative;
+	left: 50px;
+	width: 800px;
+}
+.kit_slide{
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+	width: 800px;
+}
+.kit_slide img{
+  width: 250px;
+}
+.kit_slide .info{
+  width: 510px;
+}
+
+
+.slider_arrow_left{
+	position: absolute;
+	left: 0;
+	bottom: 220px;
+	cursor: pointer;
+}
+.slider_arrow_right{
+	position: absolute;
+	right: 0;
+	bottom: 220px;
+	cursor: pointer;
+}
+
+
+
+
+input[type="text"]{
+	border-radius: 5px;
+	border: 1px solid black;
+	padding: 10px 15px;
+	font-size: 16px;
+	width: 360px;
+	margin-bottom: 15px;
+	display: block;
+}
+label{
+	font-size: 16px;
+	font-weight: 700;
+	display: block;
+	margin-bottom: 5px;
+}
+button{
+	background-color: #facc0e;
+	font-size: 16px;
+	font-weight: 700;
+	width: 360px;
+	padding: 10px 15px;
+	border-radius: 5px;
+	border: none;
+	cursor: pointer;
+}
+
+
+.order-wrapper{
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+.order-alert{
+	width: 500px;
+	border-radius: 10px;
+	border: 1px solid black;
+	padding: 25px;
+}
+
+.order-alert p{
+	margin: 0;
+}
+
+
+
+
+.goods-wrapper{
+	display: flex;
+	align-content: flex-start;
+	justify-content: space-between;
+	flex-wrap: wrap;
+}
+
+.product{
+	width: 250px;
+	padding: 15px;
+	border: 1px solid black;
+	margin-bottom: 30px;
+}
+.product>img{
+	width: 220px;
+}
+.product>h4{
+	margin: 9px 0 0 0;
+	float: left;
+}
+.product>button{
+	width: auto;
+	padding: 9px;
+	float: right;
+}

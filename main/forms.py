@@ -27,18 +27,21 @@ class PasswordEditingForm(forms.Form):
         widget=forms.PasswordInput(
             attrs={'placeholder': 'Старый пароль'}
         ),
+        label='Введите старый пароль:',
         required=True,
     )
     new_password = forms.CharField(
         widget=forms.PasswordInput(
             attrs={'placeholder': 'Новый пароль'}
         ),
+        label='Введите новый пароль:',
         required=True,
     )
     repeat_new_password = forms.CharField(
         widget=forms.PasswordInput(
             attrs={'placeholder': 'Повторите новый пароль'}
         ),
+        label='Повторите новый пароль:',
         required=True,
     )
 

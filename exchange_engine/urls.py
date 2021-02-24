@@ -31,7 +31,8 @@ urlpatterns = [
     path('offers/', OffersView.as_view()),
     path('portfolio/<int:pk>', PortfolioUserView.as_view()),
     path('profile/', login_required(ProfileDetailView.as_view())),
-    path('login/', views.LoginView.as_view(), name='login'),
+    path('login/', auth_views.LoginView.as_view()),
+    path('logout/', auth_views.LogoutView.as_view()),
     path('accounts/register/',
          RegistrationView.as_view(
              form_class=CustomRegistrationForm

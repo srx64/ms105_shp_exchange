@@ -1,25 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Title</title>
+    <meta charset="UTF-8">
+    <title>Авторизация</title>
 </head>
 <body>
-<h1 class="mt-4">Авторизация</h1>
+    <h1 class="mt-4">Авторизация</h1>
     <hr>
-
-    <div class="row">
-        <div class="col-4 offset-4">
-            <form action="{% url 'login' %}" method="POST">
-                {% csrf_token %}
-
-                {{ form }}
-
-                    <button type="submit" class="btn btn-primary float-right btn-block">Войти</button>
-
-
-            </form>
-        </div>
-    </div>
+    <form action="/login/" method="POST">
+        {% csrf_token %}
+        {{ form }}
+        <button type="submit">Войти</button>
+        <a href="{% url 'reset_password'%}"> Забыли пароль? </a>
+    </form>
 </body>
 </html>
+

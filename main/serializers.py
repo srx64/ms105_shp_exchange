@@ -40,6 +40,7 @@ class PortfolioUserSerializer(serializers.ModelSerializer):
         model = Portfolio
         fields = '__all__'
 
+
 class ProfileUserAvatarSerializer(serializers.ModelSerializer):
     """Аватарка"""
     field = serializers.SlugRelatedField(slug_field="avatar", read_only=True)

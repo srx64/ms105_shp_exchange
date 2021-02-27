@@ -74,7 +74,7 @@ class ProfileEditingView(APIView):
         return render(request, 'profile/profile_editing.html', context)
 
     def post(self, request):
-        form = ProfileEditingForm(request.POST)
+        form = ProfileEditingForm(request.POST, request.FILES)
         if form.is_valid():
             user = User.objects.get(id=request.user.pk)
             user_avatar = UserSettings.objects.get(user_id=user.id)
@@ -82,12 +82,13 @@ class ProfileEditingView(APIView):
             user.first_name = form.data['first_name']
             user.last_name = form.data['last_name']
             user.email = form.data['email']
-            user_avatar.avatar = form.data['avatar']
+            user_avatar.avatar = request.FILES['avatar']
             user.save()
             user_avatar.save()
             return HttpResponseRedirect("/API/profile/")
         else:
             return HttpResponseRedirect("/profile/editing/")
+
 
 
 class PasswordEditingView(APIView):

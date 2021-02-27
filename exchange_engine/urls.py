@@ -22,6 +22,8 @@ from django_registration.backends.one_step.views import RegistrationView
 from main.forms import CustomRegistrationForm, EmailValidationOnForgotPassword
 from django.contrib.auth import views as auth_views
 from main.views import StocksListView, StockDetailView, OffersView, PortfolioUserView, ProfileDetailView
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -55,3 +57,6 @@ urlpatterns = [
          auth_views.PasswordResetCompleteView.as_view(template_name='password/password_reset_complete.html'),
          name='password_reset_complete'),
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

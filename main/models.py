@@ -4,6 +4,7 @@ from django.db import models
 
 class User(AbstractUser):
     status = models.CharField(max_length=255)
+    balance = models.IntegerField(null=True, default=100000)
 
 
 class UserSettings(models.Model):
@@ -13,7 +14,6 @@ class UserSettings(models.Model):
 
 class Stocks(models.Model):
     name = models.CharField(max_length=255)
-    avg_price = models.FloatField()
     description = models.CharField(max_length=255)
     is_active = models.BooleanField()
 

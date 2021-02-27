@@ -29,7 +29,7 @@ class StockDetailView(APIView):
 class ProfileDetailView(APIView):
     """Информация о пользователе"""
     def get(self, request):
-        user = User.objects.get(id=request.user.pk)
+        user = request.user
         user_avatar = UserSettings.objects.get(user_id=user.id)
         return Response(
             {

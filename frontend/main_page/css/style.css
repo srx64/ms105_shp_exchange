@@ -1,7 +1,7 @@
 .preloader {
   position: fixed;
   top: 30%;
-  left: 35%;
+  left: 40%;
   width: 400px;
   height: 400px;
   transition: 1s;
@@ -18,33 +18,6 @@
   max-width: 700px;
 }
 
-.up {
-  position: fixed;
-  bottom: 70px;
-  right: 175px;
-  font-size: 35px;
-  color: black;
-  font-weight: bold;
-  transition: 1s;
-  opacity: 0;
-}
-.top {
-  position: fixed;
-  width: 0px;
-  height: 0px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #fff;
-  font-size: 30px;
-  bottom: 200px;
-  right: 190px;
-  border-radius:100%;
-  opacity: 0;
-  transition: 1s;
-  cursor: default;
-}
-
 .UpVisible {
   opacity: 1;
   cursor: pointer;
@@ -53,31 +26,6 @@
   opacity: 0;
   cursor: default;
 }
-
-.placeholderred::-webkit-input-placeholder {
-   color: red;
-}
-.placeholderred::-webkit-input-placeholder {
-   color: default;
-}
-
-.hatch{
-    animation-name: hatch;
-    -webkit-animation-name: hatch;
-
-    animation-duration: 2s;
-    -webkit-animation-duration: 2s;
-
-    animation-timing-function: ease-in-out;
-    -webkit-animation-timing-function: ease-in-out;
-
-    transform-origin: 50% 100%;
-    -ms-transform-origin: 50% 100%;
-    -webkit-transform-origin: 50% 100%;
-
-    visibility: visible !important;
-}
-
 .top img {
   width: 150px;
   height: 150px;
@@ -87,207 +35,23 @@
   transition: 1s;
 }
 
-@keyframes hatch {
-    0% { transform: rotate(0deg) scaleY(0.6); }
-    20% { transform: rotate(-2deg) scaleY(1.05); }
-    35% { transform: rotate(2deg) scaleY(1); }
-    50% { transform: rotate(-2deg); }
-    65% { transform: rotate(1deg); }
-    80% { transform: rotate(-1deg); }
-    100% { transform: rotate(0deg); }
+#contacts, #smth, #logo {
+  width: 100px;
+  display: inline-block;
+  margin-left: 13%;
 }
-
-@-webkit-keyframes hatch {
-    0% { -webkit-transform: rotate(0deg) scaleY(0.6); }
-    20% { -webkit-transform: rotate(-2deg) scaleY(1.05); }
-    35% { -webkit-transform: rotate(2deg) scaleY(1); }
-    50% { -webkit-transform: rotate(-2deg); }
-    65% { -webkit-transform: rotate(1deg); }
-    80% { -webkit-transform: rotate(-1deg); }
-    100% { -webkit-transform: rotate(0deg); }
+#footer {
+  margin-top: 50px;
 }
-
-.fadeIn{
-    animation-name: fadeIn;
-    -webkit-animation-name: fadeIn;
-
-    animation-duration: 2s;
-    -webkit-animation-duration: 2s;
-
-    animation-timing-function: ease-in-out;
-    -webkit-animation-timing-function: ease-in-out;
-
-    visibility: visible !important;
+#registration {
+  position: fixed;
+  top: 32px;
+  right: 50px;
 }
-
-@keyframes fadeIn {
-    0% {
-        transform: scale(0);
-        opacity: 0.0;
-    }
-    60% {
-        transform: scale(1.1);
-    }
-    80% {
-        transform: scale(0.9);
-        opacity: 1;
-    }
-    100% {
-        transform: scale(1);
-        opacity: 1;
-    }
-}
-
-@-webkit-keyframes fadeIn {
-    0% {
-        -webkit-transform: scale(0);
-        opacity: 0.0;
-    }
-    60% {
-        -webkit-transform: scale(1.1);
-    }
-    80% {
-        -webkit-transform: scale(0.9);
-        opacity: 1;
-    }
-    100% {
-        -webkit-transform: scale(1);
-        opacity: 1;
-    }
-}
-.pullUp{
-    animation-name: pullUp;
-    -webkit-animation-name: pullUp;
-
-    animation-duration: 3s;
-    -webkit-animation-duration: 3s;
-
-    animation-timing-function: ease-out;
-    -webkit-animation-timing-function: ease-out;
-
-    transform-origin: 50% 100%;
-    -ms-transform-origin: 50% 100%;
-    -webkit-transform-origin: 50% 100%;
-}
-
-@keyframes pullUp {
-    0% {
-        transform: scaleY(0.1);
-    }
-    40% {
-        transform: scaleY(1.02);
-    }
-    60% {
-        transform: scaleY(0.98);
-    }
-    80% {
-        transform: scaleY(1.01);
-    }
-    100% {
-        transform: scaleY(0.98);
-    }
-    80% {
-        transform: scaleY(1.01);
-    }
-    100% {
-        transform: scaleY(1);
-    }
-}
-
-@-webkit-keyframes pullUp {
-    0% {
-        -webkit-transform: scaleY(0.1);
-    }
-    40% {
-        -webkit-transform: scaleY(1.02);
-    }
-    60% {
-        -webkit-transform: scaleY(0.98);
-    }
-    80% {
-        -webkit-transform: scaleY(1.01);
-    }
-    100% {
-        -webkit-transform: scaleY(0.98);
-    }
-    80% {
-        -webkit-transform: scaleY(1.01);
-    }
-    100% {
-        -webkit-transform: scaleY(1);
-    }
-}
-.bigEntrance{
-    animation-name: bigEntrance;
-    -webkit-animation-name: bigEntrance;
-
-    animation-duration: 2s;
-    -webkit-animation-duration: 2s;
-
-    animation-timing-function: ease-out;
-    -webkit-animation-timing-function: ease-out;
-
-    visibility: visible !important;
-}
-
-@keyframes bigEntrance {
-    0% {
-        transform: scale(0.3) rotate(6deg) translateX(-30%) translateY(30%);
-        opacity: 0.2;
-    }
-    30% {
-        transform: scale(1.03) rotate(-2deg) translateX(2%) translateY(-2%);
-        opacity: 1;
-    }
-    45% {
-        transform: scale(0.98) rotate(1deg) translateX(0%) translateY(0%);
-        opacity: 1;
-    }
-    60% {
-        transform: scale(1.01) rotate(-1deg) translateX(0%) translateY(0%);
-        opacity: 1;
-    }
-    75% {
-        transform: scale(0.99) rotate(1deg) translateX(0%) translateY(0%);
-        opacity: 1;
-    }
-    90% {
-        transform: scale(1.01) rotate(0deg) translateX(0%) translateY(0%);
-        opacity: 1;
-    }
-    100% {
-        transform: scale(1) rotate(0deg) translateX(0%) translateY(0%);
-        opacity: 1;
-    }
-}
-
-@-webkit-keyframes bigEntrance {
-    0% {
-        -webkit-transform: scale(0.3) rotate(6deg) translateX(-30%) translateY(30%);
-        opacity: 0.2;
-    }
-    30% {
-        -webkit-transform: scale(1.03) rotate(-2deg) translateX(2%) translateY(-2%);
-        opacity: 1;
-    }
-    45% {
-        -webkit-transform: scale(0.98) rotate(1deg) translateX(0%) translateY(0%);
-        opacity: 1;
-    }
-    60% {
-        -webkit-transform: scale(1.01) rotate(-1deg) translateX(0%) translateY(0%);
-        opacity: 1;
-    }
-    75% {
-        -webkit-transform: scale(0.99) rotate(1deg) translateX(0%) translateY(0%);
-        opacity: 1;
-    }
-    90% {
-        -webkit-transform: scale(1.01) rotate(0deg) translateX(0%) translateY(0%);
-        opacity: 1;
-    }
-    100% {
-        -webkit-transform: scale(1) rotate(0deg) translateX(0%) translateY(0%);
-        opacity: 1;
-    }
+#register, #logIn {
+  margin-left: 30px;
+  font-size: 18px;
+	font-weight: 700;
+	color: black;
+	text-decoration: none;
 }

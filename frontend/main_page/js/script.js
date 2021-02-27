@@ -7,6 +7,7 @@ var texts = ['Пожарная машина', 'Гоночная машина', '
 var buttons = document.querySelectorAll(".btn");
 var anims = ['fadeIn', 'hatch', 'pullUp', 'bigEntrance'];
 
+scrollToHeadline(1);
 document.body.style.overflow = "hidden";
 document.body.style.pointerEvents = "none";
 back.style.opacity = 0;

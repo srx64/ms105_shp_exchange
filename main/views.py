@@ -85,7 +85,7 @@ class ProfileEditingView(APIView):
             user_avatar.avatar = form.data['avatar']
             user.save()
             user_avatar.save()
-            return HttpResponseRedirect("/API/profile/")
+            return HttpResponseRedirect("/apiv1/profile/")
         else:
             return HttpResponseRedirect("/profile/editing/")
 
@@ -119,7 +119,7 @@ class PasswordEditingView(APIView):
                         context['is_new_password_wrong'] = False
                         user.set_password(new_password)
                         user.save()
-                        return HttpResponseRedirect("API/profile/")
+                        return HttpResponseRedirect("apiv1/profile/")
             return render(request, 'profile/password_editing.html', context)
         else:
             return HttpResponseRedirect("profile/editing/change_password/")

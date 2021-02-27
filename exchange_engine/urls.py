@@ -25,12 +25,12 @@ from main.views import StocksListView, StockDetailView, OffersView, PortfolioUse
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('API/shares_list/', OffersView.as_view()),
-    path('API/stocks/', StocksListView.as_view()),
-    path('API/stock/<int:pk>/', StockDetailView.as_view()),
-    path('API/offers/', OffersView.as_view()),
-    path('API/portfolio/<int:pk>', PortfolioUserView.as_view()),
-    path('API/profile/', login_required(ProfileDetailView.as_view())),
+    path('apiv1/shares_list/', OffersView.as_view()),
+    path('apiv1/stocks/', StocksListView.as_view()),
+    path('apiv1/stock/<int:pk>/', StockDetailView.as_view()),
+    path('apiv1/offers/', OffersView.as_view()),
+    path('apiv1/portfolio/<int:pk>', PortfolioUserView.as_view()),
+    path('apiv1/profile/', login_required(ProfileDetailView.as_view())),
     path('login/', auth_views.LoginView.as_view()),
     path('logout/', auth_views.LogoutView.as_view()),
     path('accounts/register/',

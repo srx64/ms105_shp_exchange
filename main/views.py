@@ -90,7 +90,6 @@ class ProfileEditingView(APIView):
             return HttpResponseRedirect("/profile/editing/")
 
 
-
 class PasswordEditingView(APIView):
     def get(self, request):
         form = PasswordEditingForm()

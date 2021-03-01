@@ -1,0 +1,57 @@
+.preloader {
+  position: fixed;
+  top: 30%;
+  left: 40%;
+  width: 400px;
+  height: 400px;
+  transition: 1s;
+}
+
+.scrollBar {
+  position: fixed;
+  height: 3px;
+  background-color: red;
+  margin-left: 34%;
+  display: flex;
+  top: 82px;
+  z-index: 1;
+  max-width: 700px;
+}
+
+.UpVisible {
+  opacity: 1;
+  cursor: pointer;
+}
+.UpInVisible {
+  opacity: 0;
+  cursor: default;
+}
+.top img {
+  width: 150px;
+  height: 150px;
+}
+.rotation {
+  transform: rotate(360deg);
+  transition: 1s;
+}
+
+#contacts, #smth, #logo {
+  width: 100px;
+  display: inline-block;
+  margin-left: 13%;
+}
+#footer {
+  margin-top: 50px;
+}
+#registration {
+  position: fixed;
+  top: 32px;
+  right: 50px;
+}
+#register, #logIn {
+  margin-left: 30px;
+  font-size: 18px;
+	font-weight: 700;
+	color: black;
+	text-decoration: none;
+}

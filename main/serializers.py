@@ -17,7 +17,7 @@ class StockDetailSerializer(serializers.ModelSerializer):
 
 
 class ProfileDetailSerializer(serializers.ModelSerializer):
-    """ Детальная информация об акции"""
+    """ Детальная информация о пользователе"""
     class Meta:
         model = User
         fields = '__all__'

@@ -8,7 +8,7 @@ class User(AbstractUser):
 
 class UserSettings(models.Model):
     user_id = models.ForeignKey(to=User, on_delete=models.CASCADE)
-    avatar = models.FileField(null=True, blank=True)
+    avatar = models.ImageField()
 
 
 class Stocks(models.Model):

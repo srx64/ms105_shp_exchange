@@ -1,24 +1,23 @@
 # main_page
+Страница index.html
+- Краткая информация о сервисе и переход к регистрации/логинизации
 
-## Project setup
+## Библеотеки:
+- [Vue.js](https://ru.vuejs.org/)
+- [Vuetify](https://vuetifyjs.com/en/)
+- [Vue-axios](https://ru.vuejs.org/v2/cookbook/using-axios-to-consume-apis.html)
+
+## Установка зависимостей
 ```
 npm install
 ```
 
-### Compiles and hot-reloads for development
+### Запуск сервера для просмотра страницы
 ```
 npm run serve
 ```
 
-### Compiles and minifies for production
+### Созданик продакшн-версии проекта
 ```
 npm run build
 ```
-
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).

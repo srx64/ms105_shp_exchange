@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Add Offer</title>
+</head>
+<body>
+  <form method="post" action="">
+    {% csrf_token %}
+    <p><b>Акция(name)</b><br>
+    <input type="text" name="name" required></p>
+
+    <select name="type" required>
+      <option value="0"> Купить </option>
+      <option value="1"> Продать </option>
+    </select>
+
+    <p><b>Цена</b><br>
+    <input type="number" name="price" step="0.0001" required></p>
+
+
+    <input type="submit" value="Отправить">
+  </form>
+</body>
+</html>

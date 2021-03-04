@@ -1,3 +1,5 @@
+from django.db.models.signals import post_save
+
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
@@ -10,6 +12,12 @@ class User(AbstractUser):
 class UserSettings(models.Model):
     user_id = models.ForeignKey(to=User, on_delete=models.CASCADE)
     avatar = models.ImageField()
+
+    def create_avatar(sender, instance, created, **kwargs):
+        if created:
+            user_setting = UserSettings(user_id=instance, avatar=None)
+            user_setting.save()
+    post_save.connect(create_avatar, sender=User)
 
 
 class Stocks(models.Model):

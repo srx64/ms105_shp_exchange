@@ -24,6 +24,6 @@ urlpatterns = [
     path('stocks/', StocksListView.as_view()),
     path('stock/<int:pk>/', StockDetailView.as_view()),
     path('offers/', OffersView.as_view()),
-    path('portfolio/<int:pk>', PortfolioUserView.as_view()),
+    path('portfolio/', PortfolioUserView.as_view()),
     path('profile/', ProfileDetailView.as_view()),
 ]

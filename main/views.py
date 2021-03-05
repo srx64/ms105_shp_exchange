@@ -1,46 +1,55 @@
-from main.models import Stocks, Offers, Portfolio, User, UserSettings
-
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
-from main.forms import ProfileEditingForm, PasswordEditingForm
+from main.forms import ProfileEditingForm, PasswordEditingForm, AddOfferForm
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from main.models import Stocks, Offers, Portfolio, User
+from main.models import Stocks, Offers, Portfolio, User, UserSettings
 from main import serializers
 
 from django.views.decorators.csrf import csrf_protect
 from django.shortcuts import get_object_or_404
-@csrf_protect
-def addOffer(request):
-    if request.method == 'POST':
+
+
+
+class AddOfferView(APIView):
+    def get(self, request):
+        form = AddOfferForm(initial={
+                'price': 0,
+                'stock': '',
+                'type': 0,
+            })
+        context = {
+            'form': form,
+        }
+        return render(request, 'offers/add_offer.html', context)
+
+    def post(self, request):
         user = request.user
-        name = request.POST.get('name')
+        name = request.POST.get('stock')
         stock = Stocks.objects.get(name=name)
-        type = int(request.POST.get('type'))
+        type = True if request.POST.get('type') else False
         price = float(request.POST.get('price'))
         offer = Offers(user=user, stock=stock, type=type, price=price, is_closed=False)
         offer.save()
         if Offers.objects.filter(type=not type, price=price, is_closed=False, stock=stock):
             offer_rev = Offers.objects.get(type=not type, price=price, is_closed=False, stock=stock)
             user_op = get_object_or_404(User, pk=offer_rev.user_id)
+            p_u = Portfolio.objects.get(user=user, stock=stock)
+            p_up = Portfolio.objects.get(user=user_op, stock=stock)
             if type == 0:
                 user.balance -= price
                 user_op.balance += price
                 if Portfolio.objects.filter(user=user, stock=stock):
-                    p_u = Portfolio.objects.get(user=user, stock=stock)
                     p_u.count += 1 #count
                 if Portfolio.objects.filter(user=user_op, stock=stock):
-                    p_up = Portfolio.objects.get(user=user_op, stock=stock)
                     p_up.count -= 1 #count
             elif type == 1:
                 user.balance += price
                 user_op.balance -= price
                 if Portfolio.objects.filter(user=user, stock=stock):
-                    p_u = Portfolio.objects.get(user=user, stock=stock)
                     p_u.count -= 1 #count
                 if Portfolio.objects.filter(user=user_op, stock=stock):
-                    p_up = Portfolio.objects.get(user=user_op, stock=stock)
                     p_up.count += 1 #count
             offer.is_closed = True
             offer_rev.is_closed = True
@@ -50,8 +59,7 @@ def addOffer(request):
             offer_rev.save()
             user.save()
             user_op.save()
-    context = {}
-    return render(request, 'offers/add_offer.html', context)
+        return HttpResponseRedirect("/apiv1/offers/")
 
 class StocksListView(APIView):
     """Список акций"""

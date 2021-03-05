@@ -21,7 +21,7 @@ from django.urls import path, include
 from django_registration.backends.one_step.views import RegistrationView
 from main.forms import CustomRegistrationForm, EmailValidationOnForgotPassword
 from django.contrib.auth import views as auth_views
-from main.views import StocksListView, StockDetailView, OffersView, PortfolioUserView, ProfileDetailView, addOffer
+from main.views import StocksListView, StockDetailView, OffersView, PortfolioUserView, ProfileDetailView
 from django.conf import settings
 from django.conf.urls.static import static
 
@@ -31,7 +31,7 @@ urlpatterns = [
     path('apiv1/stocks/', StocksListView.as_view()),
     path('apiv1/stock/<int:pk>/', StockDetailView.as_view()),
     path('apiv1/offers/', OffersView.as_view()),
-    path('offers/add', addOffer, name='addOffer'),
+    path('offers/add', views.AddOfferView.as_view(), name='addOffer'),
     path('apiv1/portfolio/<int:pk>', PortfolioUserView.as_view()),
     path('apiv1/profile/', login_required(ProfileDetailView.as_view())),
     path('login/', auth_views.LoginView.as_view()),

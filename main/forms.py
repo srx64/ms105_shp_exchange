@@ -59,3 +59,11 @@ class EmailValidationOnForgotPassword(PasswordResetForm):
             msg = "Такого адреса электронной почты не существует"
             self.add_error('email', msg)
         return email
+
+class AddOfferForm(forms.Form):
+    price = forms.FloatField(
+        label='Цена',
+        required=True,
+    )
+    stock = forms.CharField(label='Акция', max_length=150)
+    type = forms.BooleanField(label='Купить(0)/Продать(1)', required=False)

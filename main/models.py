@@ -5,8 +5,8 @@ from django.db import models
 
 
 class User(AbstractUser):
-    status = models.CharField(max_length=255)
-    balance = models.IntegerField(null=True, default=100000)
+    status = models.CharField(max_length=255, default='')
+    balance = models.FloatField(default=100000)
 
 
 class UserSettings(models.Model):
@@ -31,7 +31,7 @@ class Offers(models.Model):
     stock = models.ForeignKey(to=Stocks, on_delete=models.CASCADE)
     type = models.BooleanField()  # покупка - 0; продажа - 1
     price = models.FloatField()
-    is_closed = models.BooleanField()
+    is_closed = models.BooleanField(default=False)
 
 
 class Portfolio(models.Model):

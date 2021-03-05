@@ -15,8 +15,7 @@ class UserSettings(models.Model):
 
     def create_avatar(sender, instance, created, **kwargs):
         if created:
-            avatar_preset = UserSettings.objects.get(user_id=3).avatar
-            user_setting = UserSettings(user_id=instance, avatar=avatar_preset)
+            user_setting = UserSettings(user_id=instance, avatar='avatars/preset.jpg')
             user_setting.save()
     post_save.connect(create_avatar, sender=User)
 

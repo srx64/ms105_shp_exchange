@@ -7,9 +7,7 @@ from rest_framework.views import APIView
 from main.models import Stocks, Offers, Portfolio, User, UserSettings
 from main import serializers
 
-from django.views.decorators.csrf import csrf_protect
 from django.shortcuts import get_object_or_404
-
 
 
 class AddOfferView(APIView):
@@ -60,6 +58,7 @@ class AddOfferView(APIView):
             user.save()
             user_op.save()
         return HttpResponseRedirect("/apiv1/offers/")
+
 
 class StocksListView(APIView):
     """Список акций"""

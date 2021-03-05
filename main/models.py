@@ -11,11 +11,12 @@ class User(AbstractUser):
 
 class UserSettings(models.Model):
     user_id = models.ForeignKey(to=User, on_delete=models.CASCADE)
-    avatar = models.ImageField()
+    avatar = models.ImageField(upload_to='avatars/')
 
     def create_avatar(sender, instance, created, **kwargs):
         if created:
-            user_setting = UserSettings(user_id=instance, avatar=None)
+            avatar_preset = UserSettings.objects.get(user_id=3).avatar
+            user_setting = UserSettings(user_id=instance, avatar=avatar_preset)
             user_setting.save()
     post_save.connect(create_avatar, sender=User)
 

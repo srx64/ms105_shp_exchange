@@ -23,7 +23,9 @@ class ProfileEditingForm(forms.Form):
         label='Редактировать аватар:',
         required=False,
         widget=forms.FileInput(
-            attrs={'image': forms.FileInput}
+            attrs={'image': forms.FileInput,
+                   'upload_to': 'avatars',
+                   }
         )
     )
 

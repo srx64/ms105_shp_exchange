@@ -99,8 +99,8 @@ class OffersView(APIView):
 
 class PortfolioUserView(APIView):
     """Портфолио пользователя"""
-    def get(self, request, pk):
-        portfolio = Portfolio.objects.filter(user_id=pk)
+    def get(self, request):
+        portfolio = Portfolio.objects.filter(user_id=request.user.id)
         serializer = serializers.PortfolioUserSerializer(portfolio, many=True)
         return Response(serializer.data)
 

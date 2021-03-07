@@ -4,6 +4,7 @@ Pillow
 
 # API
 djangorestframework
+django-cors-headers
 
 # accounting
 django-registration

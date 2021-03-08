@@ -4,6 +4,7 @@ Pillow==8.1.2
 
 # API
 djangorestframework
+django-cors-headers
 
 # accounting
 django-registration

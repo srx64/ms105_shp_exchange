@@ -23,9 +23,10 @@ class ProfileEditingForm(forms.Form):
         label='Редактировать аватар:',
         required=False,
         widget=forms.FileInput(
-            attrs={'image': forms.FileInput,
-                   'upload_to': 'avatars',
-                   }
+            attrs={
+                'image': forms.FileInput,
+                'upload_to': 'avatars',
+            }
         )
     )
 
@@ -61,6 +62,7 @@ class EmailValidationOnForgotPassword(PasswordResetForm):
             msg = "Такого адреса электронной почты не существует"
             self.add_error('email', msg)
         return email
+
 
 class AddOfferForm(forms.Form):
     price = forms.FloatField(

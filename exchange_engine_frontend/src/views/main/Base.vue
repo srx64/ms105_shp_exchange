@@ -14,7 +14,7 @@
 </template>
 
 <script>
-  import HelloWorld from '@/components/HelloWorld.vue'
+  import HelloWorld from '@/components/main/HelloWorld.vue'
 
   export default {
     name: 'Main',

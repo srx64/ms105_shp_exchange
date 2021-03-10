@@ -73,17 +73,19 @@
               :disabled="!valid"
               color="success"
               class="mr-7"
+              to="/app"
               @click="validate"
             >
               Зарегестрироваться
             </v-btn>
           
             <v-btn
-              color="error"
+              color="primary"
+              outlined
               class="mr-0"
-              @click="reset"
+              to="/authentication/login"
             >
-              Очистить
+              Войти
             </v-btn>
           </v-form>
         </v-card-text>
@@ -103,7 +105,7 @@
         show: false,
         PasswordRules: [
           v => !!v || 'Введите пароль',
-          v => (v && v.length <= 8) || 'Минимум 8 символов',
+          v => (v && v.length >= 8) || 'Минимум 8 символов',
         ],
         nameRules: [
           v => !!v || 'Введите имя',

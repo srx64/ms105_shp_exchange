@@ -21,9 +21,9 @@
             lazy-validation
           >
             <v-text-field
-              v-model="name"
-              label="Имя"
-              placeholder="Введите имя или E-mail"
+              v-model="email"
+              label="Почта"
+              placeholder="Введите E-mail"
               required
               outlined
               dense
@@ -44,10 +44,20 @@
             
             <v-btn
               color="success"
+              to="/app"
               class="mr-15"
               @click="validate"
             >
               Войти
+            </v-btn>
+
+            <v-btn
+              color="primary"
+              outlined
+              class="mr-0"
+              to="/authentication/registration"
+            >
+              Зарегестрироваться
             </v-btn>
           </v-form>
         </v-card-text>
@@ -60,9 +70,9 @@
   export default {
     name: 'LoginForm',
     data: () => ({
-      name: '',
-      show: false,
       email: '',
+      show: false,
+      password: '',
     }),
   }
 </script>

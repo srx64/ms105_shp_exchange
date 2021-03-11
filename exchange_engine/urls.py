@@ -27,15 +27,15 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/v1/shares_list/', OffersView.as_view()),
-    path('api/v1/stocks/', StocksListView.as_view()),
-    path('api/v1/stock/<int:pk>/', StockDetailView.as_view()),
-    path('api/v1/offers/', OffersView.as_view()),
+    path('api/v1/shares_list/', OffersView.as_view(), name='shares_list'),
+    path('api/v1/stocks/', StocksListView.as_view(), name='stocks'),
+    path('api/v1/stock/<int:pk>/', StockDetailView.as_view(), name='stock'),
+    path('api/v1/offers/', OffersView.as_view(), name='offers'),
     path('offers/add', views.AddOfferView.as_view(), name='add_offer'),
-    path('api/v1/portfolio/', PortfolioUserView.as_view()),
-    path('api/v1/profile/', login_required(ProfileDetailView.as_view())),
-    path('login/', auth_views.LoginView.as_view()),
-    path('logout/', auth_views.LogoutView.as_view()),
+    path('api/v1/portfolio/', PortfolioUserView.as_view(), name='portfolio'),
+    path('api/v1/profile/', login_required(ProfileDetailView.as_view()), name='profile'),
+    path('login/', auth_views.LoginView.as_view(), name='login'),
+    path('logout/', auth_views.LogoutView.as_view(), name='logout'),
     path('accounts/register/',
          RegistrationView.as_view(
              form_class=CustomRegistrationForm

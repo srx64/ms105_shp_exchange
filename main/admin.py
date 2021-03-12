@@ -1,6 +1,6 @@
 from django.contrib import admin
-from main.models import UserSettings, Offers, Stocks
+from main.models import UserSettings, Order, Stocks
 
 admin.site.register(UserSettings)
-admin.site.register(Offers)
+admin.site.register(Order)
 admin.site.register(Stocks)

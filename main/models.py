@@ -26,7 +26,7 @@ class Stocks(models.Model):
     is_active = models.BooleanField()
 
 
-class Offers(models.Model):
+class Order(models.Model):
     user = models.ForeignKey(to=User, on_delete=models.CASCADE)
     stock = models.ForeignKey(to=Stocks, on_delete=models.CASCADE)
     type = models.BooleanField()  # покупка - 0; продажа - 1

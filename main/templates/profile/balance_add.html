@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Пополнение баланса</title>
+</head>
+<body>
+    <form action="/profile/balance_add" method="POST">
+        {% csrf_token %}
+        <input type="number" value="0" name="money">
+        <button type="submit" class="btn btn-primary float-right btn-block">Пополнить баланс</button>
+    </form>
+</body>
+</html>

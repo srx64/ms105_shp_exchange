@@ -21,9 +21,10 @@ from django.urls import path, include
 from django_registration.backends.one_step.views import RegistrationView
 from main.forms import CustomRegistrationForm, EmailValidationOnForgotPassword
 from django.contrib.auth import views as auth_views
-from main.views import StocksListView, StockDetailView, OffersView, PortfolioUserView, ProfileDetailView
+from main.views import StocksListView, StockDetailView, OffersView, PortfolioUserView, ProfileDetailView, ProfileBalanceAdd
 from django.conf import settings
 from django.conf.urls.static import static
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -58,6 +59,7 @@ urlpatterns = [
     path('reset_password_complete/',
          auth_views.PasswordResetCompleteView.as_view(template_name='password/password_reset_complete.html'),
          name='password_reset_complete'),
+    path('profile/balance_add', login_required(views.ProfileBalanceAdd.as_view()))
 ]
 
 if settings.DEBUG:

@@ -171,6 +171,22 @@ class PasswordEditingView(APIView):
                         user.set_password(new_password)
                         user.save()
                         return HttpResponseRedirect("api/v1/profile/")
-            return render(request, 'profile/password_editing.html', context)
+            return render(request, 'profile/password_editing.', context)
         else:
             return HttpResponseRedirect("profile/editing/change_password/")
+
+
+class ProfileBalanceAdd(APIView):
+    def get(self, request):
+        context = {}
+        return render(request, 'profile/balance_add.html', context)
+
+    def post(self, request):
+        user = User.objects.get(id=request.user.pk)
+        if 'money' in request.POST:
+            money = request.POST['money']
+            if int(money) > 0:
+                user.balance = int(money) + float(user.balance)
+                user.save()
+                return render(request, 'profile/balance_add_successfully.html')
+        return render(request, 'profile/balance_add_failed.html')

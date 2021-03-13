@@ -4,7 +4,7 @@ from main.forms import ProfileEditingForm, PasswordEditingForm, AddOfferForm
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from main.models import Stocks, Offers, Portfolio, User, UserSettings
+from main.models import Stocks, Order, Portfolio, User, UserSettings
 from main import serializers
 
 from django.shortcuts import get_object_or_404
@@ -28,10 +28,10 @@ class AddOfferView(APIView):
         stock = Stocks.objects.get(name=name)
         type = True if request.POST.get('type') else False
         price = float(request.POST.get('price'))
-        offer = Offers(user=user, stock=stock, type=type, price=price, is_closed=False)
+        offer = Order(user=user, stock=stock, type=type, price=price, is_closed=False)
         offer.save()
-        if Offers.objects.filter(type=not type, price=price, is_closed=False, stock=stock):
-            offer_rev = Offers.objects.get(type=not type, price=price, is_closed=False, stock=stock)
+        if Order.objects.filter(type=not type, price=price, is_closed=False, stock=stock):
+            offer_rev = Order.objects.get(type=not type, price=price, is_closed=False, stock=stock)
             user_op = get_object_or_404(User, pk=offer_rev.user_id)
             p_u = Portfolio.objects.get(user=user, stock=stock)
             p_up = Portfolio.objects.get(user=user_op, stock=stock)
@@ -92,7 +92,7 @@ class ProfileDetailView(APIView):
 class OffersView(APIView):
     """Все заявки"""
     def get(self, request):
-        offers = Offers.objects.filter(is_closed=False)
+        offers = Order.objects.filter(is_closed=False)
         serializer = serializers.OffersSerializer(offers, many=True)
         return Response(serializer.data)
 

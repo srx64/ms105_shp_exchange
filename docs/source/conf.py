@@ -12,9 +12,11 @@
 #
 import os
 import sys
+
 sys.path.insert(0, os.path.abspath('../../'))
 
 import django
+
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'exchange_engine.settings')
 django.setup()
 
@@ -26,7 +28,6 @@ author = 'SHP S105'
 
 # The full version, including alpha/beta/rc tags
 release = 'v0.01'
-
 
 # -- General configuration ---------------------------------------------------
 
@@ -56,7 +57,6 @@ language = 'ru'
 # This pattern also affects html_static_path and html_extra_path.
 exclude_patterns = []
 
-
 # -- Options for HTML output -------------------------------------------------
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
@@ -69,7 +69,6 @@ html_theme = "sphinx_rtd_theme"
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ['_static']
 
-
 # -- Extension configuration -------------------------------------------------
 
 # -- Options for intersphinx extension ---------------------------------------
@@ -78,9 +77,9 @@ html_static_path = ['_static']
 intersphinx_mapping = {
     'https://docs.python.org/3/': None,
     'django': (
-                'https://docs.djangoproject.com/en/dev/',
-                'https://docs.djangoproject.com/en/dev/_objects/'
-              ),
+        'https://docs.djangoproject.com/en/dev/',
+        'https://docs.djangoproject.com/en/dev/_objects/'
+    ),
 }
 
 # -- Options for todo extension ----------------------------------------------

@@ -63,7 +63,13 @@ class AddOfferView(APIView):
 class StocksListView(APIView):
     """Список акций"""
     def get(self, request):
-        stocks = Stocks.objects.filter(is_active=True)
+        search_data = request.GET
+        if 'name' in search_data:
+            stocks = Stocks.objects.filter(name=search_data['name'], is_active=True)
+        elif 'description' in search_data:
+            stocks = Stocks.objects.filter(description=search_data['description'], is_active=True)
+        else:
+            stocks = Stocks.objects.filter(is_active=True)
         serializer = serializers.StocksSerializer(stocks, many=True)
         return Response(serializer.data)
 

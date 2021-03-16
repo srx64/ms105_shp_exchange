@@ -8,6 +8,7 @@
       <form method="POST" enctype="multipart/form-data">
           {% csrf_token %}
           <h4 class="mt-3">{{ form.price.label }} {{ form.price }}</h4>
+          <h4 class="mt-3">{{ form.amount.label }} {{ form.amount }}</h4>
           <h4 class="mt-3">{{ form.type.label }}</h4>
           {{ form.type }}
 <!--          <select name="type" required>-->

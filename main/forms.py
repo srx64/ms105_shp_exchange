@@ -69,5 +69,9 @@ class AddOfferForm(forms.Form):
         label='Цена',
         required=True,
     )
+    amount = forms.FloatField(
+        label='Количество',
+        required=True,
+    )
     stock = forms.CharField(label='Акция', max_length=150)
     type = forms.BooleanField(label='Купить(0)/Продать(1)', required=False)

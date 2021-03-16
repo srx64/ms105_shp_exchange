@@ -23,6 +23,7 @@ class AddOfferView(APIView):
                 'price': 0,
                 'stock': '',
                 'type': 0,
+                'amount': 0,
             })
         context = {
             'form': form,
@@ -35,35 +36,85 @@ class AddOfferView(APIView):
         stock = Stocks.objects.get(name=name)
         type = True if request.POST.get('type') else False
         price = float(request.POST.get('price'))
-        offer = Order(user=user, stock=stock, type=type, price=price, is_closed=False)
+        amount = int(request.POST.get('amount'))
+        offer = Order(user=user, stock=stock, type=type, price=price, is_closed=False, amount=amount)
+        try:
+            p_u = Portfolio.objects.get(user=user, stock=stock)
+            if type == 1:
+                p_u.count += amount
+                p_u.save()
+        except Portfolio.DoesNotExist:
+            if type == 1:
+                p_u = Portfolio(user=user, stock=stock, count=amount)
+            else:
+                p_u = Portfolio(user=user, stock=stock, count=0)
+            p_u.save()
         offer.save()
         if Order.objects.filter(type=not type, price=price, is_closed=False, stock=stock):
-            offer_rev = Order.objects.get(type=not type, price=price, is_closed=False, stock=stock)
-            user_op = get_object_or_404(User, pk=offer_rev.user_id)
-            p_u = Portfolio.objects.get(user=user, stock=stock)
-            p_up = Portfolio.objects.get(user=user_op, stock=stock)
-            if type == 0:
-                user.balance -= price
-                user_op.balance += price
-                if Portfolio.objects.filter(user=user, stock=stock):
-                    p_u.count += 1 #count
-                if Portfolio.objects.filter(user=user_op, stock=stock):
-                    p_up.count -= 1 #count
-            elif type == 1:
-                user.balance += price
-                user_op.balance -= price
-                if Portfolio.objects.filter(user=user, stock=stock):
-                    p_u.count -= 1 #count
-                if Portfolio.objects.filter(user=user_op, stock=stock):
-                    p_up.count += 1 #count
-            offer.is_closed = True
-            offer_rev.is_closed = True
-            p_u.save()
-            p_up.save()
-            offer.save()
-            offer_rev.save()
-            user.save()
-            user_op.save()
+            offer_rev = Order.objects.all().filter(type=not type, price=price, is_closed=False, stock=stock)
+            for offer_obj in offer_rev:
+                user_op = get_object_or_404(User, pk=offer_obj.user_id)
+                if user != user_op:
+                    try:
+                        p_up = Portfolio.objects.get(user=user_op, stock=stock)
+                    except Portfolio.DoesNotExist:
+                        p_up = Portfolio(user=user_op, stock=stock, count=0)
+                        # покупка - 0; продажа - 1
+                    if type == 0:
+                        if amount == offer_obj.amount:
+                            user.balance -= price * amount
+                            user_op.balance += price * amount
+                            p_u.count += amount
+                            p_up.count -= amount
+                            offer.is_closed = True
+                            offer_obj.is_closed = True
+                        elif amount < offer_obj.amount:
+                            user.balance -= price * amount
+                            user_op.balance += price * amount
+                            p_u.count += amount
+                            p_up.count -= amount
+                            offer.is_closed = True
+                            offer_obj.amount -= amount
+                            offer.order_id = offer_obj.pk
+                        elif amount > offer_obj.amount:
+                            user.balance -= price * offer_obj.amount
+                            user_op.balance += price * offer_obj.amount
+                            p_u.count += offer_obj.amount
+                            p_up.count -= offer_obj.amount
+                            offer_obj.is_closed = True
+                            offer.amount -= offer_obj.amount
+                            offer_obj.order_id = offer.pk
+                    elif type == 1:
+                        if amount == offer_obj.amount:
+                            user.balance += price * amount
+                            user_op.balance -= price * amount
+                            p_u.count -= amount
+                            p_up.count += amount
+                            offer.is_closed = True
+                            offer_obj.is_closed = True
+                        elif amount < offer_obj.amount:
+                            user.balance += price * amount
+                            user_op.balance -= price * amount
+                            p_u.count -= amount
+                            p_up.count += amount
+                            offer.is_closed = True
+                            offer_obj.amount -= offer.amount
+                            offer.order_id = offer_obj.pk
+                        elif amount > offer_obj.amount:
+                            user.balance += price * offer_obj.amount
+                            user_op.balance -= price * offer_obj.amount
+                            p_u.count -= offer_obj.amount
+                            p_up.count += offer_obj.amount
+                            offer_obj.is_closed = True
+                            offer.amount -= offer_obj.amount
+                            offer_obj.order_id = offer.pk
+
+                    offer_obj.save()
+                    p_u.save()
+                    p_up.save()
+                    offer.save()
+                    user.save()
+                    user_op.save()
         return HttpResponseRedirect("/api/v1/offers/")
 
 

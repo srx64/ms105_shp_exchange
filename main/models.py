@@ -31,6 +31,8 @@ class Order(models.Model):
     stock = models.ForeignKey(to=Stocks, on_delete=models.CASCADE)
     type = models.BooleanField()  # покупка - 0; продажа - 1
     price = models.FloatField()
+    order_id = models.IntegerField(default=0)
+    amount = models.IntegerField(default=1)
     is_closed = models.BooleanField(default=False)
 
 

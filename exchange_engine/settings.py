@@ -138,7 +138,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 AUTH_USER_MODEL = 'main.User'
 
 LOGIN_URL = '/login/'
-LOGIN_REDIRECT_URL = '/apiv1/profile/'
+LOGIN_REDIRECT_URL = '/api/v1/profile/'
 LOGOUT_REDIRECT_URL = '/'
 
 

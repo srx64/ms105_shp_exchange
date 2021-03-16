@@ -13,6 +13,10 @@ from django.shortcuts import get_object_or_404
 class AddOfferView(APIView):
     """
     Добавление ордера
+
+    :param price: Цена ордера
+    :param stock: Имя акции
+    :param type: Тип ордера
     """
     def get(self, request):
         form = AddOfferForm(initial={
@@ -85,7 +89,10 @@ class StockDetailView(APIView):
 
 class ProfileDetailView(APIView):
     """
-    Информация о пользователе
+        Информация о пользователе
+
+        :param profile: Профиль
+        :param avatar: Аватарка пользователя
     """
     def get(self, request):
         user = request.user
@@ -120,7 +127,13 @@ class PortfolioUserView(APIView):
 
 class ProfileEditingView(APIView):
     """
-    Профиль пользователя
+        Профиль пользователя
+
+        :param username: Никнейм пользователя
+        :param first.name: Имя пользователя
+        :param last.name: Фамилия пользователя
+        :param user.email: Почта пользователя
+        :param user_avatar: Аватарка пользователя
     """
     def get(self, request):
         user = User.objects.get(id=request.user.pk)
@@ -159,7 +172,7 @@ class ProfileEditingView(APIView):
 
 class PasswordEditingView(APIView):
     """
-    Страница восстановление пароля
+    Страница восстановления пароля
     """
     def get(self, request):
         form = PasswordEditingForm()

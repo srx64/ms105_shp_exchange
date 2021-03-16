@@ -64,7 +64,7 @@ class AddOfferView(APIView):
             offer_rev.save()
             user.save()
             user_op.save()
-        return HttpResponseRedirect("/apiv1/offers/")
+        return HttpResponseRedirect("/api/v1/offers/")
 
 
 class StocksListView(APIView):

@@ -149,6 +149,7 @@ class ProfileEditingView(APIView):
         )
         context = {
             'form': form,
+        }
         return render(request, 'profile/profile_editing.html', context)
 
     def post(self, request):

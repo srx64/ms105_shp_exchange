@@ -50,15 +50,11 @@ class AddOfferView(APIView):
             offer_rev = Order.objects.all().filter(type=not type, price=price, is_closed=False, stock=stock)
             for offer_obj in offer_rev:
                 user_op = get_object_or_404(User, pk=offer_obj.user_id)
-                if user != user_op:  # вроде как защита от покупки у самого себя, но я не уверен и вообще хачу питцу з:
+                if user != user_op:
                     try:
                         p_up = Portfolio.objects.get(user=user_op, stock=stock)
                     except Portfolio.DoesNotExist:
                         p_up = Portfolio(user=user_op, stock=stock, count=0)
-                        # возможно нужно фисануть count --- пофиксил
-                        # все плохо --- согласен
-                        # 16.03.2021 20:30 - сделал покупку в случае, если количество совпадает
-                        # 21:34 - сделал покупку вроде как, может с божьей помощью, а может бога нет
                         # покупка - 0; продажа - 1
                     if type == 0:
                         if amount == offer_obj.amount:
@@ -69,7 +65,6 @@ class AddOfferView(APIView):
                             offer.is_closed = True
                             offer_obj.is_closed = True
                         elif amount < offer_obj.amount:
-                            print('finally0')
                             user.balance -= price * amount
                             user_op.balance += price * amount
                             p_u.count += amount
@@ -78,7 +73,6 @@ class AddOfferView(APIView):
                             offer_obj.amount -= amount
                             offer.order_id = offer_obj.pk
                         elif amount > offer_obj.amount:
-                            print('obamium0')
                             user.balance -= price * offer_obj.amount
                             user_op.balance += price * offer_obj.amount
                             p_u.count += offer_obj.amount
@@ -95,7 +89,6 @@ class AddOfferView(APIView):
                             offer.is_closed = True
                             offer_obj.is_closed = True
                         elif amount < offer_obj.amount:
-                            print('finally1')
                             user.balance += price * amount
                             user_op.balance -= price * amount
                             p_u.count -= amount
@@ -104,7 +97,6 @@ class AddOfferView(APIView):
                             offer_obj.amount -= offer.amount
                             offer.order_id = offer_obj.pk
                         elif amount > offer_obj.amount:
-                            print('obamium1')
                             user.balance += price * offer_obj.amount
                             user_op.balance -= price * offer_obj.amount
                             p_u.count -= offer_obj.amount

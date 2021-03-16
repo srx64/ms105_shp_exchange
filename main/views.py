@@ -11,6 +11,13 @@ from django.shortcuts import get_object_or_404
 
 
 class AddOfferView(APIView):
+    """
+    Добавление ордера
+
+    :param price: Цена ордера
+    :param stock: Имя акции
+    :param type: Тип ордера
+    """
     def get(self, request):
         form = AddOfferForm(initial={
                 'price': 0,
@@ -61,7 +68,9 @@ class AddOfferView(APIView):
 
 
 class StocksListView(APIView):
-    """Список акций"""
+    """
+    Список акций
+    """
     def get(self, request):
         stocks = Stocks.objects.filter(is_active=True)
         serializer = serializers.StocksSerializer(stocks, many=True)
@@ -69,7 +78,9 @@ class StocksListView(APIView):
 
 
 class StockDetailView(APIView):
-    """Информация об акции"""
+    """
+    Информация об акции
+    """
     def get(self, request, pk):
         stock = Stocks.objects.get(id=pk)
         serializer = serializers.StockDetailSerializer(stock)
@@ -77,7 +88,12 @@ class StockDetailView(APIView):
 
 
 class ProfileDetailView(APIView):
-    """Информация о пользователе"""
+    """
+        Информация о пользователе
+
+        :param profile: Профиль
+        :param avatar: Аватарка пользователя
+    """
     def get(self, request):
         user = request.user
         user_avatar = UserSettings.objects.get(user_id=user.id)
@@ -90,7 +106,9 @@ class ProfileDetailView(APIView):
 
 
 class OffersView(APIView):
-    """Все заявки"""
+    """
+    Все заявки
+    """
     def get(self, request):
         offers = Offers.objects.filter(is_closed=False)
         serializer = serializers.OffersSerializer(offers, many=True)
@@ -98,7 +116,9 @@ class OffersView(APIView):
 
 
 class PortfolioUserView(APIView):
-    """Портфолио пользователя"""
+    """
+    Портфолио пользователя
+    """
     def get(self, request):
         portfolio = Portfolio.objects.filter(user_id=request.user.id)
         serializer = serializers.PortfolioUserSerializer(portfolio, many=True)
@@ -106,6 +126,15 @@ class PortfolioUserView(APIView):
 
 
 class ProfileEditingView(APIView):
+    """
+        Профиль пользователя
+
+        :param username: Никнейм пользователя
+        :param first.name: Имя пользователя
+        :param last.name: Фамилия пользователя
+        :param user.email: Почта пользователя
+        :param user_avatar: Аватарка пользователя
+    """
     def get(self, request):
         user = User.objects.get(id=request.user.pk)
         user_avatar = UserSettings.objects.get(user_id=user.id).avatar
@@ -120,7 +149,6 @@ class ProfileEditingView(APIView):
         )
         context = {
             'form': form,
-        }
         return render(request, 'profile/profile_editing.html', context)
 
     def post(self, request):
@@ -142,6 +170,9 @@ class ProfileEditingView(APIView):
 
 
 class PasswordEditingView(APIView):
+    """
+    Страница восстановления пароля
+    """
     def get(self, request):
         form = PasswordEditingForm()
         context = {

@@ -1,5 +1,5 @@
 <template>
-  <v-container>
+  <div>
     <ul>
       <router-link to="/">Main</router-link>
     </ul>
@@ -9,7 +9,7 @@
     <v-main>
       <router-view></router-view>
     </v-main>
-  </v-container>
+  </div>
 </template>
 
 <script>

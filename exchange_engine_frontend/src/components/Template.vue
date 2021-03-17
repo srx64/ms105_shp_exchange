@@ -1,7 +1,7 @@
 <template>
-  <v-container>
+  <div>
     <!-- Здесь HTML-структура страницы -->
-  </v-container>
+  </div>
 </template>
 
 <script>

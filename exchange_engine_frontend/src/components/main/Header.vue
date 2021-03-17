@@ -1,7 +1,7 @@
 <template>
   <v-app-bar
       app
-      color="grey"
+      color="primary"
       dark
     >
       <div class="d-flex align-center">
@@ -24,7 +24,7 @@
 
       
       <v-btn
-        color="primary"
+        color="white"
         outlined
         small
         class="mr-3"
@@ -34,10 +34,11 @@
       </v-btn>
 
       <v-btn
-        color="primary"
+        color="white"
+        class="primary--text"
         to="/authentication/registration"
       >
-        Зарегестрироваться
+        Зарегистрироваться
       </v-btn>
     </v-app-bar>
 </template>

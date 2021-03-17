@@ -1,6 +1,7 @@
 <template>
-  <v-container>
-    <v-row align="center"
+  <div>
+    <v-row 
+      align="center"
       justify="center"
     >
       <v-card>
@@ -22,11 +23,20 @@
           >
             <v-text-field
               v-model="name"
-              :counter="15"
               :rules="nameRules"
               label="Имя"
               required
               placeholder="Введите имя"
+              outlined
+              dense
+            />
+
+            <v-text-field
+              v-model="surname"
+              :rules="nameRules"
+              label="Фамилия"
+              required
+              placeholder="Введите фамилию"
               outlined
               dense
             />
@@ -76,7 +86,7 @@
               to="/app"
               @click="validate"
             >
-              Зарегестрироваться
+              Зарегистрироваться
             </v-btn>
           
             <v-btn
@@ -91,7 +101,7 @@
         </v-card-text>
       </v-card>
     </v-row>
-  </v-container>
+  </div>
 </template>
 
 <script>
@@ -102,6 +112,7 @@
       return {
         valid: true,
         name: '',
+        surname: '',
         show: false,
         PasswordRules: [
           v => !!v || 'Введите пароль',

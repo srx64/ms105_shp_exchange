@@ -1,5 +1,5 @@
 <template>
-  <v-container>
+  <div>
     <v-row 
       align="center"
       justify="center"
@@ -63,7 +63,7 @@
         </v-card-text>
       </v-card>
     </v-row>
-  </v-container>
+  </div>
 </template>
 
 <script>

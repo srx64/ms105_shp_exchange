@@ -3,13 +3,14 @@
     <Header/>
     <v-main>
       <v-container
-        color="primary"
-        class="pa-0"
+        fluid
+        class="blue"
       >
-        <v-img 
-          src="https://wonder-day.com/wp-content/uploads/2020/10/wonder-day-among-us-png-28.png"
-          width="200"
-        />
+        <div
+          class="d-inline deep-purple ma-0 pa-10"
+        >
+          Hello, i'm block)
+        </div>
       </v-container>
     </v-main>
     <Footer/>

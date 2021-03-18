@@ -263,8 +263,7 @@ class PasswordEditingView(APIView):
 
 class ProfileBalanceAdd(APIView):
     def get(self, request):
-        context = {}
-        return render(request, 'profile/balance_add.html', context)
+        return render(request, 'profile/balance_add.html')
 
     def post(self, request):
         user = User.objects.get(id=request.user.pk)

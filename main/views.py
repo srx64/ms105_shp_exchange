@@ -1,5 +1,7 @@
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
+from rest_framework.generics import ListAPIView
+from rest_framework import filters
 from main.forms import ProfileEditingForm, PasswordEditingForm, AddOfferForm
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -118,14 +120,14 @@ class AddOfferView(APIView):
         return HttpResponseRedirect("/api/v1/offers/")
 
 
-class StocksListView(APIView):
+class StocksListView(ListAPIView):
     """
     Список акций
     """
-    def get(self, request):
-        stocks = Stocks.objects.filter(is_active=True)
-        serializer = serializers.StocksSerializer(stocks, many=True)
-        return Response(serializer.data)
+    queryset = Stocks.objects.filter(is_active=True)
+    serializer_class = serializers.StocksSerializer
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['name', 'description']
 
 
 class StockDetailView(APIView):

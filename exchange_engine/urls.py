@@ -28,7 +28,6 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/v1/shares_list/', OffersView.as_view(), name='shares_list'),
     path('api/v1/stocks/', StocksListView.as_view(), name='stocks'),
     path('api/v1/stock/<int:pk>/', StockDetailView.as_view(), name='stock'),
     path('api/v1/offers/', OffersView.as_view(), name='offers'),

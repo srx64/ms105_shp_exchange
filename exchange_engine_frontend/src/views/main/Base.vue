@@ -1,6 +1,7 @@
 <template>
   <div>
-    <Header/>
+    <Header v-if="false"/>
+    <HomeAppBar/>
     <v-main>
       <v-container
         fluid
@@ -20,11 +21,13 @@
 <script>
   import Header from '@/components/main/Header.vue'
   import Footer from '@/components/main/Footer.vue'
+  import HomeAppBar from '@/components/main/AppBar.vue'
 
   export default {
     name: 'Main',
+
     components: {
-      Header, Footer
+      Header, Footer, HomeAppBar
     }
   }
 </script>

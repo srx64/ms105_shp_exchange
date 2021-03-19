@@ -8,7 +8,7 @@
       height="80"
     >
       <base-img
-        :src="require('@/assets/EE-logo.png')"
+        src=""
         class="mr-3 hidden-xs-only"
         contain
         max-width="46"
@@ -16,7 +16,7 @@
       />
 
       <base-img
-        src="@/assets/EE-logo.png"
+        src=""
         contain
         max-width="96"
         width="100%"
@@ -55,6 +55,25 @@
 
 <script>
   export default {
-    name: 'Header'
+    name: 'HomeAppBar',
+
+    data: () => ({
+      drawer: null,
+      items: [
+        'Home',
+        'Pro',
+      ],
+    }),
   }
 </script>
+
+<style lang="sass">
+  #home-app-bar
+    .v-tabs-slider
+      max-width: 24px
+      margin: 0 auto
+
+    .v-tab
+      &::before
+        display: none
+</style>

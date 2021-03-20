@@ -34,6 +34,7 @@ class Order(models.Model):
     order_id = models.IntegerField(default=0)
     amount = models.IntegerField(default=1)
     is_closed = models.BooleanField(default=False)
+    closed = models.DateTimeField(default=None, null=True)
 
 
 class Portfolio(models.Model):

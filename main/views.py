@@ -2,7 +2,8 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from rest_framework.generics import ListAPIView
 from rest_framework import filters
-from main.forms import ProfileEditingForm, PasswordEditingForm, AddOfferForm
+from django.utils import timezone
+from main.forms import ProfileEditingForm, PasswordEditingForm, AddOrderForm
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -12,7 +13,7 @@ from main import serializers
 from django.shortcuts import get_object_or_404
 
 
-class AddOfferView(APIView):
+class AddOrderView(APIView):
     """
     Добавление ордера
 
@@ -21,7 +22,7 @@ class AddOfferView(APIView):
     :param type: Тип ордера
     """
     def get(self, request):
-        form = AddOfferForm(initial={
+        form = AddOrderForm(initial={
                 'price': 0,
                 'stock': '',
                 'type': 0,
@@ -30,7 +31,7 @@ class AddOfferView(APIView):
         context = {
             'form': form,
         }
-        return render(request, 'offers/add_offer.html', context)
+        return render(request, 'orders/add_order.html', context)
 
     def post(self, request):
         user = request.user
@@ -39,7 +40,7 @@ class AddOfferView(APIView):
         type = True if request.POST.get('type') else False
         price = float(request.POST.get('price'))
         amount = int(request.POST.get('amount'))
-        offer = Order(user=user, stock=stock, type=type, price=price, is_closed=False, amount=amount)
+        order = Order(user=user, stock=stock, type=type, price=price, is_closed=False, amount=amount)
         try:
             p_u = Portfolio.objects.get(user=user, stock=stock)
             if type == 1:
@@ -51,11 +52,11 @@ class AddOfferView(APIView):
             else:
                 p_u = Portfolio(user=user, stock=stock, count=0)
             p_u.save()
-        offer.save()
+        order.save()
         if Order.objects.filter(type=not type, price=price, is_closed=False, stock=stock):
-            offer_rev = Order.objects.all().filter(type=not type, price=price, is_closed=False, stock=stock)
-            for offer_obj in offer_rev:
-                user_op = get_object_or_404(User, pk=offer_obj.user_id)
+            order_rev = Order.objects.all().filter(type=not type, price=price, is_closed=False, stock=stock)
+            for order_obj in order_rev:
+                user_op = get_object_or_404(User, pk=order_obj.user_id)
                 if user != user_op:
 
                     try:
@@ -63,63 +64,63 @@ class AddOfferView(APIView):
                     except Portfolio.DoesNotExist:
                         p_up = Portfolio(user=user_op, stock=stock, count=0)
                         # покупка - 0; продажа - 1
-                    if offer.is_closed == False:
+                    if order.is_closed == False:
                         if type == 0:
-                            if amount == offer_obj.amount:
+                            if amount == order_obj.amount:
                                 user.balance -= price * amount
                                 user_op.balance += price * amount
                                 p_u.count += amount
                                 p_up.count -= amount
-                                offer.is_closed = True
-                                offer_obj.is_closed = True
-                            elif amount < offer_obj.amount:
+                                order.is_closed = True
+                                order_obj.is_closed = True
+                            elif amount < order_obj.amount:
                                 user.balance -= price * amount
                                 user_op.balance += price * amount
                                 p_u.count += amount
                                 p_up.count -= amount
-                                offer.is_closed = True
-                                offer_obj.amount -= amount
-                                offer.order_id = offer_obj.pk
-                            elif amount > offer_obj.amount:
-                                user.balance -= price * offer_obj.amount
-                                user_op.balance += price * offer_obj.amount
-                                p_u.count += offer_obj.amount
-                                p_up.count -= offer_obj.amount
-                                offer_obj.is_closed = True
-                                offer.amount -= offer_obj.amount
-                                offer_obj.order_id = offer.pk
+                                order.is_closed = True
+                                order_obj.amount -= amount
+                                order.order_id = order_obj.pk
+                            elif amount > order_obj.amount:
+                                user.balance -= price * order_obj.amount
+                                user_op.balance += price * order_obj.amount
+                                p_u.count += order_obj.amount
+                                p_up.count -= order_obj.amount
+                                order_obj.is_closed = True
+                                order.amount -= order_obj.amount
+                                order_obj.order_id = order.pk
                         elif type == 1:
-                            if amount == offer_obj.amount:
+                            if amount == order_obj.amount:
                                 user.balance += price * amount
                                 user_op.balance -= price * amount
                                 p_u.count -= amount
                                 p_up.count += amount
-                                offer.is_closed = True
-                                offer_obj.is_closed = True
-                            elif amount < offer_obj.amount:
+                                order.is_closed = True
+                                order_obj.is_closed = True
+                            elif amount < order_obj.amount:
                                 user.balance += price * amount
                                 user_op.balance -= price * amount
                                 p_u.count -= amount
                                 p_up.count += amount
-                                offer.is_closed = True
-                                offer_obj.amount -= offer.amount
-                                offer.order_id = offer_obj.pk
-                            elif amount > offer_obj.amount:
-                                user.balance += price * offer_obj.amount
-                                user_op.balance -= price * offer_obj.amount
-                                p_u.count -= offer_obj.amount
-                                p_up.count += offer_obj.amount
-                                offer_obj.is_closed = True
-                                offer.amount -= offer_obj.amount
-                                offer_obj.order_id = offer.pk
+                                order.is_closed = True
+                                order_obj.amount -= order.amount
+                                order.order_id = order_obj.pk
+                            elif amount > order_obj.amount:
+                                user.balance += price * order_obj.amount
+                                user_op.balance -= price * order_obj.amount
+                                p_u.count -= order_obj.amount
+                                p_up.count += order_obj.amount
+                                order_obj.is_closed = True
+                                order.amount -= order_obj.amount
+                                order_obj.order_id = order.pk
 
-                    offer_obj.save()
+                    order_obj.save()
                     p_u.save()
                     p_up.save()
-                    offer.save()
+                    order.save()
                     user.save()
                     user_op.save()
-        return HttpResponseRedirect("/api/v1/offers/")
+        return HttpResponseRedirect("/api/v1/orders/")
 
 
 class StocksListView(ListAPIView):
@@ -160,13 +161,13 @@ class ProfileDetailView(APIView):
         )
 
 
-class OffersView(APIView):
+class OrdersView(APIView):
     """
     Все заявки
     """
     def get(self, request):
         offers = Order.objects.filter(is_closed=False)
-        serializer = serializers.OffersSerializer(offers, many=True)
+        serializer = serializers.OrdersSerializer(offers, many=True)
         return Response(serializer.data)
 
 

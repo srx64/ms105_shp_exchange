@@ -64,7 +64,7 @@ class EmailValidationOnForgotPassword(PasswordResetForm):
         return email
 
 
-class AddOfferForm(forms.Form):
+class AddOrderForm(forms.Form):
     price = forms.FloatField(
         label='Цена',
         required=True,

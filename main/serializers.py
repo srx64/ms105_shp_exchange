@@ -23,7 +23,7 @@ class ProfileDetailSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class OffersSerializer(serializers.ModelSerializer):
+class OrdersSerializer(serializers.ModelSerializer):
     """Заявки на покупку/продажу"""
     stock = serializers.SlugRelatedField(slug_field="name", read_only=True)
 

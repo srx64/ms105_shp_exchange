@@ -2,7 +2,7 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 
 import Main from '../views/main/Base.vue'
-import Authentication from '../views/authentication/Base.vue'
+import Authentication from '../views/auth/Base.vue'
 import App from '../views/app/Base.vue' 
 
 Vue.use(VueRouter)
@@ -14,17 +14,17 @@ const routes = [
     component: Main
   },
   {
-    path: '/authentication',
+    path: '/auth',
     name: 'Authentication',
     component: Authentication,
     children: [
       {
         path: 'login',
-        component: () => import('../views/authentication/children/Login.vue')
+        component: () => import('../views/auth/children/Login.vue')
       },
       {
         path: 'registration',
-        component: () => import('../views/authentication/children/Registration.vue')
+        component: () => import('../views/auth/children/Registration.vue')
       }
     ]
   },

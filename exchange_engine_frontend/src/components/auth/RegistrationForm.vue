@@ -93,7 +93,7 @@
               color="primary"
               outlined
               class="mr-0"
-              to="/authentication/login"
+              to="/auth/login"
             >
               Войти
             </v-btn>

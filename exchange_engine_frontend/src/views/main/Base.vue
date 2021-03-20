@@ -1,18 +1,36 @@
 <template>
   <div>
-    <Header v-if="false"/>
-    <HomeAppBar/>
+    <Header/>
     <v-main>
-      <v-container
-        fluid
-        class="blue"
+      <Hero/>
+      <v-sheet
+        id="features"
+        class="secondary"
       >
-        <div
-          class="d-inline deep-purple ma-0 pa-10"
+        <v-responsive
+          class="mx-auto"
+          max-width="1350"
+          tile
         >
-          Hello, i'm block)
-        </div>
-      </v-container>
+          <v-container fluid>
+            <v-row>
+              <v-col
+                v-for="card in cards"
+                :key="card.title"
+                cols="12"
+                sm="4"
+                md="3"
+              >
+                <base-info-card
+                  align="center"
+                  dark
+                  v-bind="card"
+                />
+              </v-col>
+            </v-row>
+          </v-container>
+        </v-responsive>
+      </v-sheet>
     </v-main>
     <Footer/>
   </div>
@@ -20,14 +38,41 @@
 
 <script>
   import Header from '@/components/main/Header.vue'
+  import Hero from '@/components/main/Hero.vue'
   import Footer from '@/components/main/Footer.vue'
-  import HomeAppBar from '@/components/main/AppBar.vue'
 
   export default {
     name: 'Main',
 
     components: {
-      Header, Footer, HomeAppBar
+      Header, Hero, Footer
+    },
+
+    data() {
+      return {
+        cards: [
+          {
+            icon: 'mdi-keyboard-outline',
+            title: 'Trendy Design',
+            text: 'Curabitur aliquet quam id dui posuere blandit. Nulla quis lorem ut libero malesuada feugiat.'
+          },
+          {
+            icon: 'mdi-camera-outline',
+            title: 'Photography',
+            text: 'Curabitur aliquet quam id dui posuere blandit. Nulla quis lorem ut libero malesuada feugiat.'
+          },
+          {
+            icon: 'mdi-pencil-outline',
+            title: 'Brand Making',
+            text: 'Curabitur aliquet quam id dui posuere blandit. Nulla quis lorem ut libero malesuada feugiat.'
+          },
+          {
+            icon: 'mdi-puzzle-outline',
+            title: 'Поддержка 24/7',
+            text: 'Curabitur aliquet quam id dui posuere blandit. Nulla quis lorem ut libero malesuada feugiat.'
+          },
+        ],
+      }
     }
   }
 </script>

@@ -5,7 +5,7 @@
 </template>
 
 <script>
-  import RegistrationForm from '@/components/authentication/RegistrationForm.vue'
+  import RegistrationForm from '@/components/auth/RegistrationForm.vue'
 
   export default {
     name: 'Register',

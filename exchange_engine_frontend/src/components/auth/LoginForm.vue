@@ -55,7 +55,7 @@
               color="primary"
               outlined
               class="mr-0"
-              to="/authentication/registration"
+              to="/auth/registration"
             >
               Зарегестрироваться
             </v-btn>

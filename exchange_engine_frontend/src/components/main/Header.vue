@@ -1,54 +1,39 @@
 <template>
   <div>
     <v-app-bar
-      id="home-app-bar"
       app
       elevation="1"
       elevate-on-scroll
       height="80"
     >
-      <base-img
-        :src="require('@/assets/EE-logo.png')"
-        class="mr-3 hidden-xs-only"
+      <v-img
+        :src="require('@/assets/logo.png')"
+        class="mr-3"
         contain
-        max-width="46"
-        width="100%"
-      />
-
-      <base-img
-        src="@/assets/EE-logo.png"
-        contain
-        max-width="96"
+        max-width="150"
         width="100%"
       />
 
       <v-spacer/>
 
       <div>
-        <v-tabs
-          class="hidden-sm-and-down"
-          optional
-          background-color="transparent"
+        <v-btn
+          color="black"
+          plain
+          class="mx-1"
+          to="/auth/login"
         >
-          <v-tab
-            v-for="(name, i) in items"
-            :key="i"
-            :to="{ name }"
-            :exact="name === 'Home'"
-            :ripple="false"
-            class="font-weight-bold"
-            min-width="96"
-            text
-          >
-            {{ name }}
-          </v-tab>
-        </v-tabs>
-      </div>
+          Войти
+        </v-btn>
 
-      <v-app-bar-nav-icon
-        class="hidden-md-and-up"
-        @click="drawer = !drawer"
-      />
+        <v-btn
+          color="primary"
+          class="mx-1"
+          to="/auth/registration"
+        >
+          Зарегистрироваться
+        </v-btn>
+      </div>
     </v-app-bar>
   </div>
 </template>

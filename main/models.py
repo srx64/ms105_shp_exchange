@@ -40,3 +40,4 @@ class Portfolio(models.Model):
     user = models.ForeignKey(to=User, on_delete=models.CASCADE)
     stock = models.ForeignKey(to=Stocks, on_delete=models.CASCADE)
     count = models.IntegerField()
+    percentage = models.FloatField(default=0)

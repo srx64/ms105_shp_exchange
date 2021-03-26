@@ -1,6 +1,5 @@
 <template>
   <div>
-    <v-main>
       <Hero/>
       <v-sheet
         id="features"
@@ -30,7 +29,6 @@
           </v-container>
         </v-responsive>
       </v-sheet>
-    </v-main>
   </div>
 </template>
 
@@ -38,7 +36,9 @@
   import Hero from '@/components/home/Hero.vue'
 
   export default {
-    name: 'Main',
+    name: 'Home',
+
+    metaInfo: { title: 'Home' },
 
     components: {
       Hero

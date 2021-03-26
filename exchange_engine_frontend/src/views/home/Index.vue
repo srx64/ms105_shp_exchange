@@ -1,6 +1,5 @@
 <template>
   <div>
-    <Header/>
     <v-main>
       <Hero/>
       <v-sheet
@@ -32,20 +31,17 @@
         </v-responsive>
       </v-sheet>
     </v-main>
-    <Footer/>
   </div>
 </template>
 
 <script>
-  import Header from '@/components/main/Header.vue'
-  import Hero from '@/components/main/Hero.vue'
-  import Footer from '@/components/main/Footer.vue'
+  import Hero from '@/components/home/Hero.vue'
 
   export default {
     name: 'Main',
 
     components: {
-      Header, Hero, Footer
+      Hero
     },
 
     data() {

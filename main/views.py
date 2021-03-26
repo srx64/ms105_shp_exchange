@@ -166,8 +166,8 @@ class OrdersView(APIView):
     Все заявки
     """
     def get(self, request):
-        offers = Order.objects.filter(is_closed=False)
-        serializer = serializers.OrdersSerializer(offers, many=True)
+        orders = Order.objects.filter(is_closed=False)
+        serializer = serializers.OrdersSerializer(orders, many=True)
         return Response(serializer.data)
 
 

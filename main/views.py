@@ -51,7 +51,16 @@ class AddOrderView(APIView):
                 p_u = Portfolio(user=user, stock=stock, count=amount)
             else:
                 p_u = Portfolio(user=user, stock=stock, count=0)
-            p_u.save()
+            portfolios = Portfolio.objects.filter(stock_id=p_u.stock_id)
+            sum = 0
+            for object in portfolios:
+                sum += object.count
+            if sum == 0:
+                per_stocks = 100
+            else:
+                per_stocks = (p_u.count / sum) * 100
+        p_u.percentage = per_stocks
+        p_u.save()
         order.save()
         if Order.objects.filter(type=not type, price=price, is_closed=False, stock=stock):
             order_rev = Order.objects.all().filter(type=not type, price=price, is_closed=False, stock=stock)
@@ -113,7 +122,16 @@ class AddOrderView(APIView):
                                 order_obj.is_closed = True
                                 order.amount -= order_obj.amount
                                 order_obj.order_id = order.pk
-
+                    sum = 0
+                    portfolios = Portfolio.objects.filter(stock_id=p_u.stock_id)
+                    for object in portfolios:
+                        sum += object.count
+                    per_stocks = (p_u.count / sum) * 100
+                    p_u.percentage = per_stocks
+                    p_u.save()
+                    per_stocks = (p_up.count / sum) * 100
+                    p_up.percentage = per_stocks
+                    p_up.save()
                     order_obj.save()
                     p_u.save()
                     p_up.save()

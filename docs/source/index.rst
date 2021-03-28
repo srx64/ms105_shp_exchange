@@ -11,6 +11,8 @@
    :caption: Оглавление:
 
    overview.rst
+   exchange.rst
+   function_exchange.rst
    authors.rst
    code.rst
 

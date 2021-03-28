@@ -40,104 +40,40 @@ class AddOrderView(APIView):
         type = True if request.POST.get('type') else False
         price = float(request.POST.get('price'))
         amount = int(request.POST.get('amount'))
+        portfolio, created = Portfolio.objects.get_or_create(user=user, stock=stock)
         order = Order(user=user, stock=stock, type=type, price=price, is_closed=False, amount=amount)
-        try:
-            p_u = Portfolio.objects.get(user=user, stock=stock)
-            if type == 1:
-                p_u.count += amount
-                p_u.save()
-        except Portfolio.DoesNotExist:
-            if type == 1:
-                p_u = Portfolio(user=user, stock=stock, count=amount)
-            else:
-                p_u = Portfolio(user=user, stock=stock, count=0)
-            portfolios = Portfolio.objects.filter(stock_id=p_u.stock_id)
-            sum = 0
-            for object in portfolios:
-                sum += object.count
-            if sum == 0:
-                per_stocks = 100
-            else:
-                per_stocks = (p_u.count / sum) * 100
-        p_u.percentage = per_stocks
-        p_u.save()
-        order.save()
-        if Order.objects.filter(type=not type, price=price, is_closed=False, stock=stock):
-            order_rev = Order.objects.all().filter(type=not type, price=price, is_closed=False, stock=stock)
-            for order_obj in order_rev:
-                user_op = get_object_or_404(User, pk=order_obj.user_id)
-                if user != user_op:
+        order_ops = Order.objects.filter(stock=stock, type=not type, price=price, is_closed=False)
+        for order_op in order_ops:
+            if order.amount != 0:
+                user_op = order_op.user
+                portfolio_op = Portfolio.objects.get(user=user_op, stock=stock)
 
-                    try:
-                        p_up = Portfolio.objects.get(user=user_op, stock=stock)
-                    except Portfolio.DoesNotExist:
-                        p_up = Portfolio(user=user_op, stock=stock, count=0)
-                        # покупка - 0; продажа - 1
-                    if order.is_closed == False:
-                        if type == 0:
-                            if amount == order_obj.amount:
-                                user.balance -= price * amount
-                                user_op.balance += price * amount
-                                p_u.count += amount
-                                p_up.count -= amount
-                                order.is_closed = True
-                                order_obj.is_closed = True
-                            elif amount < order_obj.amount:
-                                user.balance -= price * amount
-                                user_op.balance += price * amount
-                                p_u.count += amount
-                                p_up.count -= amount
-                                order.is_closed = True
-                                order_obj.amount -= amount
-                                order.order_id = order_obj.pk
-                            elif amount > order_obj.amount:
-                                user.balance -= price * order_obj.amount
-                                user_op.balance += price * order_obj.amount
-                                p_u.count += order_obj.amount
-                                p_up.count -= order_obj.amount
-                                order_obj.is_closed = True
-                                order.amount -= order_obj.amount
-                                order_obj.order_id = order.pk
-                        elif type == 1:
-                            if amount == order_obj.amount:
-                                user.balance += price * amount
-                                user_op.balance -= price * amount
-                                p_u.count -= amount
-                                p_up.count += amount
-                                order.is_closed = True
-                                order_obj.is_closed = True
-                            elif amount < order_obj.amount:
-                                user.balance += price * amount
-                                user_op.balance -= price * amount
-                                p_u.count -= amount
-                                p_up.count += amount
-                                order.is_closed = True
-                                order_obj.amount -= order.amount
-                                order.order_id = order_obj.pk
-                            elif amount > order_obj.amount:
-                                user.balance += price * order_obj.amount
-                                user_op.balance -= price * order_obj.amount
-                                p_u.count -= order_obj.amount
-                                p_up.count += order_obj.amount
-                                order_obj.is_closed = True
-                                order.amount -= order_obj.amount
-                                order_obj.order_id = order.pk
-                    sum = 0
-                    portfolios = Portfolio.objects.filter(stock_id=p_u.stock_id)
-                    for object in portfolios:
-                        sum += object.count
-                    per_stocks = (p_u.count / sum) * 100
-                    p_u.percentage = per_stocks
-                    p_u.save()
-                    per_stocks = (p_up.count / sum) * 100
-                    p_up.percentage = per_stocks
-                    p_up.save()
-                    order_obj.save()
-                    p_u.save()
-                    p_up.save()
-                    order.save()
-                    user.save()
-                    user_op.save()
+                min_count = min(order.amount, order_op.amount) if type == 0 else -min(order.amount, order_op.amount)
+
+                order.amount -= abs(min_count)
+                order_op.amount -= abs(min_count)
+
+                user.balance -= min_count * price
+                user_op.balance += min_count * price
+
+                portfolio.count += min_count
+                portfolio_op.count -= min_count
+
+                if order_op.amount == 0:
+                    order_op.is_closed = True
+                    order_op.date_closed = timezone.now()
+
+                user_op.save()
+                order_op.save()
+                portfolio_op.save()
+
+            if order.amount == 0:
+                order.is_closed = True
+                order.date_closed = timezone.now()
+
+        user.save()
+        portfolio.save()
+        order.save()
         return HttpResponseRedirect("/api/v1/orders/")
 
 

@@ -20,6 +20,7 @@ class AddOrderView(APIView):
     :param price: Цена ордера
     :param stock: Имя акции
     :param type: Тип ордера
+    :param amount: Количество ордеров
     """
     def get(self, request):
         form = AddOrderForm(initial={

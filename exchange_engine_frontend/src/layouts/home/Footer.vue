@@ -23,7 +23,7 @@
                 :dialog="dialog.state"
                 :title="dialog.title"
               >
-                Hier our HTML  
+                Извините, данный раздел в разработке 
               </BaseDialog>
               <span
                 v-if="i < dialogs.length - 1"

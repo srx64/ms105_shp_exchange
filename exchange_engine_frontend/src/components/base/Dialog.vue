@@ -13,11 +13,15 @@
     </template>
 
     <v-card>
-      <v-card-title class="headline grey lighten-2">
+      <v-card-title 
+        class="headline grey lighten-2"
+      >
         {{ title }}
       </v-card-title>
 
-      <v-card-text>
+      <v-card-text
+        class="mt-2"
+      >
         <slot/>
       </v-card-text>
 

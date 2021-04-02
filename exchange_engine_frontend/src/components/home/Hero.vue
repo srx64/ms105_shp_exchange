@@ -22,9 +22,9 @@
 
           <h2
             class="font-weight-medium mb-4 text-left"
-            style="font-size: 1.75rem"
+            style="font-size: 1.65rem"
           >
-            ДОБРО ПОЖАЛОВАТЬ НА БИРЖУ COMPANY NAME
+            ДОБРО ПОЖАЛОВАТЬ НА БИРЖУ EXCHANGE ENGINE
           </h2>
 
           <p
@@ -36,14 +36,25 @@
           <div
             class="align-center d-flex flex-wrap"
           >
-            <v-btn
-              color="primary"
-              depressed
-              x-large
-              tile
-            >
-              Узнайте больше
-            </v-btn>
+            <v-tooltip left>
+              <template v-slot:activator="{ on, attrs }">
+                <div
+                  v-bind="attrs"
+                  v-on="on"
+                >
+                  <v-btn
+                    color="primary"
+                    disabled
+                    depressed
+                    x-large
+                    tile
+                  >
+                    Узнайте больше
+                  </v-btn>
+                </div>
+              </template>
+              <span>Извините, раздел в разработке</span>
+            </v-tooltip>
 
             <span class="font-weight-bold ml-6 mr-4 my-4">или</span>
 

@@ -1,7 +1,5 @@
 <template>
-  <component>
-    :is="tag"
-  </component>
+ <h1> in develop </h1>
 </template>
 
 <script>

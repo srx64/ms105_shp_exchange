@@ -2,6 +2,7 @@ from django.db.models.signals import post_save
 
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.utils import timezone
 
 
 class User(AbstractUser):
@@ -42,3 +43,9 @@ class Portfolio(models.Model):
     stock = models.ForeignKey(to=Stocks, on_delete=models.CASCADE)
     count = models.IntegerField()
     percentage = models.FloatField(default=0)
+
+
+class Quotes(models.Model):
+    stock = models.ForeignKey(to=Stocks, on_delete=models.CASCADE)
+    price = models.FloatField()
+    date = models.DateTimeField(default=timezone.now)

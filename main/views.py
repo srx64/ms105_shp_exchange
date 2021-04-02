@@ -2,12 +2,11 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from rest_framework.generics import ListAPIView
 from rest_framework import filters
-from django.utils import timezone
 from main.forms import ProfileEditingForm, PasswordEditingForm, AddOrderForm
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from main.models import Stocks, Order, Portfolio, User, UserSettings
+from main.models import Stocks, Order, Portfolio, User, UserSettings, Quotes
 from main import serializers
 
 from django.shortcuts import get_object_or_404
@@ -295,3 +294,10 @@ class ProfileBalanceAdd(APIView):
                 user.save()
                 return render(request, 'profile/balance_add_successfully.html')
         return render(request, 'profile/balance_add_failed.html')
+
+
+class PricesView(APIView):
+    def get(self, request):
+        prices = Quotes.objects.all()
+        serializer = serializers.PriceSerializer(prices, many=True)
+        return Response(serializer.data)

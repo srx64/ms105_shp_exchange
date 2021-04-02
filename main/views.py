@@ -11,7 +11,7 @@ from main.models import Stocks, Order, Portfolio, User, UserSettings
 from main import serializers
 
 from django.shortcuts import get_object_or_404
-
+from rest_framework.permissions import IsAuthenticated
 
 class AddOrderView(APIView):
     """
@@ -169,6 +169,7 @@ class ProfileDetailView(APIView):
         :param profile: Профиль
         :param avatar: Аватарка пользователя
     """
+    permission_classes = (IsAuthenticated,)
     def get(self, request):
         user = request.user
         user_avatar = UserSettings.objects.get(user_id=user.id)

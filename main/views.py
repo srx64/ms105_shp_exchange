@@ -106,6 +106,7 @@ class ProfileDetailView(APIView):
         :param avatar: Аватарка пользователя
     """
     permission_classes = (IsAuthenticated,)
+
     def get(self, request):
         user = request.user
         user_avatar = UserSettings.objects.get(user_id=user.id)

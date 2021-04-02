@@ -17,9 +17,9 @@
         v-on:submit.prevent="login"
       >
         <v-text-field
-          v-model="email"
-          label="Почта"
-          placeholder="Введите E-mail"
+          v-model="username"
+          label="Имя пользователя"
+          placeholder="Введите имя пользователя"
           required
           outlined
           dense
@@ -45,8 +45,7 @@
           >
             <v-btn
               color="success"
-              to="/app"
-              @click="validate"
+              @click="login"
             >
               Войти
             </v-btn>
@@ -74,18 +73,25 @@
     name: 'LoginForm',
 
     data: () => ({
-      email: '',
+      username: '',
       password: '',
       show: false,
       incorrectAuth: false
     }),
 
     methods: {
-      login () {
-        axios
-          .get('127.0.0.1:8000/api-token', {
-            username: 
-          })
+      login () { 
+        this.$store.dispatch('userLogin', {
+          username: this.username,
+          password: this.password
+        })
+        .then(() => {
+          this.$router.push({ name: 'App' })
+        })
+        .catch(err => {
+          console.log(err)
+          this.incorrectAuth = true
+        })
       }
     }
   }

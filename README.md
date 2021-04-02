@@ -16,6 +16,8 @@
 - Django REST Framework
 
 ## Quickstart
+В главной папке проекта необходимо создать папку `media`, в которой нужно создать папку `avatars`. После этого 
+следует перейти по ссылке и сохранить в папку `avatars` файл `preset.jpg`.
 ```bash
 sudo apt install make
 pip install --upgrade pip
@@ -25,5 +27,4 @@ pip install -r requirements.txt
 ./manage.py runserver
 ```
 
-При необходимости вы можете использовать уже заполненную базу данных: https://gitlab.informatics.ru/2020-2021/mytischi/s105/exchange_engine/-/wikis/DB
-
+Все необходимые файлы вы можете найти здесь: https://gitlab.informatics.ru/2020-2021/mytischi/s105/exchange_engine/-/wikis/%D0%9D%D0%B5%D0%BE%D0%B1%D1%85%D0%BE%D0%B4%D0%B8%D0%BC%D1%8B%D0%B5+%D1%84%D0%B0%D0%B9%D0%BB%D1%8B

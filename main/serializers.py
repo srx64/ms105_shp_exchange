@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from main.models import Stocks, Offers, Portfolio, User, UserSettings
+from main.models import Stocks, Order, Portfolio, User, UserSettings
 
 
 class StocksSerializer(serializers.ModelSerializer):
@@ -17,7 +17,7 @@ class StockDetailSerializer(serializers.ModelSerializer):
 
 
 class ProfileDetailSerializer(serializers.ModelSerializer):
-    """ Детальная информация об акции"""
+    """ Детальная информация о пользователе"""
     class Meta:
         model = User
         fields = '__all__'
@@ -28,7 +28,7 @@ class OffersSerializer(serializers.ModelSerializer):
     stock = serializers.SlugRelatedField(slug_field="name", read_only=True)
 
     class Meta:
-        model = Offers
+        model = Order
         fields = '__all__'
 
 

@@ -21,18 +21,24 @@ from django.urls import path, include
 from django_registration.backends.one_step.views import RegistrationView
 from main.forms import CustomRegistrationForm, EmailValidationOnForgotPassword
 from django.contrib.auth import views as auth_views
-from main.views import StocksListView, StockDetailView, OffersView, PortfolioUserView, ProfileDetailView
+from main.views import StocksListView, StockDetailView, OffersView, PortfolioUserView, ProfileDetailView, ProfileBalanceAdd
+from django.conf import settings
+from django.conf.urls.static import static
+
+from rest_framework_simplejwt.views import (TokenObtainPairView, TokenRefreshView)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('API/shares_list/', OffersView.as_view()),
-    path('API/stocks/', StocksListView.as_view()),
-    path('API/stock/<int:pk>/', StockDetailView.as_view()),
-    path('API/offers/', OffersView.as_view()),
-    path('API/portfolio/<int:pk>', PortfolioUserView.as_view()),
-    path('API/profile/', login_required(ProfileDetailView.as_view())),
-    path('login/', auth_views.LoginView.as_view()),
-    path('logout/', auth_views.LogoutView.as_view()),
+    path('api-token/', TokenObtainPairView.as_view()),
+    path('api-token-refresh/', TokenRefreshView.as_view()),
+    path('api/v1/stocks/', StocksListView.as_view(), name='stocks'),
+    path('api/v1/stock/<int:pk>/', StockDetailView.as_view(), name='stock'),
+    path('api/v1/offers/', OffersView.as_view(), name='offers'),
+    path('offers/add', views.AddOfferView.as_view(), name='add_offer'),
+    path('api/v1/portfolio/', PortfolioUserView.as_view(), name='portfolio'),
+    path('api/v1/profile/', ProfileDetailView.as_view(), name='profile'),
+    path('login/', auth_views.LoginView.as_view(), name='login'),
+    path('logout/', auth_views.LogoutView.as_view(), name='logout'),
     path('accounts/register/',
          RegistrationView.as_view(
              form_class=CustomRegistrationForm
@@ -42,9 +48,10 @@ urlpatterns = [
     path('accounts/', include('django_registration.backends.activation.urls')),
     path('profile/editing/', login_required(views.ProfileEditingView.as_view()), name='profile_editing'),
     path('profile/editing/change_password/', login_required(views.PasswordEditingView.as_view()), name='change_password'),
-    path('reset_password/', auth_views.PasswordResetView.as_view(template_name='password/password_reset.html',
-                                                                 form_class=EmailValidationOnForgotPassword),
-         name='reset_password'),
+    path('reset_password/', auth_views.PasswordResetView.as_view(
+        template_name='password/password_reset.html',
+        form_class=EmailValidationOnForgotPassword
+    ), name='reset_password'),
     path('reset_password_sent/',
          auth_views.PasswordResetDoneView.as_view(template_name='password/password_reset_sent.html'),
          name='password_reset_done'),
@@ -54,4 +61,8 @@ urlpatterns = [
     path('reset_password_complete/',
          auth_views.PasswordResetCompleteView.as_view(template_name='password/password_reset_complete.html'),
          name='password_reset_complete'),
+    path('profile/balance_add', login_required(views.ProfileBalanceAdd.as_view()))
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -1,8 +1,11 @@
 # Engine
-Django==3.1.6
+Django==3.1.7
+Pillow==8.1.2
 
 # API
 djangorestframework
+django-cors-headers
+django-filter
 
 # accounting
 django-registration

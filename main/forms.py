@@ -19,7 +19,16 @@ class ProfileEditingForm(forms.Form):
     first_name = forms.CharField(label='Редактировать имя:', max_length=150, required=False)
     last_name = forms.CharField(label='Редактировать фамилию:', max_length=150, required=False)
     email = forms.EmailField(label='Редактировать email:', required=True)
-    avatar = forms.URLField(label='Редактировать аватар:', required=False)
+    avatar = forms.ImageField(
+        label='Редактировать аватар:',
+        required=False,
+        widget=forms.FileInput(
+            attrs={
+                'image': forms.FileInput,
+                'upload_to': 'avatars',
+            }
+        )
+    )
 
 
 class PasswordEditingForm(forms.Form):
@@ -53,3 +62,16 @@ class EmailValidationOnForgotPassword(PasswordResetForm):
             msg = "Такого адреса электронной почты не существует"
             self.add_error('email', msg)
         return email
+
+
+class AddOfferForm(forms.Form):
+    price = forms.FloatField(
+        label='Цена',
+        required=True,
+    )
+    amount = forms.FloatField(
+        label='Количество',
+        required=True,
+    )
+    stock = forms.CharField(label='Акция', max_length=150)
+    type = forms.BooleanField(label='Купить(0)/Продать(1)', required=False)

@@ -3,17 +3,19 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to Exchange Engine's documentation!
-=====================================================
+Добро пожаловать на документацию Exchange Engine :з
+===================================================
 
 .. toctree::
    :maxdepth: 2
-   :caption: Contents:
+   :caption: Оглавление:
 
+   overview.rst
+   authors.rst
+   code.rst
 
-
-Indices and tables
-==================
+Ссылки
+======
 
 * :ref:`genindex`
 * :ref:`modindex`

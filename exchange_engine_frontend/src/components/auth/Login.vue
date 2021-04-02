@@ -14,6 +14,7 @@
       <v-form
         ref="form"
         lazy-validation
+        v-on:submit.prevent="login"
       >
         <v-text-field
           v-model="email"
@@ -71,10 +72,21 @@
 <script>
   export default {
     name: 'LoginForm',
+
     data: () => ({
       email: '',
-      show: false,
       password: '',
+      show: false,
+      incorrectAuth: false
     }),
+
+    methods: {
+      login () {
+        axios
+          .get('127.0.0.1:8000/api-token', {
+            username: 
+          })
+      }
+    }
   }
 </script>

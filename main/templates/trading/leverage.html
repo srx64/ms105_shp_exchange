@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Плечо</title>
+</head>
+<body>
+      {% if too_low == 1 %}
+        <h2 class="mt-3">Этой суммы недостаточно, чтобы совершить сделку</h2>
+      {% endif %}
+      <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <h2 class="mt-3">Ваш баланс: {{user.balance}}</h2>
+                <h3 class="mt-3">Выберите соотношение одной акции</h3>
+                <h3 class="mt-3"> {{form.ratio.label}} {{form.ratio}}</h3>
+                <h4 class="mt-3">{{ form.type.label }}</h4>
+                                {{ form.type }}
+                <h3 class="mt-3"> {{form.stock.label}} {{form.stock}}</h3>
+                <input type="submit" value="Отправить" class="btn btn-primary mt-3">
+      </form>
+
+</body>
+</html>

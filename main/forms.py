@@ -75,3 +75,16 @@ class AddOrderForm(forms.Form):
     )
     stock = forms.CharField(label='Акция', max_length=150)
     type = forms.BooleanField(label='Купить(0)/Продать(1)', required=False)
+
+class LeverageTradingForm(forms.Form):
+    ratio = forms.IntegerField(
+        label='1 к',
+        required=True,
+        min_value=2,
+    )
+    stock = forms.CharField(
+        label='Название акции',
+        required=True,
+        max_length=150,
+    )
+    type = forms.BooleanField(label='Купить(0)/Продать(1)', required=False)

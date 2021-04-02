@@ -2,11 +2,11 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from rest_framework.generics import ListAPIView
 from rest_framework import filters
-from main.forms import ProfileEditingForm, PasswordEditingForm, AddOrderForm
+from main.forms import ProfileEditingForm, PasswordEditingForm, AddOrderForm, LeverageTradingForm
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from main.models import Stocks, Order, Portfolio, User, UserSettings, Quotes
+from main.models import Stocks, Order, Portfolio, User, UserSettings, Quotes, LeverageData
 from main import serializers
 
 from django.shortcuts import get_object_or_404
@@ -32,6 +32,31 @@ class AddOrderView(APIView):
         }
         return render(request, 'orders/add_order.html', context)
 
+    @staticmethod
+    def margin_call(user):
+        try:
+            user_data = LeverageData.objects.get(user=user)
+            if user.balance <= 0:
+                for object in Order.objects.filter(user=user, stock=user_data.stock):
+                    object.is_closed = True
+                    object.save()
+        except:
+            pass
+
+    @staticmethod
+    def set_percentage(user_portfolio):
+        sum = 0
+        portfolios = Portfolio.objects.filter(stock_id=user_portfolio.stock_id)
+        for object in portfolios:
+                sum += object.count
+        if sum == 0:
+            per_stocks = 100
+        else:
+            per_stocks = (user_portfolio.count / sum) * 100
+        user_portfolio.percentage = per_stocks
+        user_portfolio.save()
+
+
     def post(self, request):
         user = request.user
         name = request.POST.get('stock')
@@ -50,17 +75,9 @@ class AddOrderView(APIView):
                 p_u = Portfolio(user=user, stock=stock, count=amount)
             else:
                 p_u = Portfolio(user=user, stock=stock, count=0)
-            portfolios = Portfolio.objects.filter(stock_id=p_u.stock_id)
-            sum = 0
-            for object in portfolios:
-                sum += object.count
-            if sum == 0:
-                per_stocks = 100
-            else:
-                per_stocks = (p_u.count / sum) * 100
-        p_u.percentage = per_stocks
-        p_u.save()
+            self.set_percentage(p_u)
         order.save()
+        self.margin_call(user)
         if Order.objects.filter(type=not type, price=price, is_closed=False, stock=stock):
             order_rev = Order.objects.all().filter(type=not type, price=price, is_closed=False, stock=stock)
             for order_obj in order_rev:
@@ -121,16 +138,10 @@ class AddOrderView(APIView):
                                 order_obj.is_closed = True
                                 order.amount -= order_obj.amount
                                 order_obj.order_id = order.pk
-                    sum = 0
-                    portfolios = Portfolio.objects.filter(stock_id=p_u.stock_id)
-                    for object in portfolios:
-                        sum += object.count
-                    per_stocks = (p_u.count / sum) * 100
-                    p_u.percentage = per_stocks
-                    p_u.save()
-                    per_stocks = (p_up.count / sum) * 100
-                    p_up.percentage = per_stocks
-                    p_up.save()
+                    self.margin_call(user)
+                    self.margin_call(user_op)
+                    self.set_percentage(p_up)
+                    self.set_percentage(p_u)
                     order_obj.save()
                     p_u.save()
                     p_up.save()
@@ -279,6 +290,52 @@ class PasswordEditingView(APIView):
             return render(request, 'profile/password_editing.', context)
         else:
             return HttpResponseRedirect("profile/editing/change_password/")
+
+class LeverageTradingView(APIView):
+    def get(self, request):
+        form = LeverageTradingForm(initial={
+            'type': 0,
+            'stock': 0,
+            'ratio': 2,
+        })
+        user = User.objects.get(id=request.user.pk)
+        context = {
+            'user': user,
+            'form': form,
+            'too_low': 0,
+        }
+        return render(request, 'trading/leverage.html', context)
+
+    def post(self, request):
+        form = LeverageTradingForm(request.POST)
+
+        user = User.objects.get(id=request.user.pk)
+        ratio = int(request.POST.get('ratio'))
+        stock = Stocks.objects.get(name=request.POST.get('stock'))
+        quote = Quotes.objects.filter(stock=stock.id).last()
+        type = True if request.POST.get('type') else False
+        cash = user.balance * ratio
+        if cash // quote.price >= 1:
+            amount = cash // quote.price
+            try:
+                broker = LeverageData.objects.get(user=user, stock=stock)
+                order = Order.objects.get(user=user, stock=stock, type=type, price=quote.price, is_closed=False)
+                order.amount = amount
+                broker.ratio = ratio
+            except LeverageData.DoesNotExist:
+                broker = LeverageData(user=user, stock=stock, ratio=ratio)
+                order = Order(user=user, stock=stock, type=type, price=quote.price, is_closed=False, amount=amount)
+            order.save()
+            broker.save()
+            return HttpResponseRedirect("/api/v1/orders/")
+        else:
+            context = {
+                'too_low': 1,
+                'form': form,
+            }
+            return render(request, 'trading/leverage.html', context)
+
+
 
 
 class ProfileBalanceAdd(APIView):

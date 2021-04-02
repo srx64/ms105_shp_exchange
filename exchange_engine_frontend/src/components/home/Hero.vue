@@ -2,6 +2,7 @@
   <section id="hero">
     <v-img
       :src="require('@/assets/light.jpg')"
+      height="100vh"
       class="white--text"
       gradient="to bottom, rgba(11, 28, 61, .9), rgba(0,0,0,.4)"
     >  

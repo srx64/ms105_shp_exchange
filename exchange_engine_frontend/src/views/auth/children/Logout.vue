@@ -1,13 +1,18 @@
 <template>
+  <h1>
+    Buy
+  </h1>
 </template>
 
 <script>
   export default {
+    name: 'Logout',
+
     methods: {
       logout () {
         this.$store.dispatch('userLogout')
           .then(() => {
-            this.$router.push({ name: 'login' })
+            this.$router.push({ name: 'Login' })
           })
       }
     },

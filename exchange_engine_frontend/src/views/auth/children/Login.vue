@@ -1,5 +1,5 @@
 <template>
-  <LoginForm/>
+  <LoginForm :onLogin="onLogin" />
 </template>
 
 <script>
@@ -15,5 +15,21 @@
       show: false,
       email: '',
     }),
+
+    methods: {
+      onLogin(data) {
+        this.$store.dispatch('userLogin', {
+          username: data.username,
+          password: data.password
+        })
+        .then(() => {
+          this.$router.push({ name: 'App' })
+        })
+        .catch(err => {
+          console.log(err)
+          data.incorrectAuth = true
+        })
+      }
+    }
   }
 </script>

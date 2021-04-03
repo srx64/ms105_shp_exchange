@@ -13,7 +13,7 @@ const eventsHub = new Vue()
 
 Vue.use(IdleVue, {
   eventEmitter: eventsHub,
-  idleTime: 1000,
+  idleTime: 5 * 60 * 1000,
   keepTracking: true
 })
 Vue.use(VueMeta)

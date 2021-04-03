@@ -16,7 +16,7 @@
     inject: {
       theme: {
         default: () => ({ isDark: false }),
-      },
+      }
     },
 
     props: {

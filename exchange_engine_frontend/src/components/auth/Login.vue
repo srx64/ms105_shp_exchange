@@ -72,6 +72,10 @@
   export default {
     name: 'LoginForm',
 
+    props: [
+      'onLogin'
+    ],
+
     data: () => ({
       username: '',
       password: '',
@@ -80,17 +84,11 @@
     }),
 
     methods: {
-      login () { 
-        this.$store.dispatch('userLogin', {
+      login() { 
+        this.onLogin({
           username: this.username,
-          password: this.password
-        })
-        .then(() => {
-          this.$router.push({ name: 'App' })
-        })
-        .catch(err => {
-          console.log(err)
-          this.incorrectAuth = true
+          password: this.password,
+          incorrectAuth: this.incorrectAuth
         })
       }
     }

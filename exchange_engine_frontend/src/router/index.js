@@ -29,12 +29,31 @@ const routes = [
         name: 'Registration',
         component: () => import('../views/auth/children/Reg.vue'),
       },
+      {
+        path: 'logout',
+        name: 'Logout',
+        component: () => import('../views/auth/children/Logout.vue')
+      }
     ]
   },
   {
     path: '/app',
-    name: 'App',
-    component: () => import('../views/app/View.vue'),
+    component: () => import('../layouts/app/Index.vue'),
+    meta: {
+      requiresLogin: true
+    },
+    children: [
+      {
+        path: '',
+        name: 'App',
+        component: () => import('../views/app/Main.vue')
+      },
+      {
+        path: 'profile',
+        name: 'Profile',
+        component: () => import('../views/app/Profile.vue')
+      }
+    ]
   }
 ]
 

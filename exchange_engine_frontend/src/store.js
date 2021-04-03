@@ -12,9 +12,19 @@ export default new Vuex.Store({
   },
 
   mutations: {
+    initialiseStore(state) {
+      if (localStorage.getItem('accessToken')) {
+        state.accessToken = localStorage.getItem('accessToken')
+      }
+      if (localStorage.getItem('refreshToken')) {
+        state.refreshToken = localStorage.getItem('refreshToken')
+      }
+    },
     updateStorage (state, { access, refresh }) {
       state.accessToken = access
       state.refreshToken = refresh
+      localStorage.setItem('accessToken', access);
+      localStorage.setItem('refreshToken', refresh)
     },
     destroyToken (state) {
       state.accessToken = null
@@ -25,6 +35,9 @@ export default new Vuex.Store({
   getters: {
     loggedIn (state) {
       return state.accessToken != null
+    },
+    getRefresh (state) {
+      return state.refreshToken
     }
   },
 
@@ -42,7 +55,21 @@ export default new Vuex.Store({
         })
           .then(response => {
             context.commit('updateStorage', { access: response.data.access, refresh: response.data.refresh }) 
-            console.log(response.data.access, response.data.refresh)
+            resolve()
+          })
+          .catch(err => {
+            reject(err)
+          })
+      })
+    },
+    userRefresh (context) {
+      return new Promise((resolve, reject) => {
+        getAPI.post('/api-token-refresh/', {
+          refresh: context.getters.getRefresh
+        })
+          .then(response => {
+            context.commit('updateStorage', { access: response.data.access, refresh: context.getters.getRefresh })
+            console.log(response.data.access)
             resolve()
           })
           .catch(err => {

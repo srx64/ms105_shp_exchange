@@ -13,7 +13,8 @@ const eventsHub = new Vue()
 
 Vue.use(IdleVue, {
   eventEmitter: eventsHub,
-  idleTime: 5000
+  idleTime: 1000,
+  keepTracking: true
 })
 Vue.use(VueMeta)
 Vue.use(VueAxios, axios)
@@ -23,7 +24,7 @@ Vue.config.productionTip = false
 router.beforeEach((to, from, next) => {
   if (to.matched.some(record => record.meta.requiresLogin)) {
     if (!store.getters.loggedIn) {
-      next({ name: 'login' })
+      next({ name: 'Login' })
     } else {
       next()
     }
@@ -36,5 +37,8 @@ new Vue({
   vuetify,
   router,
   store,
+  beforeCreate() {
+    this.$store.commit('initialiseStore')
+  },
   render: h => h(App)
 }).$mount('#app')

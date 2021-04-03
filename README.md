@@ -25,7 +25,8 @@ sudo apt install make
 pip install --upgrade pip
 pip install -r requirements.txt
 sudo apt-get install postgresql
-systemctl start postgresql.service
+sudo systemctl start postgresql.service
+sudo systemctl enable postgresql.service
 sudo -u postgres psql
 create database exchange;
 create user shp with encrypted password 'promprog';

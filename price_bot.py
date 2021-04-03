@@ -10,7 +10,7 @@ from main.models import Stocks, Order, User, Quotes
 
 
 def price_bot():
-    user = User.objects.get(username='ozon')
+    user = User.objects.get(username='admin')
     with open('data/OZON2015-2021.csv', newline='') as csvfile:
         reader = csv.reader(csvfile)
         AMOUNT = 10000

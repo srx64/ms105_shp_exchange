@@ -2,6 +2,7 @@
   <v-btn
     :color="color"
     :depressed="depressed"
+    :min-width="minWidth"
     :tile="tile"
     class="font-weight-bold"
     v-bind="$attrs"
@@ -31,7 +32,7 @@
       tile: {
         type: Boolean,
         default: true,
-      },
+      }
     }
   }
 </script>

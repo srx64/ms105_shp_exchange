@@ -13,19 +13,18 @@
           max-width="700"
           width="100%"
         >
-          <h5
-            class="font-weight-regular mb-2 text-left"
-            style="font-size: 1rem; letter-spacing: 0.24rem"
+          <BaseTitle
+            weight="regular"
           >
             МЫ ХОТИМ СДЕЛАТЬ ПОКУПКУ АКЦИИ ПРОСТОЙ И ВЫГОДНОЙ
-          </h5>
+          </BaseTitle>          
 
-          <h2
-            class="font-weight-medium mb-4 text-left"
-            style="font-size: 1.65rem"
+          <BaseHeading
+            size="text-h5"
+            weight="medium"
           >
             ДОБРО ПОЖАЛОВАТЬ НА БИРЖУ EXCHANGE ENGINE
-          </h2>
+          </BaseHeading>
 
           <p
             class="grey--text mb-6"
@@ -42,15 +41,11 @@
                   v-bind="attrs"
                   v-on="on"
                 >
-                  <v-btn
-                    color="primary"
-                    disabled
-                    depressed
+                  <BaseBtn
                     x-large
-                    tile
                   >
                     Узнайте больше
-                  </v-btn>
+                  </BaseBtn>
                 </div>
               </template>
               <span>Извините, раздел в разработке</span>
@@ -58,19 +53,15 @@
 
             <span class="font-weight-bold ml-6 mr-4 my-4">или</span>
 
-            <v-btn
-              to="auth/registration"
-              color="primary"
-              class="pa-1 font-weight-bold"
+            <BaseBtn
+              to="auth/reg"
+              class="pa-1"
               height="auto"
-              min-width="164"
-              depressed
               x-large
-              text
-              tile
+              text  
             >
               Начните сейчас
-            </v-btn>
+            </BaseBtn>
           </div>
         </v-responsive>
       </v-container>

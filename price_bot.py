@@ -17,7 +17,6 @@ def price_bot():
     for i in range(min_file_length):
         for file in files:
             df = pandas.read_csv(f'data/{file}', nrows=1, skiprows=i, sep=';')
-            # print(df)
             name = df.iloc[0][0]
             if name[len(name) - 3:] != '-RM':
                 name = name.split('.')[1].split(':')[0]
@@ -32,7 +31,7 @@ def price_bot():
             purchase_order.save()
             quote = Quotes(stock=stock, price=price)
             quote.save()
-        time.sleep(2)
+        time.sleep(30)
 
 
 if __name__ == "__main__":

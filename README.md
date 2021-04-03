@@ -39,7 +39,7 @@ python price_bot.py    # открыть в отдельной вкладке, к
 ./manage.py runserver  # открыть в отдельной вкладке, команда будет работать на протяжении всего времени
 curl -fsSL https://deb.nodesource.com/setup_14.x | sudo -E bash -
 sudo apt-get install -y nodejs
-cd frontend
+cd exchange_engine_frontend
 npm install
 npm run serve
 ```

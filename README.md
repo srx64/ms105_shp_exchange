@@ -31,6 +31,7 @@ create database exchange;
 create user shp with encrypted password 'promprog';
 grant all privileges on database exchange to shp;
 \q
+psql -U shp exchange < exchange.sql
 ./manage.py migrate
 ./manage.py shell -c "from django.contrib.auth import get_user_model; get_user_model().objects.create_superuser('vasya', '1@abc.net', 'promprog')"
 python price_bot.py

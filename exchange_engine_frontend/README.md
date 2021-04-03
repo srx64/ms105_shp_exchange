@@ -6,6 +6,7 @@
 
 ## Библеотеки:
 - [Vue.js](https://ru.vuejs.org/)
+- [Vue-meta](https://vue-meta.nuxtjs.org/)
 - [Vuetify](https://vuetifyjs.com/en/)
 - [Vue-router](https://router.vuejs.org/ru/)
 - [Vue-axios](https://ru.vuejs.org/v2/cookbook/using-axios-to-consume-apis.html)

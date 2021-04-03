@@ -3,13 +3,11 @@
 </template>
 
 <script>
-  import RegistrationForm from '@/components/authentication/RegistrationForm.vue'
-
   export default {
-    name: 'Register',
+    name: 'Registration',
 
     components: {
-      RegistrationForm
+      RegistrationForm: () => import('@/components/auth/Reg.vue')
     },
 
     data() {

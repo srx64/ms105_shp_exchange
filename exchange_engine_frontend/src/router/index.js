@@ -1,37 +1,59 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 
-import Main from '../views/main/Base.vue'
-import Authentication from '../views/authentication/Base.vue'
-import App from '../views/app/Base.vue' 
-
 Vue.use(VueRouter)
 
 const routes = [
   {
     path: '/',
-    name: 'Main',
-    component: Main
+    component: () => import('../layouts/home/Index.vue'),
+    children: [
+      {
+        path: '',
+        name: 'Home',
+        component: () => import('../views/home/children/Index.vue'),
+      }
+    ]
   },
   {
-    path: '/authentication',
-    name: 'Authentication',
-    component: Authentication,
+    path: '/auth',
+    component: () => import('../views/auth/View.vue'),
     children: [
       {
         path: 'login',
-        component: () => import('../views/authentication/children/Login.vue')
+        name: 'Login',
+        component: () => import('../views/auth/children/Login.vue'),
       },
       {
-        path: 'registration',
-        component: () => import('../views/authentication/children/Registration.vue')
+        path: 'reg',
+        name: 'Registration',
+        component: () => import('../views/auth/children/Reg.vue'),
+      },
+      {
+        path: 'logout',
+        name: 'Logout',
+        component: () => import('../views/auth/children/Logout.vue')
       }
     ]
   },
   {
     path: '/app',
-    name: 'App',
-    component: App
+    component: () => import('../layouts/app/Index.vue'),
+    meta: {
+      requiresLogin: true
+    },
+    children: [
+      {
+        path: '',
+        name: 'App',
+        component: () => import('../views/app/Main.vue')
+      },
+      {
+        path: 'profile',
+        name: 'Profile',
+        component: () => import('../views/app/Profile.vue')
+      }
+    ]
   }
 ]
 

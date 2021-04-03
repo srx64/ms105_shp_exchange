@@ -27,6 +27,7 @@
         })
         .catch(err => {
           console.log(err)
+          alert('Ошибка! Возможно введен неверный логин или пароль')
           data.incorrectAuth = true
         })
       }

@@ -22,8 +22,16 @@
 sudo apt install make
 pip install --upgrade pip
 pip install -r requirements.txt
+sudo apt-get install postgresql
+systemctl start postgresql.service
+sudo -u postgres psql
+create database exchange;
+create user shp with encrypted password 'promprog';
+grant all privileges on database exchange to shp;
+\q
 ./manage.py migrate
 ./manage.py shell -c "from django.contrib.auth import get_user_model; get_user_model().objects.create_superuser('vasya', '1@abc.net', 'promprog')"
+python price_bot.py
 ./manage.py runserver
 ```
 

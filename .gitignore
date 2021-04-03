@@ -12,6 +12,9 @@ db.sqlite3
 db.sqlite3-journal
 media
 
+# DB
+exchange.sql
+
 # Infornation .csv files
 data
 

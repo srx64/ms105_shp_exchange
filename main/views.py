@@ -21,13 +21,14 @@ class AddOrderView(APIView):
     :param type: Тип ордера
     :param amount: Количество ордеров
     """
+
     def get(self, request):
         form = AddOrderForm(initial={
-                'price': 0,
-                'stock': '',
-                'type': 0,
-                'amount': 0,
-            })
+            'price': 0,
+            'stock': '',
+            'type': 0,
+            'amount': 0,
+        })
         context = {
             'form': form,
         }
@@ -53,11 +54,23 @@ class AddOrderView(APIView):
                 order.amount -= abs(min_count)
                 order_op.amount -= abs(min_count)
 
-                user.balance -= min_count * price
-                user_op.balance += min_count * price
+                if portfolio.count > 0:
+                    user_op.balance += min_count * price
+                    user.balance -= min_count * price
 
                 portfolio.count += min_count
                 portfolio_op.count -= min_count
+
+                if portfolio.count < 0:
+                    user.short_balance -= portfolio.count * price
+                    user.balance += (min_count + portfolio.count) * price
+                    user.is_debt = True
+
+                if portfolio.count >= 0 and user.is_debt:
+
+                    user.balance += 100000+user.short_balance
+                    user.short_balance = -100000
+                    user.is_debt = False
 
                 if order_op.amount == 0:
                     order_op.is_closed = True
@@ -91,6 +104,7 @@ class StockDetailView(APIView):
     """
     Информация об акции
     """
+
     def get(self, request, pk):
         stock = Stocks.objects.get(id=pk)
         serializer = serializers.StockDetailSerializer(stock)
@@ -121,6 +135,7 @@ class OrdersView(APIView):
     """
     Все заявки
     """
+
     def get(self, request):
         orders = Order.objects.filter(is_closed=False)
         serializer = serializers.OrdersSerializer(orders, many=True)
@@ -131,6 +146,7 @@ class PortfolioUserView(APIView):
     """
     Портфолио пользователя
     """
+
     def get(self, request):
         portfolio = Portfolio.objects.filter(user_id=request.user.id)
         serializer = serializers.PortfolioUserSerializer(portfolio, many=True)
@@ -147,6 +163,7 @@ class ProfileEditingView(APIView):
         :param user.email: Почта пользователя
         :param user_avatar: Аватарка пользователя
     """
+
     def get(self, request):
         user = User.objects.get(id=request.user.pk)
         user_avatar = UserSettings.objects.get(user_id=user.id).avatar
@@ -186,6 +203,7 @@ class PasswordEditingView(APIView):
     """
     Страница восстановления пароля
     """
+
     def get(self, request):
         form = PasswordEditingForm()
         context = {

@@ -8,6 +8,8 @@ from django.utils import timezone
 class User(AbstractUser):
     status = models.CharField(max_length=255, default='')
     balance = models.FloatField(default=100000)
+    short_balance = models.FloatField(default=-100000)
+    is_debt = models.BooleanField(default=False)
 
 
 class UserSettings(models.Model):

@@ -28,7 +28,7 @@
 			</BaseBtn>
 
 			<BaseBtn
-				to="auth/registration"
+				to="auth/reg"
 				class="ma-2"
 				weight="regular"
 			>

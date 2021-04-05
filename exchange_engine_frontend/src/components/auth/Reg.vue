@@ -19,6 +19,16 @@
         lazy-validation
       >
         <v-text-field
+          v-model="username"
+          :rules="nameRules"
+          label="Никнейм"
+          required
+          placeholder="Введите имя"
+          outlined
+          dense
+        />
+<!-- 
+        <v-text-field
           v-model="name"
           :rules="nameRules"
           label="Имя"
@@ -36,7 +46,7 @@
           placeholder="Введите фамилию"
           outlined
           dense
-        />
+        /> -->
       
         <v-text-field
           v-model="email"
@@ -66,6 +76,7 @@
 
         <v-text-field
           label="Подтвердите пароль"
+          v-model="password2"
           :rules="[v => !!v || 'Подтвердите пароль']"
           :type="'password'"
           name="input-10-1"
@@ -82,10 +93,10 @@
             md="6"
           >
             <v-btn
+              v-on:click="register"
               :disabled="!valid"
               color="success"
               to="/app"
-              @click="validate"
             >
               Зарегистрироваться
             </v-btn>
@@ -111,12 +122,18 @@
 <script>
   export default {
     name: 'RegForm',
+    props: [
+      'onReg',
+      'validate'
+    ],
 
     data() {
       return {
-        valid: true,
-        name: '',
-        surname: '',
+        valid: false,
+        username: '',
+        email: '',
+        password: '',
+        password2: '',
         show: false,
         PasswordRules: [
           v => !!v || 'Введите пароль',
@@ -126,21 +143,21 @@
           v => !!v || 'Введите имя',
           v => (v && v.length <= 15) || 'Максимум 15 символов',
         ],
-        email: '',
         emailRules: [
           v => !!v || 'Введите E-mail',
           v => /.+@.+\..+/.test(v) || 'Введите правильный E-mail',
         ],
       }
     },
-
     methods: {
-      validate () {
-        this.$refs.form.validate()
-      },
-      reset () {
-        this.$refs.form.reset()
-      },
-    },
+      register() { 
+        this.onReg({
+          email: this.email,
+          username: this.username,
+          password: this.password,
+          password2: this.password2,
+        })
+      }
+    }
   }
 </script>

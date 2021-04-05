@@ -5,12 +5,24 @@ from rest_framework import filters
 from main.forms import ProfileEditingForm, PasswordEditingForm, AddOrderForm
 from rest_framework.response import Response
 from rest_framework.views import APIView
-
+from rest_framework.decorators import api_view
 from main.models import Stocks, Order, Portfolio, User, UserSettings, Quotes
 from main import serializers
 
 from rest_framework.permissions import IsAuthenticated
 
+@api_view(['POST',])
+def registration_view(request):
+    if request.method == 'POST':
+        serializer = serializers.RegistrationSerializer(data=request.data)
+        data = {}
+        if serializer.is_valid():
+            account = serializer.save()
+            data['response'] = "succefully"
+            data['email'] = account.email
+        else:
+            data = serializer.errors
+        return Response(data)
 
 class AddOrderView(APIView):
     """

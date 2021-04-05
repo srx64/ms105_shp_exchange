@@ -62,6 +62,23 @@ export default new Vuex.Store({
           })
       })
     },
+    userReg (context, usercredentials) {
+      return new Promise((resolve, reject) => {
+        getAPI.post('api/v1/register/', {
+          email: usercredentials.email,
+          username: usercredentials.username,
+          password: usercredentials.password,
+          password2: usercredentials.password2
+        })
+          .then(response => {
+            console.log(response);
+            resolve()
+          })
+          .catch(err => {
+            reject(err)
+          })
+      })
+    },
     userRefresh (context) {
       return new Promise((resolve, reject) => {
         getAPI.post('/api-token-refresh/', {

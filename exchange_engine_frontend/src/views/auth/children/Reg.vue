@@ -10,13 +10,6 @@
       RegistrationForm: () => import('@/components/auth/Reg.vue')
     },
 
-    // data() {
-    //   return {
-    //     name: '',
-    //     show: false,
-    //   }
-    // },
-
     methods: {
       validate () {
         this.$refs.form.validate()

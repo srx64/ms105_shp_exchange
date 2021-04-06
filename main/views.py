@@ -1,6 +1,6 @@
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
-from main.forms import ProfileEditingForm, PasswordEditingForm, AddOfferForm
+from main.forms import ProfileEditingForm, PasswordEditingForm, AddOfferForm, UserBalance
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -179,14 +179,18 @@ class PasswordEditingView(APIView):
 class ProfileBalanceAdd(APIView):
     def get(self, request):
         context = {}
+        form = UserBalance()
+        context['form'] = form
         return render(request, 'profile/balance_add.html', context)
 
     def post(self, request):
+        form = UserBalance(request.POST)
         user = User.objects.get(id=request.user.pk)
-        if 'money' in request.POST:
+        if form.is_valid():
+            context = {'form': form}
             money = request.POST['money']
-            if int(money) > 0:
-                user.balance = int(money) + float(user.balance)
+            if money.replace(',', '.', 1).replace('.', '', 1).isdigit() and float(money.replace(',', '.', 1)) > 0:
+                user.balance = float(money.replace(',', '.', 1)) + float(user.balance)
                 user.save()
-                return render(request, 'profile/balance_add_successfully.html')
+                return render(request, 'profile/balance_add_successfully.html', context)
         return render(request, 'profile/balance_add_failed.html')

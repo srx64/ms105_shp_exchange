@@ -3,7 +3,6 @@
 </template>
 
 <script>
-// import axios from 'axios'
   export default {
     name: 'Registration',
 
@@ -11,13 +10,12 @@
       RegistrationForm: () => import('@/components/auth/Reg.vue')
     },
 
-    data() {
-      return {
-        valid: true,
-        name: '',
-        show: false,
-      }
-    },
+    // data() {
+    //   return {
+    //     name: '',
+    //     show: false,
+    //   }
+    // },
 
     methods: {
       validate () {
@@ -29,6 +27,14 @@
           username: data.username,
           password: data.password,
           password2: data.password2,
+        })
+        .then(() => {
+          this.$router.push({ name: 'Login' })
+        })
+        .catch(err => {
+          alert(err)
+          console.log(err)
+          alert('Ошибка! Введите корректные данные')
         })
       }
     },

@@ -94,9 +94,7 @@
           >
             <v-btn
               v-on:click="register"
-              :disabled="!valid"
               color="success"
-              to="/app"
             >
               Зарегистрироваться
             </v-btn>
@@ -124,12 +122,10 @@
     name: 'RegForm',
     props: [
       'onReg',
-      'validate'
     ],
 
     data() {
       return {
-        valid: false,
         username: '',
         email: '',
         password: '',

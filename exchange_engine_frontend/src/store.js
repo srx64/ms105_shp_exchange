@@ -72,7 +72,7 @@ export default new Vuex.Store({
         })
           .then(response => {
             console.log(response);
-            resolve()
+            resolve(response)
           })
           .catch(err => {
             reject(err)

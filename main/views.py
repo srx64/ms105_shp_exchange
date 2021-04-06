@@ -1,7 +1,7 @@
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from rest_framework.generics import ListAPIView
-from rest_framework import filters
+from rest_framework import filters, status
 from main.forms import ProfileEditingForm, PasswordEditingForm, AddOrderForm
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -20,8 +20,9 @@ def registration_view(request):
             account = serializer.save()
             data['response'] = "succefully"
             data['email'] = account.email
+            data['username'] = account.username
         else:
-            data = serializer.errors
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         return Response(data)
 
 class AddOrderView(APIView):
@@ -141,6 +142,19 @@ class ProfileDetailView(APIView):
                 'avatar': serializers.ProfileUserAvatarSerializer(user_avatar).data,
             }
         )
+
+    def patch(self, request):
+        user = request.user
+        data = request.data
+
+        user.email = data.get("email", user.email)
+        user.first_name = data.get("first_name", user.first_name)
+        user.last_name = data.get("last_name", user.last_name)
+
+        user.save()
+        serializer = serializers.ProfileDetailSerializer(user)
+
+        return Response(serializer.data)
 
 
 class OrdersView(APIView):

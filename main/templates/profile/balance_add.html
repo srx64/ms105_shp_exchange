@@ -7,8 +7,7 @@
 <body>
     <form action="/profile/balance_add" method="POST">
         {% csrf_token %}
-        <input type="number" value="0" name="money">
+        {{form.money.label}} {{ form.money }} <br>
         <button type="submit" class="btn btn-primary float-right btn-block">Пополнить баланс</button>
     </form>
 </body>
-</html>

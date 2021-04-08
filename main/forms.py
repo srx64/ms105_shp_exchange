@@ -75,3 +75,7 @@ class AddOrderForm(forms.Form):
     )
     stock = forms.CharField(label='Акция', max_length=150)
     type = forms.BooleanField(label='Купить(0)/Продать(1)', required=False)
+
+
+class UserBalance(forms.Form):
+    money = forms.CharField(label='Деньги', max_length=150)

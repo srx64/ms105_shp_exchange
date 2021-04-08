@@ -4,15 +4,17 @@
 
 
     <!-- <v-row align="center" justify="center"> -->
-      <v-btn absolute color="primary" fab
-              small dark outlined>
+      <v-btn absolute color="primary" fab @click="chooseFile"
+              small dark >
+              <input id="fileUpload" type="file" hidden @change="onFile">
               <v-icon>mdi-pencil</v-icon>
             </v-btn>
 
       <v-avatar
             size="200px"
             color="primary">
-            <span class="white--text headline">
+            <img v-if="url" :src="url"/>
+            <span v-else class="white--text headline">
               {{ first_name[0] }} {{ last_name[0] }}
             </span>
       </v-avatar>
@@ -29,7 +31,7 @@
         </v-form>
       </v-card>
 
-    <v-card class="pa-6">
+    <!-- <v-card class="pa-6">
       <v-form>
         <v-file-input @change="onFile"
             v-model="file"
@@ -53,9 +55,9 @@
               </v-chip>
             </template>
           </v-file-input>
-        <v-btn x-small color="" class="mr-0" > <v-icon small> mdi-pencil </v-icon> Изменить </v-btn>
+        <v-btn x-small @click="onUpload" > <v-icon small> mdi-pencil </v-icon> Изменить </v-btn>
       </v-form>
-    </v-card>
+    </v-card> -->
 
   </v-container>
 </template>
@@ -71,7 +73,8 @@ export default {
     return {
       username: '',
       email: '',
-      // avatar: '',
+      selectedFile: null,
+      url: null,
       first_name: '',
       last_name: '',
       balance: '',
@@ -104,6 +107,7 @@ export default {
             this.first_name = profile.first_name
             this.last_name = profile.last_name
             this.balance = profile.balance
+            this.url = 'http://127.0.0.1:8000' + response.data.avatar.avatar
           })
           .catch(err => {
             console.log(err)
@@ -121,9 +125,37 @@ export default {
             } 
           })
       },
+      chooseFile(){
+        document.getElementById("fileUpload").click()
+      },
       onFile(event){
-        console.log(event)
-      }
+        let ev = event.target.files[0]
+        console.log(ev)
+        this.selectedFile = ev
+        this.url = URL.createObjectURL(this.selectedFile);
+        const fd = new FormData();
+        fd.append('file', this.selectedFile, this.selectedFile.name)
+        getAPI.patch('api/v1/profile/', fd, {
+            headers: { 
+              Authorization: `Bearer ${this.$store.state.accessToken}` 
+            } 
+          })
+          .then(res => {
+            console.log(res)
+          })
+      },
+      // onUpload(){
+      //   const fd = new FormData();
+      //   fd.append('file', this.selectedFile, this.selectedFile.name)
+      //   getAPI.patch('api/v1/profile/', fd, {
+      //       headers: { 
+      //         Authorization: `Bearer ${this.$store.state.accessToken}` 
+      //       } 
+      //     })
+      //     .then(res => {
+      //       console.log(res)
+      //     })
+      // }
     },
 
     mounted () {

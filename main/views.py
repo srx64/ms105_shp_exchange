@@ -151,6 +151,11 @@ class ProfileDetailView(APIView):
         user.first_name = data.get("first_name", user.first_name)
         user.last_name = data.get("last_name", user.last_name)
 
+        if request.FILES:
+            user_settings = UserSettings.objects.get(user_id=user)
+            user_settings.avatar = request.FILES['file']
+            user_settings.save()
+
         user.save()
         serializer = serializers.ProfileDetailSerializer(user)
 

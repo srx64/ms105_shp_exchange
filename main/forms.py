@@ -80,7 +80,7 @@ class LeverageTradingForm(forms.Form):
     ratio = forms.IntegerField(
         label='1 к',
         required=True,
-        min_value=2,
+        min_value=1,
     )
     stock = forms.CharField(
         label='Название акции',

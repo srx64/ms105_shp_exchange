@@ -315,6 +315,7 @@ class LeverageTradingView(APIView):
         quote = Quotes.objects.filter(stock=stock.id).last()
         type = True if request.POST.get('type') else False
         cash = user.balance * ratio
+        AddOrderView.margin_call(user)
         if cash // quote.price >= 1:
             amount = cash // quote.price
             try:

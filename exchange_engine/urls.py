@@ -34,6 +34,7 @@ urlpatterns = [
     path('api/v1/stocks/', StocksListView.as_view(), name='stocks'),
     path('api/v1/stock/<int:pk>/', StockDetailView.as_view(), name='stock'),
     path('api/v1/orders/', OrdersView.as_view(), name='orders'),
+    path('trading/leverage/', views.LeverageTradingView.as_view(), name='add_order'),
     path('api/v1/portfolio/', PortfolioUserView.as_view(), name='portfolio'),
     path('api/v1/profile/', ProfileDetailView.as_view(), name='profile'),
     path('orders/add', views.AddOrderView.as_view(), name='add_order'),

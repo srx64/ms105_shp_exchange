@@ -50,3 +50,9 @@ class Quotes(models.Model):
     stock = models.ForeignKey(to=Stocks, on_delete=models.CASCADE)
     price = models.FloatField()
     date = models.DateTimeField(default=timezone.now)
+
+
+class LeverageData(models.Model):
+    stock = models.ForeignKey(to=Stocks, on_delete=models.CASCADE)
+    user = models.ForeignKey(to=User, on_delete=models.CASCADE)
+    ratio = models.IntegerField(default=1)

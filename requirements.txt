@@ -16,7 +16,7 @@ Sphinx==3.4.3
 sphinx-rtd-theme==0.5.1
 
 # .csv files
-pandas
+pandas==1.2.3
 
 # DB
 psycopg2

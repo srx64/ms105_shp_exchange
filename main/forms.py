@@ -79,3 +79,17 @@ class AddOrderForm(forms.Form):
 
 class UserBalance(forms.Form):
     money = forms.CharField(label='Деньги', max_length=150)
+
+
+class LeverageTradingForm(forms.Form):
+    ratio = forms.IntegerField(
+        label='1 к',
+        required=True,
+        min_value=1,
+    )
+    stock = forms.CharField(
+        label='Название акции',
+        required=True,
+        max_length=150,
+    )
+    type = forms.BooleanField(label='Купить(0)/Продать(1)', required=False)

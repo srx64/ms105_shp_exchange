@@ -6,7 +6,7 @@
     <!-- <v-row align="center" justify="center"> -->
       <v-btn absolute color="primary" fab @click="chooseFile"
               small dark >
-              <input id="fileUpload" type="file" hidden @change="onFile">
+              <input id="fileUpload" type="file" hidden @change="onFile" accept="image/*">
               <v-icon>mdi-pencil</v-icon>
             </v-btn>
 

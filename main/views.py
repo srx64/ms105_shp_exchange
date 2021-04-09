@@ -21,6 +21,8 @@ def registration_view(request):
             data['response'] = "succefully"
             data['email'] = account.email
             data['username'] = account.username
+            us_settings = UserSettings(user_id=account)
+            us_settings.save()
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         return Response(data)

@@ -1,9 +1,7 @@
 <template>
   <v-container>
     <h1> {{username}} </h1>
-
-
-    <!-- <v-row align="center" justify="center"> -->
+    
       <v-btn absolute color="primary" fab @click="chooseFile"
               small dark >
               <input id="fileUpload" type="file" hidden @change="onFile" accept="image/*">
@@ -14,11 +12,8 @@
             size="200px"
             color="primary">
             <img v-if="url" :src="url"/>
-            <span v-else class="white--text headline">
-              {{ first_name[0] }} {{ last_name[0] }}
-            </span>
+            <img v-else src="@/assets/andrey.jpg" alt="">
       </v-avatar>
-    <!-- </v-row> -->
     
       <v-card class="pa-6">
         <v-card-title> Редактировать профиль </v-card-title>
@@ -40,34 +35,6 @@
           <v-btn color="" @click="saveData"> Изменить </v-btn>
         </v-form>
       </v-card>
-
-    <!-- <v-card class="pa-6">
-      <v-form>
-        <v-file-input @change="onFile"
-            v-model="file"
-            color="primary"
-            counter
-            label="File input"
-            placeholder="Select your files"
-            prepend-icon="mdi-paperclip"
-            outlined
-            :show-size="1000"
-          >
-            <template v-slot:selection="{ index, text }">
-              <v-chip
-                v-if="index < 2"
-                color="primary"
-                dark
-                label
-                small
-              >
-                {{ text }}
-              </v-chip>
-            </template>
-          </v-file-input>
-        <v-btn x-small @click="onUpload" > <v-icon small> mdi-pencil </v-icon> Изменить </v-btn>
-      </v-form>
-    </v-card> -->
 
   </v-container>
 </template>
@@ -119,7 +86,10 @@ export default {
             this.first_name = profile.first_name
             this.last_name = profile.last_name
             this.balance = profile.balance
-            this.url = 'http://127.0.0.1:8000' + response.data.avatar.avatar
+            console.log(response.data.avatar.avatar)
+            if (response.data.avatar.avatar){
+              this.url = 'http://127.0.0.1:8000' + response.data.avatar.avatar
+            }
           })
           .catch(err => {
             console.log(err)

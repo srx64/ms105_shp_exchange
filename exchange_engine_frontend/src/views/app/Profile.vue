@@ -21,6 +21,7 @@
     <!-- </v-row> -->
     
       <v-card class="pa-6">
+        <v-card-title> Редактировать профиль </v-card-title>
         <v-form>
           <v-text-field v-model="username" hint="" label="Никнейм"></v-text-field>
           <v-text-field v-model="first_name" hint="" label="Имя"></v-text-field>
@@ -28,6 +29,15 @@
           <v-text-field v-model="email" hint="" label="Email"></v-text-field>
           <v-text-field v-model="balance" hint="" label="Balance"></v-text-field>
           <v-btn color="" @click="saveData"> Сохранить </v-btn>
+        </v-form>
+      </v-card>
+
+      <v-card class="pa-6">
+        <v-card-title> Изменить пароль </v-card-title>
+        <v-form>
+          <v-text-field v-model="password" hint="" label="Старый пароль"></v-text-field>
+          <v-text-field v-model="password2" hint="" label="Новый пароль"></v-text-field>
+          <v-btn color="" @click="saveData"> Изменить </v-btn>
         </v-form>
       </v-card>
 
@@ -77,6 +87,8 @@ export default {
       url: null,
       first_name: '',
       last_name: '',
+      password: '',
+      password2: '',
       balance: '',
       avatar: '',
     };
@@ -118,6 +130,8 @@ export default {
             first_name: this.first_name,
             last_name: this.last_name,
             email: this.email,
+            password: this.password,
+            password2: this.password2,
         },
         {
             headers: { 

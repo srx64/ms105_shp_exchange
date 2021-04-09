@@ -150,6 +150,10 @@ class ProfileDetailView(APIView):
         user.email = data.get("email", user.email)
         user.first_name = data.get("first_name", user.first_name)
         user.last_name = data.get("last_name", user.last_name)
+        password2 = data.get("password2", user.password)
+        if user.check_password(data.get("password", user.password)):
+            print("RESET")
+            user.set_password(password2)
 
         if request.FILES:
             user_settings = UserSettings.objects.get(user_id=user)

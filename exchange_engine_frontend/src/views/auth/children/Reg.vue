@@ -1,5 +1,5 @@
 <template>
-  <RegistrationForm/>
+  <RegistrationForm :onReg="onReg"/>
 </template>
 
 <script>
@@ -10,34 +10,26 @@
       RegistrationForm: () => import('@/components/auth/Reg.vue')
     },
 
-    data() {
-      return {
-        valid: true,
-        name: '',
-        show: false,
-        PasswordRules: [
-          v => !!v || 'Введите пароль',
-          v => (v && v.length <= 8) || 'Минимум 8 символов',
-        ],
-        nameRules: [
-          v => !!v || 'Введите имя',
-          v => (v && v.length <= 15) || 'Максимум 15 символов',
-        ],
-        email: '',
-        emailRules: [
-          v => !!v || 'Введите E-mail',
-          v => /.+@.+\..+/.test(v) || 'Введите правильный E-mail',
-        ],
-      }
-    },
-
     methods: {
       validate () {
         this.$refs.form.validate()
       },
-      reset () {
-        this.$refs.form.reset()
-      },
+      onReg(data){
+        this.$store.dispatch('userReg', {
+          email: data.email,
+          username: data.username,
+          password: data.password,
+          password2: data.password2,
+        })
+        .then(() => {
+          this.$router.push({ name: 'Login' })
+        })
+        .catch(err => {
+          alert(err)
+          console.log(err)
+          alert('Ошибка! Введите корректные данные')
+        })
+      }
     },
   }
 </script>

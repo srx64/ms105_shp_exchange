@@ -5,7 +5,11 @@
     v-bind="$attrs"
     v-on="$listeners"
   >
-    <slot/>
+    <template v-if="title">
+      {{ title }}
+    </template>
+
+    <slot v-else />
   </component>
 </template>
 
@@ -16,46 +20,61 @@
     inject: {
       theme: {
         default: () => ({ isDark: false }),
+      },
+      heading: {
+        default: () => ({ align: 'left' }),
+      },
+    },
+
+    provide () {
+      return {
+        heading: {
+          align: this.align,
+        },
       }
     },
 
     props: {
       align: {
         type: String,
-        default: 'left'
+        default () {
+          return this.heading.align
+        },
+      },
+      dense: {
+        type: Boolean,
+        default () {
+          return this.isDense
+        },
       },
       size: {
         type: String,
-        default: 'text-h3'
+        default: 'text-h3',
       },
       space: {
         type: [Number, String],
-        default: 4
+        default: 4,
       },
       mobileSize: {
         type: String,
-        default: 'text-h4'
+        default: 'text-h4',
       },
       mobileBreakpoint: {
         type: [Number, String],
-        default: 768
+        default: 768,
       },
       tag: {
         type: String,
-        default: 'h1'
+        default: 'h1',
       },
+      title: String,
       weight: {
         type: String,
-        default: 'black'
+        default: 'black',
       },
     },
 
     computed: {
-      fontSize () {
-        return this.$vuetify.breakpoint.width >= this.mobileBreakpoint
-          ? this.size
-          : this.mobileSize
-      },
       classes () {
         const classes = [
           this.fontSize,
@@ -66,7 +85,12 @@
         ]
 
         return classes
-      }
-    }
+      },
+      fontSize () {
+        return this.$vuetify.breakpoint.width >= this.mobileBreakpoint
+          ? this.size
+          : this.mobileSize
+      },
+    },
   }
 </script>

@@ -2,7 +2,8 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.utils import timezone
 from rest_framework.generics import ListAPIView
-from rest_framework import filters
+from rest_framework.decorators import api_view
+from rest_framework import filters, status
 from main.forms import ProfileEditingForm, PasswordEditingForm, AddOrderForm, LeverageTradingForm, UserBalance
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -11,6 +12,23 @@ from main.models import Stocks, Order, Portfolio, User, UserSettings, Quotes, Le
 from main import serializers
 
 from rest_framework.permissions import IsAuthenticated
+
+
+@api_view(['POST',])
+def registration_view(request):
+    if request.method == 'POST':
+        serializer = serializers.RegistrationSerializer(data=request.data)
+        data = {}
+        if serializer.is_valid():
+            account = serializer.save()
+            data['response'] = "succefully"
+            data['email'] = account.email
+            data['username'] = account.username
+            us_settings = UserSettings(user_id=account)
+            us_settings.save()
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response(data)
 
 
 class AddOrderView(APIView):
@@ -161,6 +179,28 @@ class ProfileDetailView(APIView):
                 'avatar': serializers.ProfileUserAvatarSerializer(user_avatar).data,
             }
         )
+
+    def patch(self, request):
+        user = request.user
+        data = request.data
+
+        user.email = data.get("email", user.email)
+        user.first_name = data.get("first_name", user.first_name)
+        user.last_name = data.get("last_name", user.last_name)
+        password2 = data.get("password2", user.password)
+        if user.check_password(data.get("password", user.password)):
+            print("RESET")
+            user.set_password(password2)
+
+        if request.FILES:
+            user_settings = UserSettings.objects.get(user_id=user)
+            user_settings.avatar = request.FILES['file']
+            user_settings.save()
+
+        user.save()
+        serializer = serializers.ProfileDetailSerializer(user)
+
+        return Response(serializer.data)
 
 
 class OrdersView(APIView):

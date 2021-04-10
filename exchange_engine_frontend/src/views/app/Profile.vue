@@ -1,53 +1,151 @@
 <template>
   <v-container>
-    <v-text-field v-model="username" hint="This field uses counter prop" label="Username"></v-text-field>
-    <v-text-field v-model="first_name" hint="This field uses counter prop" label="First Name"></v-text-field>
-    <v-text-field v-model="last_name" hint="This field uses counter prop" label="Last Name"></v-text-field>
-    <v-text-field v-model="email" hint="This field uses counter prop" label="Email"></v-text-field>
+    <h1> {{username}} </h1>
+    
+      <v-btn absolute color="primary" fab @click="chooseFile"
+              small dark >
+              <input id="fileUpload" type="file" hidden @change="onFile" accept="image/*">
+              <v-icon>mdi-pencil</v-icon>
+            </v-btn>
 
-    <v-btn color="" class="mr-0" @click="send"> Сохранить </v-btn>
+      <v-avatar
+            size="200px"
+            color="primary">
+            <img v-if="url" :src="url"/>
+            <img v-else src="@/assets/andrey.jpg" alt="">
+      </v-avatar>
+    
+      <v-card class="pa-6">
+        <v-card-title> Редактировать профиль </v-card-title>
+        <v-form>
+          <v-text-field v-model="username" hint="" label="Никнейм"></v-text-field>
+          <v-text-field v-model="first_name" hint="" label="Имя"></v-text-field>
+          <v-text-field v-model="last_name" hint="" label="Фамилия"></v-text-field>
+          <v-text-field v-model="email" hint="" label="Email"></v-text-field>
+          <v-text-field v-model="balance" hint="" label="Balance"></v-text-field>
+          <v-btn color="" @click="saveData"> Сохранить </v-btn>
+        </v-form>
+      </v-card>
 
-    <button v-on:click="get_data"> GET </button>
+      <v-card class="pa-6">
+        <v-card-title> Изменить пароль </v-card-title>
+        <v-form>
+          <v-text-field v-model="password" hint="" label="Старый пароль"></v-text-field>
+          <v-text-field v-model="password2" hint="" label="Новый пароль"></v-text-field>
+          <v-btn color="" @click="saveData"> Изменить </v-btn>
+        </v-form>
+      </v-card>
+
   </v-container>
 </template>
 
 <script>
 // @ is an alias to /src
-import axios from 'axios'
+  import { getAPI } from '../../axios-api'
+  import { mapState } from 'vuex'
 
 export default {
   name: 'Profile',
   data() {
     return {
-      info: null,
       username: '',
       email: '',
+      selectedFile: null,
+      url: null,
       first_name: '',
       last_name: '',
+      password: '',
+      password2: '',
+      balance: '',
       avatar: '',
     };
   },
+
+  computed: mapState(['APIData']),
+
+  onIdle () {
+      console.log('refresh')
+      this.$store.dispatch('userRefresh')
+    },
+
   created () {
       this.get_data()
   },
   methods: {
-    get_data () {
-          axios
-      .get('https://api.npoint.io/e07d530886a2fd5afbcc',)
-      .then(response => {
-        this.info = response.data;
-        this.username = this.info.profile.username;
-        this.first_name = this.info.profile.first_name;
-        this.last_name = this.info.profile.last_name;
-        this.email = this.info.profile.email;
-        this.avatar = this.info.profile.avatar;
-      });
+      getProfile () {
+        getAPI.get('api/v1/profile/', {
+            headers: { 
+              Authorization: `Bearer ${this.$store.state.accessToken}` 
+            } 
+          })
+          .then(response => {
+            this.$store.state.APIData = response.data
+            let profile = response.data.profile
+            this.username = profile.username
+            this.email = profile.email
+            this.first_name = profile.first_name
+            this.last_name = profile.last_name
+            this.balance = profile.balance
+            console.log(response.data.avatar.avatar)
+            if (response.data.avatar.avatar){
+              this.url = 'http://127.0.0.1:8000' + response.data.avatar.avatar
+            }
+          })
+          .catch(err => {
+            console.log(err)
+          })
+      },
+      saveData(){
+        getAPI.patch('api/v1/profile/', {
+            first_name: this.first_name,
+            last_name: this.last_name,
+            email: this.email,
+            password: this.password,
+            password2: this.password2,
+        },
+        {
+            headers: { 
+              Authorization: `Bearer ${this.$store.state.accessToken}` 
+            } 
+          })
+      },
+      chooseFile(){
+        document.getElementById("fileUpload").click()
+      },
+      onFile(event){
+        let ev = event.target.files[0]
+        console.log(ev)
+        this.selectedFile = ev
+        this.url = URL.createObjectURL(this.selectedFile);
+        const fd = new FormData();
+        fd.append('file', this.selectedFile, this.selectedFile.name)
+        getAPI.patch('api/v1/profile/', fd, {
+            headers: { 
+              Authorization: `Bearer ${this.$store.state.accessToken}` 
+            } 
+          })
+          .then(res => {
+            console.log(res)
+          })
+      },
+      // onUpload(){
+      //   const fd = new FormData();
+      //   fd.append('file', this.selectedFile, this.selectedFile.name)
+      //   getAPI.patch('api/v1/profile/', fd, {
+      //       headers: { 
+      //         Authorization: `Bearer ${this.$store.state.accessToken}` 
+      //       } 
+      //     })
+      //     .then(res => {
+      //       console.log(res)
+      //     })
+      // }
     },
-    send () {
-      this.email = ''
+
+    mounted () {
+      this.getProfile()
     }
   }
-}
 </script>
 
 <style scoped>

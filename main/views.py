@@ -81,7 +81,7 @@ class AddOrderView(APIView):
                 order.amount -= abs(min_count)
                 order_op.amount -= abs(min_count)
 
-                if portfolio.count > 0:
+                if portfolio.count >= 0:
                     user_op.balance += min_count * price
                     user.balance -= min_count * price
 

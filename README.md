@@ -34,7 +34,9 @@ sudo -u postgres psql exchange < exchange.sql
 ./manage.py shell -c "from django.contrib.auth import get_user_model; get_user_model().objects.create_superuser('vasya', '1@abc.net', 'promprog')"
 python price_bot.py    # открыть в отдельной вкладке, команда будет работать на протяжении всего времени
 ./manage.py runserver  # открыть в отдельной вкладке, команда будет работать на протяжении всего времени
+sudo rm /etc/apt/sources.list.d/google-chrome.list
 curl -fsSL https://deb.nodesource.com/setup_14.x | sudo -E bash -
+sudo apt-get install gcc g++ make
 sudo apt-get install -y nodejs
 cd exchange_engine_frontend
 npm install

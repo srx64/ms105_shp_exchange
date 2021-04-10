@@ -14,7 +14,6 @@
       <v-form
         ref="form"
         lazy-validation
-        v-on:submit.prevent="login"
       >
         <v-text-field
           v-model="username"

@@ -1,5 +1,5 @@
 <template>
-  <LoginForm :onLogin="onLogin" />
+  <LoginForm :onLogin="onLogin"/>
 </template>
 
 <script>

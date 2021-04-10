@@ -1,6 +1,7 @@
 <template>
   <v-app-bar
     id="home-app-bar"
+    color="grey lighten-4"
 		app
 		elevation="1"
 		elevate-on-scroll

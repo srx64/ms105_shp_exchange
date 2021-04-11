@@ -61,24 +61,24 @@ class AddOrderView(APIView):
                 user.balance -= min_count * price
 
                 if portfolio.count < 0:
-                    user.short_balance -= min_count * price
+                    portfolio.short_balance -= min_count * price
                     user.balance += min_count * price
-                    user.is_debt = True
+                    portfolio.is_debt = True
 
                 if portfolio_op.count < 0:
-                    user_op.short_balance += min_count * price
+                    portfolio_op.short_balance += min_count * price
                     user_op.balance -= min_count * price
-                    user_op.is_debt = True
+                    portfolio_op.is_debt = True
 
-                if portfolio.count == 0 and user.is_debt:
+                if portfolio.count == 0 and portfolio.is_debt:
                     user.balance += 100000+user.short_balance
-                    user.short_balance = -100000
-                    user.is_debt = False
+                    portfolio.short_balance = -100000
+                    portfolio.is_debt = False
 
-                if portfolio_op.count == 0 and user_op.is_debt:
+                if portfolio_op.count == 0 and portfolio_op.is_debt:
                     user.balance += 100000+user.short_balance
-                    user_op.short_balance = -100000
-                    user_op.is_debt = False
+                    portfolio_op.short_balance = -100000
+                    portfolio_op.is_debt = False
 
                 if order_op.amount == 0:
                     order_op.is_closed = True

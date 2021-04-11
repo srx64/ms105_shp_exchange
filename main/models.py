@@ -7,8 +7,6 @@ from django.db import models
 class User(AbstractUser):
     status = models.CharField(max_length=255, default='')
     balance = models.FloatField(default=100000)
-    short_balance = models.FloatField(default=-100000)
-    is_debt = models.BooleanField(default=False)
 
 
 class UserSettings(models.Model):
@@ -43,3 +41,5 @@ class Portfolio(models.Model):
     stock = models.ForeignKey(to=Stocks, on_delete=models.CASCADE)
     count = models.IntegerField(default=0)
     percentage = models.FloatField(default=0)
+    short_balance = models.FloatField(default=-100000)
+    is_debt = models.BooleanField(default=False)

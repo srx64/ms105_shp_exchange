@@ -32,8 +32,8 @@ def generate(candles, candles_len, stock, time, spec, last):
                 last[spec-1] = i
                 candle.save()
                 one = []
-            except RuntimeError:
-                # Упираемся в границы
+            except:
+                # Упираемся в границы или ждём котировок
                 pass
         if i == candles_len - 2:
             return last

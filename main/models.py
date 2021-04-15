@@ -50,3 +50,13 @@ class LeverageData(models.Model):
     stock = models.ForeignKey(to=Stocks, on_delete=models.CASCADE)
     user = models.ForeignKey(to=User, on_delete=models.CASCADE)
     ratio = models.IntegerField(default=1)
+
+
+class Candles(models.Model):
+    open = models.FloatField()
+    close = models.FloatField()
+    high = models.FloatField()
+    low = models.FloatField()
+    date = models.DateTimeField(default=timezone.now)
+    stock = models.ForeignKey(to=Stocks, on_delete=models.CASCADE)
+    type = models.IntegerField(default=1)

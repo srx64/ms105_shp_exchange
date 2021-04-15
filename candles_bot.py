@@ -39,7 +39,6 @@ def generate(candles, candles_len, stock, time, spec, last):
             i += 1
 
 
-
 def candles_bot():
     types = [60, 300, 900, 1800, 3600]
     try:

@@ -14,28 +14,29 @@ def generate(candles, candles_len, stock, time, spec, last):
     shift = candles[0].date - candles[0].date
     i = last[spec-1]
     while i < candles_len:
-        shift += candles[i + 1].date - candles[i].date
-        if shift.seconds <= time:
-            one.append(candles[i].price)
-        else:
-            if len(one) > 0:
-                shift = candles[1].date - candles[1].date
-                candle = Candles(
-                    high=max(one),
-                    low=min(one),
-                    date=datetime.datetime.now(pytz.timezone('Europe/Moscow')),
-                    type=spec,
-                    open=one[0],
-                    close=one[-1],
-                    stock=stock
-                )
-                last[spec-1] = i
-                candle.save()
-                one = []
+        if candles_len >= 2:
+            shift += candles[i + 1].date - candles[i].date
+            if shift.seconds <= time:
+                one.append(candles[i].price)
+            else:
+                if len(one) > 0:
+                    shift = candles[1].date - candles[1].date
+                    candle = Candles(
+                        high=max(one),
+                        low=min(one),
+                        date=datetime.datetime.now(pytz.timezone('Europe/Moscow')),
+                        type=spec,
+                        open=one[0],
+                        close=one[-1],
+                        stock=stock
+                    )
+                    last[spec-1] = i
+                    candle.save()
+                    one = []
 
-        if i == candles_len - 2:
-            return last
-        i += 1
+            if i == candles_len - 2:
+                return last
+            i += 1
 
 
 

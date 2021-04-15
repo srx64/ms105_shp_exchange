@@ -18,23 +18,19 @@ def generate(candles, candles_len, stock, time, spec, last):
         if shift.seconds <= time:
             one.append(candles[i].price)
         else:
-            try:
+            if len(one) > 0:
                 shift = candles[1].date - candles[1].date
                 candle = Candles(high=max(one), low=min(one), date=datetime.datetime.now(pytz.timezone('Europe/Moscow')), type=spec, open=one[0], close=one[-1], stock=stock)
                 last[spec-1] = i
                 candle.save()
                 one = []
-            except:
-                '''
-                Упираемся в границы
-                '''
-                pass
         if i == candles_len - 2:
             return last
         i += 1
 
 
 def candles_bot():
+    types = [60, 300, 900, 1800, 3600]
     try:
         print("Бот начал работу")
         data = [[0, 0, 0, 0, 0] for _ in range(len(Stocks.objects.all()))]
@@ -44,11 +40,8 @@ def candles_bot():
                     info = data[stock.pk - 1]
                     candles = list(Quotes.objects.filter(stock=stock))
                     candles_len = len(candles)
-                    info = generate(candles, candles_len, stock, 60, 1, info)
-                    info = generate(candles, candles_len, stock, 300, 2, info)
-                    info = generate(candles, candles_len, stock, 900, 3, info)
-                    info = generate(candles, candles_len, stock, 1800, 4, info)
-                    info = generate(candles, candles_len, stock, 3600, 5, info)
+                    for i in range(len(types)):
+                        info = generate(candles, candles_len, stock, types[i], i+1, info)
     except KeyboardInterrupt:
         print("Бот остановлен пользователем")
 

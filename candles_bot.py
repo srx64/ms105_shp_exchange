@@ -14,6 +14,8 @@ def generate(candles, candles_len, stock, time, spec, last):
     shift = candles[0].date - candles[0].date
     i = last[spec-1]
     while i < candles_len:
+        candles = list(Quotes.objects.filter(stock=stock))
+        candles_len = len(candles)
         if candles_len >= 2:
             shift += candles[i + 1].date - candles[i].date
             if shift.seconds <= time:

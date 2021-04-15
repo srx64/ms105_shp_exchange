@@ -10,15 +10,15 @@ from main.models import Stocks, Candles, Quotes
 
 
 def generate(candles, candles_len, stock, time, spec, last):
-    one = []
-    shift = candles[0].date - candles[0].date
-    i = last[spec-1]
-    while i < candles_len:
-        shift += candles[i + 1].date - candles[i].date
-        if shift.seconds <= time:
-            one.append(candles[i].price)
-        else:
-            try:
+    try:
+        one = []
+        shift = candles[0].date - candles[0].date
+        i = last[spec-1]
+        while i < candles_len:
+            shift += candles[i + 1].date - candles[i].date
+            if shift.seconds <= time:
+                one.append(candles[i].price)
+            else:
                 shift = candles[1].date - candles[1].date
                 candle = Candles(
                     high=max(one),
@@ -32,12 +32,12 @@ def generate(candles, candles_len, stock, time, spec, last):
                 last[spec-1] = i
                 candle.save()
                 one = []
-            except:
-                # Упираемся в границы или ждём котировок
-                pass
-        if i == candles_len - 2:
-            return last
-        i += 1
+            if i == candles_len - 2:
+                return last
+            i += 1
+    except:
+        # Упираемся в границы или ждём котировок
+        pass
 
 
 def candles_bot():

@@ -24,8 +24,7 @@ def price_bot():
                 name = name[:-3]
             stock = Stocks.objects.get(name=name)
             price = df.iloc[:, [7]][df.iloc[:, [7]].columns[0]][0]
-            sale_order = Order(user=user, stock=stock, type=True, price=price, amount=AMOUNT, is_closed=True)
-            sale_order.save()
+            Order.objects.create(user=user, stock=stock, type=True, price=price, amount=AMOUNT, is_closed=True)
             purchase_order = Order(user=user, stock=stock, type=False, price=price, amount=AMOUNT,
                                    is_closed=True)
             purchase_order.save()

@@ -31,6 +31,11 @@
           >
             Профиль
           </v-tab>
+          <v-tab
+            to="/app/portfolio"
+          >
+            Портфель
+          </v-tab>
         </v-tabs>
       </v-col>
       <v-col

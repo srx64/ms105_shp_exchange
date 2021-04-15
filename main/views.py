@@ -12,7 +12,7 @@ from main.models import Stocks, Order, Portfolio, User, UserSettings, Quotes, Le
 from main import serializers
 
 from rest_framework.permissions import IsAuthenticated
-
+from django.db.models import Q
 
 @api_view(['POST',])
 def registration_view(request):
@@ -220,7 +220,7 @@ class PortfolioUserView(APIView):
     """
 
     def get(self, request):
-        portfolio = Portfolio.objects.filter(user_id=request.user.id)
+        portfolio = Portfolio.objects.filter(~Q(count=0), user_id=request.user.id,)
         serializer = serializers.PortfolioUserSerializer(portfolio, many=True)
         return Response(serializer.data)
 

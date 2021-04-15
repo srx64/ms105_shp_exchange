@@ -68,9 +68,6 @@ export default {
       this.$store.dispatch('userRefresh')
     },
 
-  created () {
-      this.get_data()
-  },
   methods: {
       getProfile () {
         getAPI.get('api/v1/profile/', {
@@ -86,7 +83,6 @@ export default {
             this.first_name = profile.first_name
             this.last_name = profile.last_name
             this.balance = profile.balance
-            console.log(response.data.avatar.avatar)
             if (response.data.avatar.avatar){
               this.url = 'http://127.0.0.1:8000' + response.data.avatar.avatar
             }

@@ -20,13 +20,23 @@ def generate(candles, candles_len, stock, time, spec, last):
         else:
             if len(one) > 0:
                 shift = candles[1].date - candles[1].date
-                candle = Candles(high=max(one), low=min(one), date=datetime.datetime.now(pytz.timezone('Europe/Moscow')), type=spec, open=one[0], close=one[-1], stock=stock)
+                candle = Candles(
+                    high=max(one),
+                    low=min(one),
+                    date=datetime.datetime.now(pytz.timezone('Europe/Moscow')),
+                    type=spec,
+                    open=one[0],
+                    close=one[-1],
+                    stock=stock
+                )
                 last[spec-1] = i
                 candle.save()
                 one = []
+
         if i == candles_len - 2:
             return last
         i += 1
+
 
 
 def candles_bot():

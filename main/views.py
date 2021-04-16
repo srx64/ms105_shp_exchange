@@ -235,13 +235,13 @@ class PortfolioUserView(APIView):
 
 class ProfileEditingView(APIView):
     """
-        Профиль пользователя
+        Редактирование профиля пользователя
 
         :param username: Никнейм пользователя
         :param first.name: Имя пользователя
         :param last.name: Фамилия пользователя
         :param user.email: Почта пользователя
-        :param user_avatar: Аватарка пользователя
+        :param user.avatar: Аватарка пользователя
     """
 
     def get(self, request):
@@ -281,7 +281,7 @@ class ProfileEditingView(APIView):
 
 class PasswordEditingView(APIView):
     """
-    Страница восстановления пароля
+    Страница изменения пароля
     """
 
     def get(self, request):
@@ -319,6 +319,10 @@ class PasswordEditingView(APIView):
 
 
 class LeverageTradingView(APIView):
+    """
+    Торговля с плечом
+    """
+
     def get(self, request):
         form = LeverageTradingForm(initial={
             'type': 0,
@@ -365,6 +369,10 @@ class LeverageTradingView(APIView):
 
 
 class ProfileBalanceAdd(APIView):
+    """
+    Пополнение баланса пользователя
+    """
+
     def get(self, request):
         context = {}
         form = UserBalance()
@@ -385,6 +393,9 @@ class ProfileBalanceAdd(APIView):
 
 
 class PricesView(APIView):
+    """
+    Страница с текущими и предыдущими котировками акций
+    """
     def get(self, request):
         prices = Quotes.objects.all()
         serializer = serializers.PriceSerializer(prices, many=True)

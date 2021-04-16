@@ -4,7 +4,9 @@
       Lorem ipsum dolor sit amet consectetur adipisicing elit. Libero, in! Asperiores, impedit libero. Veniam rerum saepe unde nihil possimus quibusdam esse accusamus mollitia magni fuga.
     </BaseSectionHeading>
 
-    <v-container>
+    <v-container
+      class="py-15"
+    >
       <v-row>
         <v-col
           v-for="(feature, i) in features"

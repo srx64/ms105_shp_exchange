@@ -1,5 +1,8 @@
 <template>
-  <v-card>
+  <v-card
+    class="mx-auto my-12"
+    max-width="400"
+  >
     <v-toolbar
       flat
       color="blue darken-2"
@@ -10,7 +13,9 @@
       </v-toolbar-title>
     </v-toolbar>
 
-    <v-card-text>
+    <v-card-text
+      class="pb-0"
+    >
       <v-form
         ref="form"
         lazy-validation
@@ -36,32 +41,29 @@
           required
           dense
         />
-        
-        <v-row>
-          <v-col
-            cols="12"
-            md="6"
+
+        <v-divider class="mx-4"></v-divider>
+
+        <v-container 
+          class="d-flex flex-wrap justify-space-between pa-0"
+        >
+          <v-btn
+            @click="login"
+            color="primary"
+            class="mx-auto my-3"
           >
-            <v-btn
-              color="success"
-              @click="login"
-            >
-              Войти
-            </v-btn>
-          </v-col>
-          <v-col
-            cols="12"
-            md="6"
+            Войти
+          </v-btn>
+
+          <v-btn
+            to="/auth/reg"
+            color="primary"
+            class="mx-auto my-3"
+            outlined
           >
-            <v-btn
-              color="primary"
-              outlined
-              to="/auth/reg"
-            >
-              Зарегистрироваться
-            </v-btn>
-          </v-col>
-        </v-row>
+            Создать аккаунт
+          </v-btn>
+        </v-container>
       </v-form>
     </v-card-text>
   </v-card>

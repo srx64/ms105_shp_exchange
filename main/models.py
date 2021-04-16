@@ -12,14 +12,7 @@ class User(AbstractUser):
 
 class UserSettings(models.Model):
     user_id = models.ForeignKey(to=User, on_delete=models.CASCADE)
-    avatar = models.ImageField(upload_to='avatars/')
-
-    def create_avatar(sender, instance, created, **kwargs):
-        if created:
-            user_setting = UserSettings(user_id=instance, avatar='avatars/preset.jpg')
-            user_setting.save()
-
-    post_save.connect(create_avatar, sender=User)
+    avatar = models.ImageField(upload_to='avatars/', max_length=255, null=True, blank=True)
 
 
 class Stocks(models.Model):

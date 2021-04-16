@@ -19,10 +19,11 @@ class ProfileTest(APITestCase):
         self.client.force_login(user=self.user)
         verification_url = reverse('api_token')
         resp = self.client.post(verification_url, {'username': 'vasya', 'password': 'promprog'}, format='json')
+        # получаем токен
         token = resp.data['access']
         self.assertEqual(resp.status_code, 200)
         self.assertTrue('access' in resp.data)
-
+        # делаем get-запрос на профиль с помощью токена
         url = reverse('profile')
         self.client.credentials(HTTP_AUTHORIZATION='Bearer ' + token)
         resp = self.client.get(url, data={'format': 'json'})

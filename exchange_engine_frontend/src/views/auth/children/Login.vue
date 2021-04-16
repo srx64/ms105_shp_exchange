@@ -1,5 +1,30 @@
 <template>
-  <LoginForm :onLogin="onLogin"/>
+  <div>
+    <LoginForm :onLogin="onLogin"/>
+
+    <template>
+      <v-snackbar
+        v-model="snackbar"
+        timeout="1000"
+        color="blue darken-2"
+      >
+        {{ text }}
+
+        <template v-slot:action="{ attrs }">
+          <v-btn
+            color="red"
+            text
+            v-bind="attrs"
+            @click="snackbar = false"
+          >
+            Закрыть
+          </v-btn>
+        </template>
+      </v-snackbar>
+    </template>
+  </div>
+  
+  
 </template>
 
 <script>
@@ -14,6 +39,8 @@
       name: '',
       show: false,
       email: '',
+      snackbar: false,
+      text: 'Ошибка! Неверный логин или пароль!'
     }),
 
     methods: {
@@ -27,7 +54,7 @@
         })
         .catch(err => {
           console.log(err)
-          alert('Ошибка! Возможно введен неверный логин или пароль')
+          this.snackbar = true
           data.incorrectAuth = true
         })
       }

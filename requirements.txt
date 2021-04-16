@@ -24,3 +24,6 @@ psycopg2-binary
 
 # Timezone
 pytz
+
+# pylint
+pylint-django==2.4.3

@@ -45,7 +45,7 @@ npm run serve  # открыть в отдельной вкладке, коман
 
 Для тестирования чистоты кода введите команду:
 ```bash
-pylint --load-plugins pylint_django --load-plugins pylint_django.checkers.migrations *
+DJANGO_SETTINGS_MODULE=exchange_engine.settings pylint --load-plugins pylint_django --load-plugins pylint_django.checkers.migrations *```
 ```
 
 Все необходимые файлы вы можете найти здесь: https://gitlab.informatics.ru/2020-2021/mytischi/s105/exchange_engine/-/wikis/%D0%9D%D0%B5%D0%BE%D0%B1%D1%85%D0%BE%D0%B4%D0%B8%D0%BC%D1%8B%D0%B5+%D1%84%D0%B0%D0%B9%D0%BB%D1%8B

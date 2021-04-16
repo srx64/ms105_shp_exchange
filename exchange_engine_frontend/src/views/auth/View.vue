@@ -1,5 +1,7 @@
 <template>
-  <v-app>
+  <v-app
+    @keyup.enter="snackbar = !snackbar"
+  >
 		<v-main
       class="pa-5"
     >
@@ -15,6 +17,11 @@
         </v-col>
       </v-row>
     </v-main>
+
+    <BaseSnackbar
+      align="center"
+      dark
+    />
   </v-app>
 </template>
 
@@ -30,7 +37,7 @@
     },
 
     data: () => ({
-      sections: []
-    })
+      sections: [],
+    }),
   }
 </script>

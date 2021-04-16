@@ -8,8 +8,13 @@ export default new Vuex.Store({
   state: {
     accessToken: null,
     refreshToken: null,
-    APIData: ''
+    APIData: '',
+    snackbarText: ''
   },
+
+  plugins: [
+    
+  ],
 
   mutations: {
     initialiseStore(state) {
@@ -29,6 +34,9 @@ export default new Vuex.Store({
     destroyToken (state) {
       state.accessToken = null
       state.refreshToken = null
+    },
+    showSnackbar (state, payload) {
+      state.snackbarText = payload.text
     }
   },
 

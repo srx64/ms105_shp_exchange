@@ -1,30 +1,7 @@
 <template>
   <div>
     <LoginForm :onLogin="onLogin"/>
-
-    <template>
-      <v-snackbar
-        v-model="snackbar"
-        timeout="1000"
-        color="blue darken-2"
-      >
-        {{ text }}
-
-        <template v-slot:action="{ attrs }">
-          <v-btn
-            color="red"
-            text
-            v-bind="attrs"
-            @click="snackbar = false"
-          >
-            Закрыть
-          </v-btn>
-        </template>
-      </v-snackbar>
-    </template>
   </div>
-  
-  
 </template>
 
 <script>
@@ -39,7 +16,6 @@
       name: '',
       show: false,
       email: '',
-      snackbar: false,
       text: 'Ошибка! Неверный логин или пароль!'
     }),
 
@@ -54,7 +30,10 @@
         })
         .catch(err => {
           console.log(err)
-          this.snackbar = true
+          this.$store.commit({
+            type: 'showSnackbar',
+            text: 'Неправильный логин или пароль'
+          })
           data.incorrectAuth = true
         })
       }

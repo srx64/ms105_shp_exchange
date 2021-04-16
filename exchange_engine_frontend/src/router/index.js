@@ -6,7 +6,7 @@ Vue.use(VueRouter)
 const routes = [
   {
     path: '/',
-    component: () => import('../layouts/home/Index.vue'),
+    component: () => import('../components/home/layouts/Index.vue'),
     children: [
       {
         path: '',
@@ -38,7 +38,7 @@ const routes = [
   },
   {
     path: '/app',
-    component: () => import('../layouts/app/Index.vue'),
+    component: () => import('../views/app/View.vue'),
     meta: {
       requiresLogin: true
     },
@@ -46,17 +46,17 @@ const routes = [
       {
         path: '',
         name: 'App',
-        component: () => import('../views/app/Main.vue')
+        component: () => import('../views/app/children/Main.vue')
       },
       {
         path: 'profile',
         name: 'Profile',
-        component: () => import('../views/app/Profile.vue')
+        component: () => import('../views/app/children/Profile.vue')
       },
       {
         path: 'portfolio',
         name: 'Portfolio',
-        component: () => import('../views/app/Portfolio.vue')
+        component: () => import('../views/app/children/Portfolio.vue')
       }
     ]
   }

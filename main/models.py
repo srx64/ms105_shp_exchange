@@ -8,13 +8,18 @@ from django.utils import timezone
 class User(AbstractUser):
     status = models.CharField(max_length=255, default='')
     balance = models.FloatField(default=100000)
-    short_balance = models.FloatField(default=-100000)
-    is_debt = models.BooleanField(default=False)
 
 
 class UserSettings(models.Model):
     user_id = models.ForeignKey(to=User, on_delete=models.CASCADE)
-    avatar = models.ImageField(upload_to='avatars/', max_length=255, null=True, blank=True)
+    avatar = models.ImageField(upload_to='avatars/')
+
+    def create_avatar(sender, instance, created, **kwargs):
+        if created:
+            user_setting = UserSettings(user_id=instance, avatar='avatars/preset.jpg')
+            user_setting.save()
+
+    post_save.connect(create_avatar, sender=User)
 
 
 class Stocks(models.Model):
@@ -38,6 +43,8 @@ class Portfolio(models.Model):
     stock = models.ForeignKey(to=Stocks, on_delete=models.CASCADE)
     count = models.IntegerField(default=0)
     percentage = models.FloatField(default=0)
+    short_balance = models.FloatField(default=-100000)
+    is_debt = models.BooleanField(default=False)
 
 
 class Quotes(models.Model):

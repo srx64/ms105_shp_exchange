@@ -2,6 +2,7 @@ import os
 import datetime
 import django
 import pytz
+import logging
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'exchange_engine.settings')
 django.setup()
@@ -43,8 +44,9 @@ def generate(candles, candles_len, stock, time, spec, last):
 
 def candles_bot():
     types = [60, 300, 900, 1800, 3600]
+    logging.basicConfig(format='', level=logging.INFO)
     try:
-        print("Бот начал работу")
+        logging.info('Бот начал работу')
         data = [[0, 0, 0, 0, 0] for _ in range(len(Stocks.objects.all()))]
         while True:
             for stock in Stocks.objects.all():
@@ -55,7 +57,7 @@ def candles_bot():
                     for i in range(len(types)):
                         info = generate(candles, candles_len, stock, types[i], i+1, info)
     except KeyboardInterrupt:
-        print("Бот остановлен пользователем")
+        logging.info('Бот остановлен пользователем')
 
 
 if __name__ == "__main__":

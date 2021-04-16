@@ -2,6 +2,8 @@ import os
 import time
 import django
 import pandas
+import logging
+
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'exchange_engine.settings')
 django.setup()
@@ -10,8 +12,9 @@ from main.models import Stocks, Order, User, Quotes
 
 
 def price_bot():
+    logging.basicConfig(format='', level=logging.INFO)
     try:
-        print('Бот начал работу')
+        logging.info('Бот начал работу')
         files = next(os.walk('data/'))[2]
         min_file_length = min([len(open(f'data/{file}', 'r').readlines()) for file in files])
         user = User.objects.get(username='admin')
@@ -32,7 +35,7 @@ def price_bot():
                 quote.save()
             time.sleep(30)
     except KeyboardInterrupt:
-        print('Бот остановлен пользователем')
+        logging.info('Бот остановлен пользователем')
 
 
 if __name__ == "__main__":

@@ -11,9 +11,8 @@
 </template>
 
 <script>
-// @ is an alias to /src
-  import { getAPI } from '../../../axios-api'
-  import { mapState } from 'vuex'
+import { getAPI } from '@/axios-api'
+import { mapState } from 'vuex'
 
 export default {
   name: 'Portfolio',

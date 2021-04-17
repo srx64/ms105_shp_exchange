@@ -12,10 +12,6 @@ export default new Vuex.Store({
     snackbarText: ''
   },
 
-  plugins: [
-    
-  ],
-
   mutations: {
     initialiseStore(state) {
       if (localStorage.getItem('accessToken')) {
@@ -37,6 +33,9 @@ export default new Vuex.Store({
     },
     showSnackbar (state, payload) {
       state.snackbarText = payload.text
+    },
+    changeProfile () {
+      
     }
   },
 
@@ -72,7 +71,7 @@ export default new Vuex.Store({
     },
     userReg (context, usercredentials) {
       return new Promise((resolve, reject) => {
-        getAPI.post('api/v1/register/', {
+        getAPI.get('api/v1/register/', {
           email: usercredentials.email,
           username: usercredentials.username,
           password: usercredentials.password,

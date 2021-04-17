@@ -104,13 +104,16 @@ export default {
               Authorization: `Bearer ${this.$store.state.accessToken}` 
             } 
           })
+          .then(res => {
+            console.log(res)
+            this.$store.commit('changeProfile')
+          })
       },
       chooseFile(){
         document.getElementById("fileUpload").click()
       },
       onFile(event){
         let ev = event.target.files[0]
-        console.log(ev)
         this.selectedFile = ev
         this.url = URL.createObjectURL(this.selectedFile);
         const fd = new FormData();
@@ -122,7 +125,9 @@ export default {
           })
           .then(res => {
             console.log(res)
+            this.$store.commit('changeProfile')
           })
+       
       },
       // onUpload(){
       //   const fd = new FormData();

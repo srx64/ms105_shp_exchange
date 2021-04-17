@@ -43,5 +43,10 @@
         })
       }
     },
+
+    onIdle () {
+      console.log('refresh')
+      this.$store.dispatch('userRefresh')
+    }
   }
 </script>

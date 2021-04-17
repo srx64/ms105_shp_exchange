@@ -12,8 +12,10 @@
           v-model="selectedItem"
           color="primary"
         >
+          <template
+            v-for="(stock, index) in stocks"
+          >
           <v-list-item
-            v-for="stock in stocks"
             :key="stock.id"
           >
             <v-list-item-avatar
@@ -53,8 +55,9 @@
 
           <v-divider
             v-if="index < stocks.length - 1"
-            :key="index"
+            :key="'divider-' + index"
           ></v-divider>
+          </template>
         </v-list-item-group>
       </v-list>
     </v-col>
@@ -79,118 +82,77 @@
           </v-card-actions>
         </v-form>
       </v-card>
-      <div v-else>
-        Hello
-      </div>
+      
+      <v-container
+        v-else
+      >
+        <BaseTitle
+          align="center"
+          weight="regular"
+        >
+          Ни одной акции не выбрано
+        </BaseTitle>
+
+        <BaseBody
+          class="text-center"
+        >
+          Пожалуйста, выберите любую акцию из списка справа для просмотра ее информации
+        </BaseBody>
+      </v-container>
     </v-col>
   </v-row>
 </template>
 
 <script>
-  import { getAPI } from '../../../axios-api'
-  import { mapState } from 'vuex'
+  import { getAPI } from '@/axios-api'
 
   export default {
     name: 'App',
 
     data: () => ({
-      username: '',
-      email: '',
-      balance: '',
       selectedItem: undefined,
-      stocks: [
-        {
-          'id': 1,
-          'name': 'OZON',
-          'description': 'OZON',
-          'is_active': true
-        },
-        {
-          'id': 2,
-          'name': 'AAPL',
-          'description': 'Apple',
-          'is_active': true
-        },
-        {
-          'id': 3,
-          'name': 'FB',
-          'description': 'Facebook',
-          'is_active': true
-        },
-        {
-          'id': 4,
-          'name': 'MSFT',
-          'description': 'Microsoft',
-          'is_active': true
-        },
-        {
-          'id': 5,
-          'name': 'TWTR',
-          'description': 'Twitter',
-          'is_active': true
-        },
-        {
-          'id': 6,
-          'name': 'OZON',
-          'description': 'OZON',
-          'is_active': true
-        },
-        {
-          'id': 7,
-          'name': 'AAPL',
-          'description': 'Apple',
-          'is_active': true
-        },
-        {
-          'id': 8,
-          'name': 'FB',
-          'description': 'Facebook',
-          'is_active': true
-        },
-        {
-          'id': 9,
-          'name': 'MSFT',
-          'description': 'Microsoft',
-          'is_active': true
-        },
-        {
-          'id': 10,
-          'name': 'TWTR',
-          'description': 'Twitter',
-          'is_active': true
-        }
-      ],
+      price: 0,
+      amount: 0,
+      stocks: [],
     }),
 
-    computed: mapState(['APIData']),
-
-    onIdle () {
-      console.log('refresh')
-      this.$store.dispatch('userRefresh')
-    },
-
     methods: {
-      getProfile () {
-        getAPI.get('api/v1/profile/', {
+      getStocks(){
+        getAPI.get('api/v1/stocks/', {
             headers: { 
               Authorization: `Bearer ${this.$store.state.accessToken}` 
             } 
           })
           .then(response => {
-            this.$store.state.APIData = response.data
-            let profile = response.data.profile
-            this.username = profile.username
-            this.email = profile.email
-            this.balance = profile.balance
+            this.stocks = response.data
           })
           .catch(err => {
             console.log(err)
           })
+      },
+      trade(type){
+        getAPI.post('orders/add', {
+          stock: this.stocks[this.selectedItem].name.toString(),
+          type: type,
+          price: this.price,
+          amount: this.amount,
+        },
+        {
+          headers: { 
+            Authorization: `Bearer ${this.$store.state.accessToken}` 
+          } 
+        })
+        .then(response => {
+          console.log(response)
+        })
+        .catch(err => {
+          console.log(err)
+        })
       }
     },
 
-    mounted () {
-      this.getProfile()
+    created () {
+      this.getStocks()
     }
   }
 </script>

@@ -5,7 +5,7 @@ from main.models import User
 
 
 class ProfileTest(APITestCase):
-    fixtures = ['profile_test_database.json']
+    fixtures = ['test_database.json']
 
     def setUp(self) -> None:
         self.client = APIClient()
@@ -27,6 +27,23 @@ class ProfileTest(APITestCase):
         url = reverse('profile')
         self.client.credentials(HTTP_AUTHORIZATION='Bearer ' + token)
         resp = self.client.get(url, data={'format': 'json'})
+        self.assertEqual(resp.status_code, 200)
+
+
+class LoginTest(TestCase):
+    fixtures = ['test_database.json']
+
+    def setUp(self) -> None:
+        self.client = Client()
+
+    def test_error_with_token(self):
+        self.user = User.objects.get(username='vasya')
+        self.client.force_login(user=self.user)
+        verification_url = reverse('api_token')
+        resp = self.client.post(verification_url, {'username': 'vasya', 'password': 'promprog'}, format='json')
+        token = resp.data['access']
+        url = reverse('login')
+        resp = self.client.post(url, {'token': token}, format='json')
         self.assertEqual(resp.status_code, 200)
 
 

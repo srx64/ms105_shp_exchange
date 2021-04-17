@@ -2,7 +2,7 @@
   <v-theme-provider dark>
     <base-section
       id="social"
-      class="accent text-center"
+      class="light-blue darken-4 text-center"
       space="56"
     >
       <base-icon class="mb-8">

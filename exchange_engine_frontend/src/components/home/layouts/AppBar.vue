@@ -15,13 +15,11 @@
 
 		<v-spacer/>
 
-		<div 
-		
-		>
+		<div >
 			<BaseBtn
 				to="auth/login"
-				class="d-inline-flex pa-2"
-        height="auto"
+				class="ma-2"
+				weight="regular"
 				text
 			>
 				Войти
@@ -29,7 +27,7 @@
 
 			<BaseBtn
 				to="auth/reg"
-				class="ma-2"
+				class="ma-2 hidden-sm-and-down"
 				weight="regular"
 			>
 				Создать аккаунт

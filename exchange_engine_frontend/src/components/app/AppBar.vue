@@ -8,7 +8,9 @@
 		height="80"
 	>
     <v-row>
-      <v-col>
+      <v-col
+        class="hidden-sm-and-down"
+      >
         <BaseImg
           :src="require('@/assets/logo.png')"
           contain

@@ -1,15 +1,20 @@
 <template>
   <v-row
     no-gutters
+    class="grey lighten-5 align-stretch"
   >
     <v-col>
       <v-list 
-        subheader
         two-line
+        subheader
       >
-        <template v-for='(stock, index) in stocks'>
+        <v-list-item-group
+          v-model="selectedItem"
+          color="primary"
+        >
           <v-list-item
-            :key='stock.id'
+            v-for="stock in stocks"
+            :key="stock.id"
           >
             <v-list-item-avatar
               size="25px"
@@ -50,17 +55,33 @@
             v-if="index < stocks.length - 1"
             :key="index"
           ></v-divider>
-        </template>
+        </v-list-item-group>
       </v-list>
     </v-col>
+    
+    <v-divider  vertical/>
+
     <v-col>
       <v-card
-        class="pa-2"
-        outlined
+        v-if="selectedItem != undefined" 
+        class="pa-6"
+        elevation="0"
         tile
       >
-        One of two columns
+        <v-card-title> {{stocks[selectedItem].name}} </v-card-title>
+        <v-card-text>Описание: {{stocks[selectedItem].description}}</v-card-text>
+        <v-form>
+          <v-text-field v-model="price" hint="" label="Цена" type="number"></v-text-field>
+          <v-text-field v-model="amount" hint="" label="Количество" type="number"></v-text-field>
+          <v-card-actions>
+            <v-btn color="success" @click="trade(0)"> Купить </v-btn> 
+            <v-btn color="error" @click="trade(1)"> Продать </v-btn>
+          </v-card-actions>
+        </v-form>
       </v-card>
+      <div v-else>
+        Hello
+      </div>
     </v-col>
   </v-row>
 </template>
@@ -76,6 +97,7 @@
       username: '',
       email: '',
       balance: '',
+      selectedItem: undefined,
       stocks: [
         {
           'id': 1,
@@ -93,7 +115,7 @@
           'id': 3,
           'name': 'FB',
           'description': 'Facebook',
-          'is_active': false
+          'is_active': true
         },
         {
           'id': 4,
@@ -103,6 +125,36 @@
         },
         {
           'id': 5,
+          'name': 'TWTR',
+          'description': 'Twitter',
+          'is_active': true
+        },
+        {
+          'id': 6,
+          'name': 'OZON',
+          'description': 'OZON',
+          'is_active': true
+        },
+        {
+          'id': 7,
+          'name': 'AAPL',
+          'description': 'Apple',
+          'is_active': true
+        },
+        {
+          'id': 8,
+          'name': 'FB',
+          'description': 'Facebook',
+          'is_active': true
+        },
+        {
+          'id': 9,
+          'name': 'MSFT',
+          'description': 'Microsoft',
+          'is_active': true
+        },
+        {
+          'id': 10,
           'name': 'TWTR',
           'description': 'Twitter',
           'is_active': true

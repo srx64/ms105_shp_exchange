@@ -55,14 +55,12 @@ class AddOrderView(APIView):
 
     @staticmethod
     def margin_call(user):
-        try:
+        if LeverageData.objects.filter(user=user):
             user_data = LeverageData.objects.get(user=user)
             if user.balance <= 0:
                 for object in Order.objects.filter(user=user, stock=user_data.stock):
                     object.is_closed = True
                     object.save()
-        except:
-            pass
 
     @staticmethod
     def set_percentage(user_portfolio):
@@ -78,14 +76,15 @@ class AddOrderView(APIView):
         user_portfolio.save()
 
     def post(self, request):
+        data = request.data
         user = request.user
-        name = request.POST.get('stock')
+        name = data['stock']#request.POST.get('stock')
         stock = Stocks.objects.get(name=name)
-        type = True if request.POST.get('type') else False
-        price = float(request.POST.get('price'))
-        amount = int(request.POST.get('amount'))
+        type = True if data['type'] else False#True if request.POST.get('type') else False
+        price = float(data['price'])#float(request.POST.get('price'))
+        amount = int(data['amount'])#int(request.POST.get('amount'))
         self.margin_call(user)
-        portfolio, created = Portfolio.objects.get_or_create(user=user, stock=stock)
+        portfolio, created = Portfolio.objects.get_or_create(user=user, stock=stock, count=amount)
         self.set_percentage(portfolio)
         order = Order(user=user, stock=stock, type=type, price=price, is_closed=False, amount=amount)
         order_ops = Order.objects.filter(stock=stock, type=not type, price=price, is_closed=False)
@@ -99,23 +98,31 @@ class AddOrderView(APIView):
                 order.amount -= abs(min_count)
                 order_op.amount -= abs(min_count)
 
-                if portfolio.count >= 0:
-                    user_op.balance += min_count * price
-                    user.balance -= min_count * price
-
                 portfolio.count += min_count
                 portfolio_op.count -= min_count
 
+                user_op.balance += min_count * price
+                user.balance -= min_count * price
+
                 if portfolio.count < 0:
-                    user.short_balance -= portfolio.count * price
-                    user.balance += (min_count + portfolio.count) * price
-                    user.is_debt = True
+                    portfolio.short_balance -= min_count * price
+                    user.balance += min_count * price
+                    portfolio.is_debt = True
 
-                if portfolio.count >= 0 and user.is_debt:
+                if portfolio_op.count < 0:
+                    portfolio_op.short_balance += min_count * price
+                    user_op.balance -= min_count * price
+                    portfolio_op.is_debt = True
 
+                if portfolio.count == 0 and portfolio.is_debt:
                     user.balance += 100000+user.short_balance
-                    user.short_balance = -100000
-                    user.is_debt = False
+                    portfolio.short_balance = -100000
+                    portfolio.is_debt = False
+
+                if portfolio_op.count == 0 and portfolio_op.is_debt:
+                    user.balance += 100000+user.short_balance
+                    portfolio_op.short_balance = -100000
+                    portfolio_op.is_debt = False
 
                 if order_op.amount == 0:
                     order_op.is_closed = True
@@ -227,13 +234,13 @@ class PortfolioUserView(APIView):
 
 class ProfileEditingView(APIView):
     """
-        Профиль пользователя
+        Редактирование профиля пользователя
 
         :param username: Никнейм пользователя
         :param first.name: Имя пользователя
         :param last.name: Фамилия пользователя
         :param user.email: Почта пользователя
-        :param user_avatar: Аватарка пользователя
+        :param user.avatar: Аватарка пользователя
     """
 
     def get(self, request):
@@ -273,7 +280,7 @@ class ProfileEditingView(APIView):
 
 class PasswordEditingView(APIView):
     """
-    Страница восстановления пароля
+    Страница изменения пароля
     """
 
     def get(self, request):
@@ -311,6 +318,10 @@ class PasswordEditingView(APIView):
 
 
 class LeverageTradingView(APIView):
+    """
+    Торговля с плечом
+    """
+
     def get(self, request):
         form = LeverageTradingForm(initial={
             'type': 0,
@@ -357,6 +368,10 @@ class LeverageTradingView(APIView):
 
 
 class ProfileBalanceAdd(APIView):
+    """
+    Пополнение баланса пользователя
+    """
+
     def get(self, request):
         context = {}
         form = UserBalance()
@@ -369,14 +384,19 @@ class ProfileBalanceAdd(APIView):
         if form.is_valid():
             context = {'form': form}
             money = request.POST['money']
-            if money.replace(',', '.', 1).replace('.', '', 1).isdigit() and float(money.replace(',', '.', 1)) > 0:
+            try:
                 user.balance = float(money.replace(',', '.', 1)) + float(user.balance)
                 user.save()
                 return render(request, 'profile/balance_add_successfully.html', context)
+            except ValueError:
+                return render(request, 'profile/balance_add_failed.html')
         return render(request, 'profile/balance_add_failed.html')
 
 
 class PricesView(APIView):
+    """
+    Страница с текущими и предыдущими котировками акций
+    """
     def get(self, request):
         prices = Quotes.objects.all()
         serializer = serializers.PriceSerializer(prices, many=True)

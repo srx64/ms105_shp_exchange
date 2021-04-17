@@ -37,6 +37,7 @@ export default {
           })
           .then(response => {
             this.rows = response.data;
+            console.log(response.data)
           })
           .catch(err => {
             console.log(err)

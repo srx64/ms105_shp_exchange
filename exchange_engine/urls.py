@@ -64,7 +64,7 @@ urlpatterns = [
     path('reset_password_complete/',
          auth_views.PasswordResetCompleteView.as_view(template_name='password/password_reset_complete.html'),
          name='password_reset_complete'),
-    path('profile/balance_add', login_required(views.ProfileBalanceAdd.as_view()))
+    path('profile/balance_add', login_required(views.ProfileBalanceAdd.as_view()), name='balance_add')
 ]
 
 if settings.DEBUG:

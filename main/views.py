@@ -385,10 +385,12 @@ class ProfileBalanceAdd(APIView):
         if form.is_valid():
             context = {'form': form}
             money = request.POST['money']
-            if money.replace(',', '.', 1).replace('.', '', 1).isdigit() and float(money.replace(',', '.', 1)) > 0:
+            try:
                 user.balance = float(money.replace(',', '.', 1)) + float(user.balance)
                 user.save()
                 return render(request, 'profile/balance_add_successfully.html', context)
+            except ValueError:
+                return render(request, 'profile/balance_add_failed.html')
         return render(request, 'profile/balance_add_failed.html')
 
 

@@ -107,3 +107,40 @@ class StockDetailTest(APITestCase):
     def test_wrong_data(self) -> None:
         response = self.client.get('/api/v1/stock/qwe/')
         self.assertEqual(response.status_code, 404)
+
+
+class BalanceAddTest(TestCase):
+    fixtures = ['profile_test_database.json']
+
+    def setUp(self) -> None:
+        self.client = APIClient()
+        self.user = User.objects.get(username='vasya')
+        self.client.force_login(user=self.user)
+        self.verification_url = reverse('api_token')
+        self.response = self.client.post(
+            self.verification_url, {'username': 'vasya', 'password': 'promprog'},
+            format='json'
+        )
+        self.token = self.response.data['access']
+        self.url = reverse('balance_add')
+        self.client.credentials(HTTP_AUTHORIZATION='Bearer ' + self.token)
+
+    def test_error(self) -> None:
+        resp = self.client.get(self.url, data={'format': 'json'})
+        self.assertEqual(resp.status_code, 200)
+
+    def test_letters(self) -> None:
+        resp = self.client.post(self.url, data={'money': 'qwerty'})
+        self.assertEqual(resp.status_code, 200)
+
+    def test_numbers(self) -> None:
+        resp = self.client.post(self.url, data={'money': 111})
+        self.assertEqual(resp.status_code, 200)
+
+    def test_float_numbers(self) -> None:
+        resp = self.client.post(self.url, data={'money': 42.13})
+        self.assertEqual(resp.status_code, 200)
+
+    def test_negative_numbers(self) -> None:
+        resp = self.client.post(self.url, data={'money': -12})
+        self.assertEqual(resp.status_code, 200)

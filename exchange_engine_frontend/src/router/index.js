@@ -45,7 +45,7 @@ const routes = [
     path: '/app',
     component: () => import('../views/app/View.vue'),
     meta: {
-      requiresLogin: false
+      requiresLogin: true
     },
     children: [
       {

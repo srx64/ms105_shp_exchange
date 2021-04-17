@@ -1,11 +1,11 @@
 from django.test import TestCase, Client
 from rest_framework.test import APITestCase, APIClient
 from django.urls import reverse
-from main.models import User
+from main.models import User, Stocks
 
 
 class ProfileTest(APITestCase):
-    fixtures = ['test_database.json']
+    fixtures = ['profile_test_database.json']
 
     def setUp(self) -> None:
         self.client = APIClient()
@@ -14,7 +14,7 @@ class ProfileTest(APITestCase):
     def test_error(self) -> None:
         self.assertEqual(self.response.status_code, 401)
 
-    def test_error_with_token(self):
+    def test_error_with_token(self) -> None:
         self.user = User.objects.get(username='vasya')
         self.client.force_login(user=self.user)
         verification_url = reverse('api_token')
@@ -31,14 +31,14 @@ class ProfileTest(APITestCase):
 
 
 class LoginTest(TestCase):
-    fixtures = ['test_database.json']
+    fixtures = ['profile_test_database.json']
 
     def setUp(self) -> None:
         self.client = Client()
-
-    def test_error_with_token(self):
         self.user = User.objects.get(username='vasya')
         self.client.force_login(user=self.user)
+
+    def test_error_with_token(self) -> None:
         verification_url = reverse('api_token')
         resp = self.client.post(verification_url, {'username': 'vasya', 'password': 'promprog'}, format='json')
         token = resp.data['access']
@@ -72,3 +72,38 @@ class PortfolioTest(APITestCase):
 
     def test_error(self) -> None:
         self.assertEqual(self.response.status_code, 200)
+
+
+class StocksListTest(APITestCase):
+    fixtures = ['profile_test_database.json']
+
+    def setUp(self) -> None:
+        self.client = Client()
+        self.response = self.client.get(reverse('stocks'))
+
+    def test_error(self) -> None:
+        self.assertEqual(self.response.status_code, 200)
+
+    def test_data_output(self) -> None:
+        self.assertEqual(len(Stocks.objects.all()), 5)
+
+
+class StockDetailTest(APITestCase):
+    fixtures = ['profile_test_database.json']
+
+    def setUp(self) -> None:
+        self.client = Client()
+
+    def test_error(self) -> None:
+        for ind in range(1, len(Stocks.objects.all()) + 1):
+            response = self.client.get(f'/api/v1/stock/{ind}/')
+            self.assertEqual(response.status_code, 200)
+
+    def test_is_not_empty(self) -> None:
+        for ind in range(1, len(Stocks.objects.all()) + 1):
+            response = self.client.get(f'/api/v1/stock/{ind}/')
+            self.assertIsNotNone(response)
+
+    def test_wrong_data(self) -> None:
+        response = self.client.get('/api/v1/stock/qwe/')
+        self.assertEqual(response.status_code, 404)

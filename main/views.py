@@ -14,6 +14,7 @@ from main import serializers
 from rest_framework.permissions import IsAuthenticated
 from django.db.models import Q
 
+
 @api_view(['POST',])
 def registration_view(request):
     if request.method == 'POST':

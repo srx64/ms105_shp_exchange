@@ -76,12 +76,13 @@ class AddOrderView(APIView):
         user_portfolio.save()
 
     def post(self, request):
+        data = request.data
         user = request.user
-        name = request.POST.get('stock')
+        name = data['stock']#request.POST.get('stock')
         stock = Stocks.objects.get(name=name)
-        type = True if request.POST.get('type') else False
-        price = float(request.POST.get('price'))
-        amount = int(request.POST.get('amount'))
+        type = True if data['type'] else False#True if request.POST.get('type') else False
+        price = float(data['price'])#float(request.POST.get('price'))
+        amount = int(data['amount'])#int(request.POST.get('amount'))
         self.margin_call(user)
         portfolio, created = Portfolio.objects.get_or_create(user=user, stock=stock, count=amount)
         self.set_percentage(portfolio)

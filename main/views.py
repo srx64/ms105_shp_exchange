@@ -55,14 +55,12 @@ class AddOrderView(APIView):
 
     @staticmethod
     def margin_call(user):
-        try:
+        if LeverageData.objects.filter(user=user):
             user_data = LeverageData.objects.get(user=user)
             if user.balance <= 0:
                 for object in Order.objects.filter(user=user, stock=user_data.stock):
                     object.is_closed = True
                     object.save()
-        except:
-            pass
 
     @staticmethod
     def set_percentage(user_portfolio):
@@ -85,7 +83,7 @@ class AddOrderView(APIView):
         price = float(request.POST.get('price'))
         amount = int(request.POST.get('amount'))
         self.margin_call(user)
-        portfolio, created = Portfolio.objects.get_or_create(user=user, stock=stock)
+        portfolio, created = Portfolio.objects.get_or_create(user=user, stock=stock, count=amount)
         self.set_percentage(portfolio)
         order = Order(user=user, stock=stock, type=type, price=price, is_closed=False, amount=amount)
         order_ops = Order.objects.filter(stock=stock, type=not type, price=price, is_closed=False)

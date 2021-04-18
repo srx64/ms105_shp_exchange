@@ -4,7 +4,7 @@ from django.utils import timezone
 from rest_framework.generics import ListAPIView
 from rest_framework.decorators import api_view
 from rest_framework import filters, status
-from main.forms import ProfileEditingForm, PasswordEditingForm, AddOrderForm, LeverageTradingForm, UserBalance
+from main.forms import AddOrderForm, LeverageTradingForm, UserBalance
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -41,18 +41,18 @@ class AddOrderView(APIView):
     :param type: Тип ордера
     :param amount: Количество ордеров
     """
-
-    def get(self, request):
-        form = AddOrderForm(initial={
-            'price': 0,
-            'stock': '',
-            'type': 0,
-            'amount': 0,
-        })
-        context = {
-            'form': form,
-        }
-        return render(request, 'orders/add_order.html', context)
+    permission_classes = (IsAuthenticated,)
+    # def get(self, request):
+    #     form = AddOrderForm(initial={
+    #         'price': 0,
+    #         'stock': '',
+    #         'type': 0,
+    #         'amount': 0,
+    #     })
+    #     context = {
+    #         'form': form,
+    #     }
+    #     return render(request, 'orders/add_order.html', context)
 
     @staticmethod
     def margin_call(user):
@@ -81,9 +81,11 @@ class AddOrderView(APIView):
         user = request.user
         name = data['stock']#request.POST.get('stock')
         stock = Stocks.objects.get(name=name)
-        type = True if data['type'] else False#True if request.POST.get('type') else False
+        type = data['type']
         price = float(data['price'])#float(request.POST.get('price'))
         amount = int(data['amount'])#int(request.POST.get('amount'))
+        if price <= 0 or amount <= 0:
+            return Response({"detail": "uncorrect data"}, status=status.HTTP_400_BAD_REQUEST)
         self.margin_call(user)
         portfolio, created = Portfolio.objects.get_or_create(user=user, stock=stock)
         self.set_percentage(portfolio)
@@ -196,9 +198,11 @@ class ProfileDetailView(APIView):
         user.first_name = data.get("first_name", user.first_name)
         user.last_name = data.get("last_name", user.last_name)
         password2 = data.get("password2", user.password)
-        if user.check_password(data.get("password", user.password)):
-            print("RESET")
-            user.set_password(password2)
+        if password2:
+            if user.check_password(data.get("password", user.password)):
+                user.set_password(password2)
+            else:
+                return Response({"detail": "password must match"}, status=status.HTTP_400_BAD_REQUEST)
 
         if request.FILES:
             user_settings = UserSettings.objects.get(user_id=user)
@@ -231,91 +235,6 @@ class PortfolioUserView(APIView):
         portfolio = Portfolio.objects.filter(~Q(count=0), user_id=request.user.id,)
         serializer = serializers.PortfolioUserSerializer(portfolio, many=True)
         return Response(serializer.data)
-
-
-class ProfileEditingView(APIView):
-    """
-        Редактирование профиля пользователя
-
-        :param username: Никнейм пользователя
-        :param first.name: Имя пользователя
-        :param last.name: Фамилия пользователя
-        :param user.email: Почта пользователя
-        :param user.avatar: Аватарка пользователя
-    """
-
-    def get(self, request):
-        user = User.objects.get(id=request.user.pk)
-        user_avatar = UserSettings.objects.get(user_id=user.id).avatar
-        form = ProfileEditingForm(
-            initial={
-                'username': user.username,
-                'first_name': user.first_name,
-                'last_name': user.last_name,
-                'email': user.email,
-                'avatar': user_avatar,
-            }
-        )
-        context = {
-            'form': form,
-        }
-        return render(request, 'profile/profile_editing.html', context)
-
-    def post(self, request):
-        form = ProfileEditingForm(request.POST, request.FILES)
-        if form.is_valid():
-            user = User.objects.get(id=request.user.pk)
-            user.username = form.data['username']
-            user.first_name = form.data['first_name']
-            user.last_name = form.data['last_name']
-            user.email = form.data['email']
-            user.save()
-            if request.FILES:
-                user_avatar = UserSettings.objects.get(user_id=user.id)
-                user_avatar.avatar = request.FILES['avatar']
-                user_avatar.save()
-            return HttpResponseRedirect("/api/v1/profile/")
-        else:
-            return HttpResponseRedirect("/profile/editing/")
-
-
-class PasswordEditingView(APIView):
-    """
-    Страница изменения пароля
-    """
-
-    def get(self, request):
-        form = PasswordEditingForm()
-        context = {
-            'form': form,
-        }
-        return render(request, 'profile/password_editing.html', context)
-
-    def post(self, request):
-        form = PasswordEditingForm(request.POST)
-        if form.is_valid():
-            context = {
-                'form': form,
-                'is_old_password_wrong': True,
-                'is_new_password_wrong': True,
-                'is_repeat_password_wrong': True,
-            }
-            user = User.objects.get(id=request.user.pk)
-            password = form.data['old_password']
-            if user.check_password(password):
-                new_password = form.data['new_password']
-                repeat_new_password = form.data['repeat_new_password']
-                context['is_old_password_wrong'] = False
-                if new_password == repeat_new_password:
-                    context['is_repeat_password_wrong'] = False
-                    if len(new_password) > 7 and len(repeat_new_password) > 7:
-                        context['is_new_password_wrong'] = False
-                        user.set_password(new_password)
-                        user.save()
-                        return HttpResponseRedirect("api/v1/profile/")
-            return render(request, 'profile/password_editing.', context)
-        else:
-            return HttpResponseRedirect("profile/editing/change_password/")
 
 
 class LeverageTradingView(APIView):

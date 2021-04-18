@@ -25,9 +25,11 @@
           this.$router.push({ name: 'Login' })
         })
         .catch(err => {
-          alert(err)
           console.log(err)
-          alert('Ошибка! Введите корректные данные')
+          this.$store.commit({
+              type: 'showSnackbar',
+              text: 'Введите корректные данные'
+            })
         })
       }
     },

@@ -35,7 +35,6 @@
           <v-btn color="" @click="saveData"> Изменить </v-btn>
         </v-form>
       </v-card>
-
   </v-container>
 </template>
 
@@ -106,7 +105,18 @@ export default {
           })
           .then(res => {
             console.log(res)
+            this.$store.commit({
+              type: 'showSnackbar',
+              text: 'Профиль изменён'
+            })
             this.$store.commit('changeProfile')
+          })
+          .catch(err => {
+            console.log(err)
+            this.$store.commit({
+              type: 'showSnackbar',
+              text: 'Введите корректные данные'
+            })
           })
       },
       chooseFile(){

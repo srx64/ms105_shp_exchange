@@ -144,9 +144,17 @@
         })
         .then(response => {
           console.log(response)
+          this.$store.commit({
+              type: 'showSnackbar',
+              text: 'Вы создали заявку'
+            })
         })
         .catch(err => {
           console.log(err)
+          this.$store.commit({
+              type: 'showSnackbar',
+              text: 'Введите корректные данные для торговли'
+            })
         })
       }
     },

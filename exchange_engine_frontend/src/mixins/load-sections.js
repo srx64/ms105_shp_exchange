@@ -7,7 +7,7 @@ export default function (sections = []) {
     components: sections.reduce((acc, cur) => {
       const name = upperFirst(camelCase(cur))
 
-      acc[`Section${name}`] = () => import(`@/components/home/${name}.vue`)
+      acc[`Section${name}`] = () => import(`@/components/home/sections/${name}.vue`)
 
       return acc
     }, {}),

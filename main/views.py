@@ -85,7 +85,7 @@ class AddOrderView(APIView):
         price = float(data['price'])#float(request.POST.get('price'))
         amount = int(data['amount'])#int(request.POST.get('amount'))
         self.margin_call(user)
-        portfolio, created = Portfolio.objects.get_or_create(user=user, stock=stock, count=amount)
+        portfolio, created = Portfolio.objects.get_or_create(user=user, stock=stock)
         self.set_percentage(portfolio)
         order = Order(user=user, stock=stock, type=type, price=price, is_closed=False, amount=amount)
         order_ops = Order.objects.filter(stock=stock, type=not type, price=price, is_closed=False)
@@ -145,7 +145,7 @@ class AddOrderView(APIView):
         user.save()
         portfolio.save()
         order.save()
-        return HttpResponseRedirect("/api/v1/orders/")
+        return Response("/api/v1/orders/")
 
 
 class StocksListView(ListAPIView):

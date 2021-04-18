@@ -42,17 +42,6 @@ class AddOrderView(APIView):
     :param amount: Количество ордеров
     """
     permission_classes = (IsAuthenticated,)
-    # def get(self, request):
-    #     form = AddOrderForm(initial={
-    #         'price': 0,
-    #         'stock': '',
-    #         'type': 0,
-    #         'amount': 0,
-    #     })
-    #     context = {
-    #         'form': form,
-    #     }
-    #     return render(request, 'orders/add_order.html', context)
 
     @staticmethod
     def margin_call(user):
@@ -79,11 +68,11 @@ class AddOrderView(APIView):
     def post(self, request):
         data = request.data
         user = request.user
-        name = data['stock']#request.POST.get('stock')
+        name = data['stock']
         stock = Stocks.objects.get(name=name)
         type = data['type']
-        price = float(data['price'])#float(request.POST.get('price'))
-        amount = int(data['amount'])#int(request.POST.get('amount'))
+        price = float(data['price'])
+        amount = int(data['amount'])
         if price <= 0 or amount <= 0:
             return Response({"detail": "uncorrect data"}, status=status.HTTP_400_BAD_REQUEST)
         self.margin_call(user)

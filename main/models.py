@@ -14,18 +14,7 @@ class User(AbstractUser):
 
     status = models.CharField(max_length=255, default='')
     balance = models.FloatField(default=100000)
-
-
-class UserSettings(models.Model):
-    """
-    Модель с настройками пользователя
-
-    :param user_id: Ссылка на пользователя, которому принадлежат настройки в данной записи
-    :param avatar: Аватар пользователя
-    """
-
-    user_id = models.ForeignKey(to=User, on_delete=models.CASCADE)
-    avatar = models.ImageField(upload_to='avatars/', max_length=255, null=True, blank=True)
+    avatar = models.ImageField(upload_to='avatars/', max_length=255, default='avatars/preset.jpg', null=True, blank=True)
 
 
 class Stocks(models.Model):

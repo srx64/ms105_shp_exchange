@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from main.models import Stocks, Order, Portfolio, User, UserSettings, Quotes
+from main.models import Stocks, Order, Portfolio, User, Quotes
 
 class RegistrationSerializer(serializers.ModelSerializer):
 
@@ -21,6 +21,7 @@ class RegistrationSerializer(serializers.ModelSerializer):
         account.set_password(password)
         account.save()
         return account
+
 
 class StocksSerializer(serializers.ModelSerializer):
     """ Список всех акций"""
@@ -58,15 +59,6 @@ class PortfolioUserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Portfolio
-        fields = '__all__'
-
-
-class ProfileUserAvatarSerializer(serializers.ModelSerializer):
-    """Аватарка"""
-    field = serializers.SlugRelatedField(slug_field="avatar", read_only=True)
-
-    class Meta:
-        model = UserSettings
         fields = '__all__'
 
 

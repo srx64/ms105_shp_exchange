@@ -8,7 +8,7 @@ from main.forms import AddOrderForm, LeverageTradingForm, UserBalance
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from main.models import Stocks, Order, Portfolio, User, UserSettings, Quotes, LeverageData
+from main.models import Stocks, Order, Portfolio, User, Quotes, LeverageData
 from main import serializers
 
 from rest_framework.permissions import IsAuthenticated
@@ -25,8 +25,6 @@ def registration_view(request):
             data['response'] = "succefully"
             data['email'] = account.email
             data['username'] = account.username
-            us_settings = UserSettings(user_id=account)
-            us_settings.save()
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         return Response(data)
@@ -107,12 +105,12 @@ class AddOrderView(APIView):
                     portfolio_op.is_debt = True
 
                 if portfolio.count == 0 and portfolio.is_debt:
-                    user.balance += 100000+user.short_balance
+                    user.balance += 100000+portfolio.short_balance
                     portfolio.short_balance = -100000
                     portfolio.is_debt = False
 
                 if portfolio_op.count == 0 and portfolio_op.is_debt:
-                    user.balance += 100000+user.short_balance
+                    user.balance += 100000+portfolio.short_balance
                     portfolio_op.short_balance = -100000
                     portfolio_op.is_debt = False
 
@@ -171,13 +169,7 @@ class ProfileDetailView(APIView):
 
     def get(self, request):
         user = request.user
-        user_avatar = UserSettings.objects.get(user_id=user.id)
-        return Response(
-            {
-                'profile': serializers.ProfileDetailSerializer(user).data,
-                'avatar': serializers.ProfileUserAvatarSerializer(user_avatar).data,
-            }
-        )
+        return Response(serializers.ProfileDetailSerializer(user).data)
 
     def patch(self, request):
         user = request.user
@@ -190,13 +182,11 @@ class ProfileDetailView(APIView):
         if password2:
             if user.check_password(data.get("password", user.password)):
                 user.set_password(password2)
-            else:
-                return Response({"detail": "password must match"}, status=status.HTTP_400_BAD_REQUEST)
+            # else:
+            #     return Response({"detail": "password must match"}, status=status.HTTP_400_BAD_REQUEST)
 
         if request.FILES:
-            user_settings = UserSettings.objects.get(user_id=user)
-            user_settings.avatar = request.FILES['file']
-            user_settings.save()
+            user.avatar = request.FILES['file']
 
         user.save()
         serializer = serializers.ProfileDetailSerializer(user)

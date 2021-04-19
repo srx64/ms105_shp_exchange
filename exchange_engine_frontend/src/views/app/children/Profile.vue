@@ -76,15 +76,13 @@ export default {
           })
           .then(response => {
             this.$store.state.APIData = response.data
-            let profile = response.data.profile
+            let profile = response.data
             this.username = profile.username
             this.email = profile.email
             this.first_name = profile.first_name
             this.last_name = profile.last_name
             this.balance = profile.balance
-            if (response.data.avatar.avatar){
-              this.url = 'http://127.0.0.1:8000' + response.data.avatar.avatar
-            }
+            this.url = 'http://127.0.0.1:8000' + profile.avatar
           })
           .catch(err => {
             console.log(err)
@@ -123,8 +121,7 @@ export default {
         document.getElementById("fileUpload").click()
       },
       onFile(event){
-        let ev = event.target.files[0]
-        this.selectedFile = ev
+        this.selectedFile = event.target.files[0]
         this.url = URL.createObjectURL(this.selectedFile);
         const fd = new FormData();
         fd.append('file', this.selectedFile, this.selectedFile.name)

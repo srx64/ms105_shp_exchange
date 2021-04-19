@@ -104,13 +104,11 @@
           })
           .then(response => {
             this.$store.state.APIData = response.data
-            let profile = response.data.profile
+            let profile = response.data
             this.surname = profile.first_name
             this.name = profile.last_name
             this.balance = profile.balance
-            if (response.data.avatar.avatar){
-              this.avatar = 'http://127.0.0.1:8000' + response.data.avatar.avatar
-            }
+            this.avatar = 'http://127.0.0.1:8000' +profile.avatar
           })
           .catch(err => {
             console.log(err)

@@ -71,7 +71,7 @@ export default new Vuex.Store({
     },
     userReg (context, usercredentials) {
       return new Promise((resolve, reject) => {
-        getAPI.get('api/v1/register/', {
+        getAPI.post('api/v1/register/', {
           email: usercredentials.email,
           username: usercredentials.username,
           password: usercredentials.password,

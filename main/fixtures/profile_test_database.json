@@ -1,83 +1,271 @@
 [
 {
-    "model": "sessions.session",
-    "pk": "d8e8qjswn8qhfwo69457dhws9uvjimhp",
+    "model": "token_blacklist.outstandingtoken",
+    "pk": 1,
     "fields": {
-        "session_data": ".eJxVjDEOwjAMRe-SGUVxqjopIztniBzbIQXUSk07Ie4OlTrA-t97_2USbWtNW9MljWLOJpjT75aJHzrtQO403WbL87QuY7a7Yg_a7HUWfV4O9--gUqvfGlACRhyo4OA0aAYRJCTnEXLowEPIkbV4AOaOIzJJ6TBSzwrkevP-AOVcOCw:1lXCnw:umM3Flwomf9ubdQHxsiM7kRfgj_A1uq-x6cA35wpQ_c",
-        "expire_date": "2021-04-30T00:57:52.575Z"
+        "user": 1,
+        "jti": "8da62fd8c4b0488bbbef53e0c8e572bb",
+        "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTYxOTE5NjIzOCwianRpIjoiOGRhNjJmZDhjNGIwNDg4YmJiZWY1M2UwYzhlNTcyYmIiLCJ1c2VyX2lkIjoxfQ.AKcFkqkjoq5VYIPgWeZAWJNKKSanw7hWk5U5L5yBsjE",
+        "created_at": "2021-04-22T16:43:58.505Z",
+        "expires_at": "2021-04-23T16:43:58Z"
+    }
+},
+{
+    "model": "token_blacklist.outstandingtoken",
+    "pk": 2,
+    "fields": {
+        "user": 1,
+        "jti": "e9a6eabe2f86456b8b25ae6155b96719",
+        "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTYxOTIwNTkwMSwianRpIjoiZTlhNmVhYmUyZjg2NDU2YjhiMjVhZTYxNTViOTY3MTkiLCJ1c2VyX2lkIjoxfQ.Fc-gWhrBRP091kSWdexVTv5c86mMcw-Uar9kY8fvFkc",
+        "created_at": "2021-04-22T19:25:01.855Z",
+        "expires_at": "2021-04-23T19:25:01Z"
+    }
+},
+{
+    "model": "token_blacklist.outstandingtoken",
+    "pk": 3,
+    "fields": {
+        "user": 1,
+        "jti": "fdbcef584ab84c04a2787fe09225f083",
+        "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTYxOTIwNjA4NywianRpIjoiZmRiY2VmNTg0YWI4NGMwNGEyNzg3ZmUwOTIyNWYwODMiLCJ1c2VyX2lkIjoxfQ.2GUx8dL9oJStFQ9noxwqz4sWuzZr2cKJoGkOsD91jEQ",
+        "created_at": "2021-04-22T19:28:07.459Z",
+        "expires_at": "2021-04-23T19:28:07Z"
+    }
+},
+{
+    "model": "token_blacklist.outstandingtoken",
+    "pk": 4,
+    "fields": {
+        "user": 1,
+        "jti": "c3a837a5419b4ec8a60661c6c7327b08",
+        "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTYxOTIwNjEzNSwianRpIjoiYzNhODM3YTU0MTliNGVjOGE2MDY2MWM2YzczMjdiMDgiLCJ1c2VyX2lkIjoxfQ.SjOhj_AzwR79iVPK20TEJiPcD5gmK5t-nZqD1sD5LTg",
+        "created_at": "2021-04-22T19:28:55.518Z",
+        "expires_at": "2021-04-23T19:28:55Z"
+    }
+},
+{
+    "model": "token_blacklist.outstandingtoken",
+    "pk": 5,
+    "fields": {
+        "user": 3,
+        "jti": "8c4087abcbb84f2d94a8a055d7f28c7a",
+        "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTYxOTIwNjUzNCwianRpIjoiOGM0MDg3YWJjYmI4NGYyZDk0YThhMDU1ZDdmMjhjN2EiLCJ1c2VyX2lkIjozfQ.cUNu-IPULjKdawRCy9OmiRC0CPJKA-pv3OqexsebyRk",
+        "created_at": "2021-04-22T19:35:34.386Z",
+        "expires_at": "2021-04-23T19:35:34Z"
+    }
+},
+{
+    "model": "token_blacklist.outstandingtoken",
+    "pk": 6,
+    "fields": {
+        "user": 3,
+        "jti": "765745062f8f4449be73d9b2ae79795c",
+        "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTYxOTIwNjc4MywianRpIjoiNzY1NzQ1MDYyZjhmNDQ0OWJlNzNkOWIyYWU3OTc5NWMiLCJ1c2VyX2lkIjozfQ.WyrW4Wu53Tbdvp3D892SPg0EJSCr7eq0D079dOyJJ0I",
+        "created_at": "2021-04-22T19:39:43.218Z",
+        "expires_at": "2021-04-23T19:39:43Z"
+    }
+},
+{
+    "model": "token_blacklist.outstandingtoken",
+    "pk": 7,
+    "fields": {
+        "user": 3,
+        "jti": "4ab8058f529948449607399b8f340733",
+        "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTYxOTIwOTAxMCwianRpIjoiNGFiODA1OGY1Mjk5NDg0NDk2MDczOTliOGYzNDA3MzMiLCJ1c2VyX2lkIjozfQ.m-7blmfY3aBr94cULpS4ZnvSl9Qj0Q8-VQ66zWqnwxo",
+        "created_at": "2021-04-22T20:16:50.936Z",
+        "expires_at": "2021-04-23T20:16:50Z"
+    }
+},
+{
+    "model": "token_blacklist.outstandingtoken",
+    "pk": 8,
+    "fields": {
+        "user": 3,
+        "jti": "a19eb6fbb67d4d3697e8308bc2022fa3",
+        "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTYxOTIwOTM1MywianRpIjoiYTE5ZWI2ZmJiNjdkNGQzNjk3ZTgzMDhiYzIwMjJmYTMiLCJ1c2VyX2lkIjozfQ.uLsM_TgjES5bBONdeK5Z7bsGlWBYY6kmDYZAm9Kudlc",
+        "created_at": "2021-04-22T20:22:33.848Z",
+        "expires_at": "2021-04-23T20:22:33Z"
+    }
+},
+{
+    "model": "token_blacklist.outstandingtoken",
+    "pk": 9,
+    "fields": {
+        "user": 3,
+        "jti": "1e6006e82b044d1a8f6808ccaf56cd61",
+        "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTYxOTIxMDAxNCwianRpIjoiMWU2MDA2ZTgyYjA0NGQxYThmNjgwOGNjYWY1NmNkNjEiLCJ1c2VyX2lkIjozfQ.CKgkq5ZqtA0WxWhHzaTkzhCbzsBQkwQ2-IetdxrEusE",
+        "created_at": "2021-04-22T20:33:34.727Z",
+        "expires_at": "2021-04-23T20:33:34Z"
+    }
+},
+{
+    "model": "token_blacklist.outstandingtoken",
+    "pk": 10,
+    "fields": {
+        "user": 3,
+        "jti": "e85911d8dcc246e1a89ee2f952f90f9b",
+        "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTYxOTIxMDY0MywianRpIjoiZTg1OTExZDhkY2MyNDZlMWE4OWVlMmY5NTJmOTBmOWIiLCJ1c2VyX2lkIjozfQ._B5kcod5rtzQJr4iGBsLiyLkHwAWkKsoM5djrvFY2oE",
+        "created_at": "2021-04-22T20:44:03.197Z",
+        "expires_at": "2021-04-23T20:44:03Z"
+    }
+},
+{
+    "model": "token_blacklist.outstandingtoken",
+    "pk": 11,
+    "fields": {
+        "user": 3,
+        "jti": "085ca94df6a44f4fbbb97680791313af",
+        "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTYxOTIxMTY4NiwianRpIjoiMDg1Y2E5NGRmNmE0NGY0ZmJiYjk3NjgwNzkxMzEzYWYiLCJ1c2VyX2lkIjozfQ.nAqSQCUiokyLPFYkvIeDTkuOFdtw0Utdj3IYmujh4UU",
+        "created_at": "2021-04-22T21:01:26.277Z",
+        "expires_at": "2021-04-23T21:01:26Z"
     }
 },
 {
     "model": "token_blacklist.outstandingtoken",
     "pk": 12,
     "fields": {
-        "user": 7,
-        "jti": "2961d0c742bf461684034ceb1630ae4f",
-        "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTYxODYxOTczNCwianRpIjoiMjk2MWQwYzc0MmJmNDYxNjg0MDM0Y2ViMTYzMGFlNGYiLCJ1c2VyX2lkIjo3fQ.uBk_j8H2qfFN6GzfapC6nnFv8bkNschKK0MTdA-qVLE",
-        "created_at": "2021-04-16T00:35:34.025Z",
-        "expires_at": "2021-04-17T00:35:34Z"
+        "user": 3,
+        "jti": "372fad11137c4e0388b175f5bae081c6",
+        "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTYxOTIxMjI3NSwianRpIjoiMzcyZmFkMTExMzdjNGUwMzg4YjE3NWY1YmFlMDgxYzYiLCJ1c2VyX2lkIjozfQ.YLUemIUaLawey8DrQX2zVseH4f_QYuW2_gU-6dKf6Q8",
+        "created_at": "2021-04-22T21:11:15.475Z",
+        "expires_at": "2021-04-23T21:11:15Z"
     }
 },
 {
     "model": "token_blacklist.outstandingtoken",
     "pk": 13,
     "fields": {
-        "user": 9,
-        "jti": "88b2d5f7b5494176955e81a1ae0c517e",
-        "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTYxODYyMDA5NCwianRpIjoiODhiMmQ1ZjdiNTQ5NDE3Njk1NWU4MWExYWUwYzUxN2UiLCJ1c2VyX2lkIjo5fQ.5hXf_cV0uPpu93fv--PCYpk0SiSiSY_ea11bXJiXDLc",
-        "created_at": "2021-04-16T00:41:34.109Z",
-        "expires_at": "2021-04-17T00:41:34Z"
+        "user": 3,
+        "jti": "f6fe6113af684ade9bcc01c07e54e592",
+        "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTYxOTIxMjUwNCwianRpIjoiZjZmZTYxMTNhZjY4NGFkZTliY2MwMWMwN2U1NGU1OTIiLCJ1c2VyX2lkIjozfQ.i-VulkwShMEOtYI9tMB5i405xHm8zCcGngePrgsMC5M",
+        "created_at": "2021-04-22T21:15:04.579Z",
+        "expires_at": "2021-04-23T21:15:04Z"
     }
 },
 {
     "model": "token_blacklist.outstandingtoken",
     "pk": 14,
     "fields": {
-        "user": 9,
-        "jti": "9a3b8bbe30304361958c7db658703117",
-        "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTYxODYyMDE4OCwianRpIjoiOWEzYjhiYmUzMDMwNDM2MTk1OGM3ZGI2NTg3MDMxMTciLCJ1c2VyX2lkIjo5fQ.b2P7gadJXLf1CRAa2NhxALpXDcD0mL0A8IISU11_K4c",
-        "created_at": "2021-04-16T00:43:08.625Z",
-        "expires_at": "2021-04-17T00:43:08Z"
+        "user": 3,
+        "jti": "f6677e495b614f36b0c1a0c587284a3a",
+        "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTYxOTIxMjc0NSwianRpIjoiZjY2NzdlNDk1YjYxNGYzNmIwYzFhMGM1ODcyODRhM2EiLCJ1c2VyX2lkIjozfQ.mQUtXmG6JhYHdwg2iPhwdZ5Izg-oQEbbr8oYqbCrF8c",
+        "created_at": "2021-04-22T21:19:05.087Z",
+        "expires_at": "2021-04-23T21:19:05Z"
     }
 },
 {
     "model": "token_blacklist.outstandingtoken",
     "pk": 15,
     "fields": {
-        "user": 9,
-        "jti": "c15a93de09b74fc3a7b2680d1d17194f",
-        "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTYxODYyMDc3NiwianRpIjoiYzE1YTkzZGUwOWI3NGZjM2E3YjI2ODBkMWQxNzE5NGYiLCJ1c2VyX2lkIjo5fQ.HgW6f-RguzTHBsqAx1dNQ0EjgWICdnL20yHfRI9S_kg",
-        "created_at": "2021-04-16T00:52:56.402Z",
-        "expires_at": "2021-04-17T00:52:56Z"
+        "user": 3,
+        "jti": "1440f67651f946f9aca6766390acd279",
+        "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTYxOTIxMzc1MiwianRpIjoiMTQ0MGY2NzY1MWY5NDZmOWFjYTY3NjYzOTBhY2QyNzkiLCJ1c2VyX2lkIjozfQ.CYoarcBQmGyck2klAiMY7XrqrBYUbCj0E-kw2hQDUK0",
+        "created_at": "2021-04-22T21:35:52.956Z",
+        "expires_at": "2021-04-23T21:35:52Z"
     }
 },
 {
     "model": "token_blacklist.outstandingtoken",
     "pk": 16,
     "fields": {
-        "user": 9,
-        "jti": "feb7552fe4ce4052a0186dc0eeaef25b",
-        "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTYxODYyMTIxNywianRpIjoiZmViNzU1MmZlNGNlNDA1MmEwMTg2ZGMwZWVhZWYyNWIiLCJ1c2VyX2lkIjo5fQ.9X8eXHR7fgKj98TdkySYopx2crCns7ytOAf4Xc-cUM4",
-        "created_at": "2021-04-16T01:00:17.621Z",
-        "expires_at": "2021-04-17T01:00:17Z"
+        "user": 3,
+        "jti": "5925f685369a4ec9859487970e1129b3",
+        "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTYxOTI2MjcyOSwianRpIjoiNTkyNWY2ODUzNjlhNGVjOTg1OTQ4Nzk3MGUxMTI5YjMiLCJ1c2VyX2lkIjozfQ.9lzZw_2jU3G-kvxQwQCEtuOwfTf7v20bNkGz7zoHU-I",
+        "created_at": "2021-04-23T11:12:09.205Z",
+        "expires_at": "2021-04-24T11:12:09Z"
     }
 },
 {
     "model": "token_blacklist.outstandingtoken",
     "pk": 17,
     "fields": {
-        "user": 9,
-        "jti": "fc3475e1d4674ca59ff618eca6556b29",
-        "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTYxODYyMTU2OSwianRpIjoiZmMzNDc1ZTFkNDY3NGNhNTlmZjYxOGVjYTY1NTZiMjkiLCJ1c2VyX2lkIjo5fQ.BNSHQ8AB1lNw-_ps578Utowkbnv5Ryl4qdHcbT8ZZx0",
-        "created_at": "2021-04-16T01:06:09.332Z",
-        "expires_at": "2021-04-17T01:06:09Z"
+        "user": 3,
+        "jti": "ba6735ed1dbf4f31b5c4d7fa7113d3bc",
+        "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTYxOTI2Mjc3MywianRpIjoiYmE2NzM1ZWQxZGJmNGYzMWI1YzRkN2ZhNzExM2QzYmMiLCJ1c2VyX2lkIjozfQ.U5PbJKFNaKrvYBvv7GjTzUXQdI0nYlX4-jMYxZCAhJk",
+        "created_at": "2021-04-23T11:12:53.613Z",
+        "expires_at": "2021-04-24T11:12:53Z"
+    }
+},
+{
+    "model": "token_blacklist.outstandingtoken",
+    "pk": 18,
+    "fields": {
+        "user": 1,
+        "jti": "4f287be90b3d4c6d90792a299202e14a",
+        "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTYxOTI2Mjk4MSwianRpIjoiNGYyODdiZTkwYjNkNGM2ZDkwNzkyYTI5OTIwMmUxNGEiLCJ1c2VyX2lkIjoxfQ.S6yPbllKCh4uy6AbeqmYr_Jr2GFWGdL2xhCxLbwwY_I",
+        "created_at": "2021-04-23T11:16:21.071Z",
+        "expires_at": "2021-04-24T11:16:21Z"
+    }
+},
+{
+    "model": "token_blacklist.outstandingtoken",
+    "pk": 19,
+    "fields": {
+        "user": 3,
+        "jti": "08a4b11d100a4eec852d05b77ba0463d",
+        "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTYxOTI2MzEyMCwianRpIjoiMDhhNGIxMWQxMDBhNGVlYzg1MmQwNWI3N2JhMDQ2M2QiLCJ1c2VyX2lkIjozfQ._QOXqdMdZONhmjg0cfJ5y5c-KeyIERjhGT1FbRFjUOU",
+        "created_at": "2021-04-23T11:18:40.898Z",
+        "expires_at": "2021-04-24T11:18:40Z"
+    }
+},
+{
+    "model": "token_blacklist.outstandingtoken",
+    "pk": 20,
+    "fields": {
+        "user": 1,
+        "jti": "e33feb7e866a41aba2de5ab6d91029fd",
+        "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTYxOTI2NTQwNiwianRpIjoiZTMzZmViN2U4NjZhNDFhYmEyZGU1YWI2ZDkxMDI5ZmQiLCJ1c2VyX2lkIjoxfQ.2zdYZKA7PwyP-4MCow8_ggVXk0p7O-BjxRrtviDnMo4",
+        "created_at": "2021-04-23T11:56:46.705Z",
+        "expires_at": "2021-04-24T11:56:46Z"
     }
 },
 {
     "model": "main.user",
-    "pk": 5,
+    "pk": 1,
     "fields": {
-        "password": "pbkdf2_sha256$216000$d9ig7Mbxywdq$7OgLdhbQYlhQ2PniPn9JToJnoaBXOGMwzUpzlPQE36E=",
+        "password": "pbkdf2_sha256$216000$4XCvNMz0Sut4$WbZN7hLWivCdjQSlGFuxM6Gx1VTUYgzvzIZwmC9rLBc=",
+        "last_login": null,
+        "is_superuser": true,
+        "username": "vasya",
+        "first_name": "",
+        "last_name": "",
+        "email": "1@abc.net",
+        "is_staff": true,
+        "is_active": true,
+        "date_joined": "2021-04-22T15:49:15.947Z",
+        "status": "",
+        "balance": 90000.0,
+        "avatar": "avatars/preset.jpg",
+        "groups": [],
+        "user_permissions": []
+    }
+},
+{
+    "model": "main.user",
+    "pk": 3,
+    "fields": {
+        "password": "pbkdf2_sha256$216000$QD7pmsDDeA7q$MSmROHf+QxqSK9XkDOXXwVz4IW8sOMwtRXYWd3SUuPE=",
+        "last_login": null,
+        "is_superuser": true,
+        "username": "petya",
+        "first_name": "",
+        "last_name": "",
+        "email": "1@abc.net",
+        "is_staff": true,
+        "is_active": true,
+        "date_joined": "2021-04-22T16:43:44.296Z",
+        "status": "",
+        "balance": 100000.0,
+        "avatar": "avatars/preset.jpg",
+        "groups": [],
+        "user_permissions": []
+    }
+},
+{
+    "model": "main.user",
+    "pk": 4,
+    "fields": {
+        "password": "pbkdf2_sha256$216000$D6Atbol1J1NV$qW5IE0m3LmFTVrv9TpgJH7JPEG29leP6gQ+Mp50ltvY=",
         "last_login": null,
         "is_superuser": true,
         "username": "admin",
@@ -86,67 +274,12 @@
         "email": "1@abc.net",
         "is_staff": true,
         "is_active": true,
-        "date_joined": "2021-04-03T11:53:11.254Z",
+        "date_joined": "2021-04-22T16:48:39.988Z",
         "status": "",
         "balance": 100000.0,
+        "avatar": "avatars/preset.jpg",
         "groups": [],
         "user_permissions": []
-    }
-},
-{
-    "model": "main.user",
-    "pk": 7,
-    "fields": {
-        "password": "pbkdf2_sha256$216000$xFR1UnlI0Lnq$dHNTRVdX4vbwQJa8MhEhtFA1h9DtM70mv8EwGS51tA8=",
-        "last_login": "2021-04-16T00:57:52.568Z",
-        "is_superuser": true,
-        "username": "vasya",
-        "first_name": "",
-        "last_name": "",
-        "email": "1@abc.net",
-        "is_staff": true,
-        "is_active": true,
-        "date_joined": "2021-04-08T20:39:12.672Z",
-        "status": "",
-        "balance": 95000.0,
-        "groups": [],
-        "user_permissions": []
-    }
-},
-{
-    "model": "main.user",
-    "pk": 9,
-    "fields": {
-        "password": "pbkdf2_sha256$216000$YBIPXtXFNvkj$oXzCK0LRsROVNZqTgDl9aW51t8T+0ajIp2ZtFo9d+O0=",
-        "last_login": "2021-04-16T00:41:09.310Z",
-        "is_superuser": false,
-        "username": "petya",
-        "first_name": "",
-        "last_name": "",
-        "email": "1@abc.net",
-        "is_staff": false,
-        "is_active": true,
-        "date_joined": "2021-04-16T00:41:08.755Z",
-        "status": "",
-        "balance": 95000.0,
-        "groups": [],
-        "user_permissions": []
-    }
-},
-{
-    "model": "main.usersettings",
-    "pk": 7,
-    "fields": {
-        "user_id": 7,
-        "avatar": "avatars/preset.jpg"
-    }
-},
-{
-    "model": "main.usersettings",
-    "pk": 8,
-    "fields": {
-        "user_id": 9,
-        "avatar": "avatars/preset.jpg"
     }
 },
 {
@@ -162,15 +295,6 @@
     "model": "main.stocks",
     "pk": 2,
     "fields": {
-        "name": "AAPL",
-        "description": "Apple",
-        "is_active": true
-    }
-},
-{
-    "model": "main.stocks",
-    "pk": 3,
-    "fields": {
         "name": "FB",
         "description": "Facebook",
         "is_active": true
@@ -178,10 +302,19 @@
 },
 {
     "model": "main.stocks",
-    "pk": 4,
+    "pk": 3,
     "fields": {
         "name": "MSFT",
         "description": "Microsoft",
+        "is_active": true
+    }
+},
+{
+    "model": "main.stocks",
+    "pk": 4,
+    "fields": {
+        "name": "AAPL",
+        "description": "Apple",
         "is_active": true
     }
 },
@@ -196,24 +329,24 @@
 },
 {
     "model": "main.portfolio",
-    "pk": 5,
+    "pk": 4,
     "fields": {
-        "user": 7,
+        "user": 3,
         "stock": 1,
-        "count": -5,
-        "percentage": -100.0,
-        "short_balance": -95000.0,
-        "is_debt": true
+        "count": 0,
+        "percentage": 100.0,
+        "short_balance": -100000.0,
+        "is_debt": false
     }
 },
 {
     "model": "main.portfolio",
-    "pk": 6,
+    "pk": 5,
     "fields": {
-        "user": 9,
+        "user": 1,
         "stock": 1,
-        "count": 5,
-        "percentage": 100.0,
+        "count": 0,
+        "percentage": 0.0,
         "short_balance": -100000.0,
         "is_debt": false
     }

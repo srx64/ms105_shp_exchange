@@ -37,6 +37,7 @@ def price_bot():
                 Order.objects.create(user=user, stock=stock, type=False, price=price, amount=AMOUNT, is_closed=True)
                 Quotes.objects.create(stock=stock, price=price)
             time.sleep(30)
+
         while True:
             stocks = Stocks.objects.all()
             for stock in stocks:
@@ -45,14 +46,13 @@ def price_bot():
                 else:
                     last_price = randint(42, 5000)
                 if randint(0, 1) == 0:
-                    cut = randint(-10, -2) * pi / 180
+                    cut = randint(-5, -1) * pi / 180
                 else:
-                    cut = randint(2, 10) * pi / 180
+                    cut = randint(1, 5) * pi / 180
                 price = last_price * (1 + sin(cut))
                 Order.objects.create(user=user, stock=stock, type=True, price=price, amount=AMOUNT, is_closed=True)
                 Order.objects.create(user=user, stock=stock, type=False, price=price, amount=AMOUNT, is_closed=True)
                 Quotes.objects.create(stock=stock, price=price)
-
             time.sleep(30)
 
     except KeyboardInterrupt:

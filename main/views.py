@@ -105,12 +105,12 @@ class AddOrderView(APIView):
                     portfolio_op.is_debt = True
 
                 if portfolio.count == 0 and portfolio.is_debt:
-                    user.balance += 100000+portfolio.short_balance
+                    user.balance += 100000 + portfolio.short_balance
                     portfolio.short_balance = -100000
                     portfolio.is_debt = False
 
                 if portfolio_op.count == 0 and portfolio_op.is_debt:
-                    user.balance += 100000+portfolio.short_balance
+                    user.balance += 100000 + portfolio.short_balance
                     portfolio_op.short_balance = -100000
                     portfolio_op.is_debt = False
 

@@ -158,9 +158,6 @@ class OrderTest(APITestCase):
         resp = self.client.post(verification_url, {'username': 'Flopper', 'password': 'promprog'}, format='json')
         self.token = resp.data['access']
 
-    def test_error(self) -> None:
-        self.assertEqual(self.response.status_code, 200)
-
     def test_add_order(self) -> None:
         url = reverse('add_order')
         self.client.credentials(HTTP_AUTHORIZATION='Bearer ' + self.token)
@@ -180,6 +177,7 @@ class OrderTest(APITestCase):
             'stock': 'TWTR',
             'price': 2,
             'amount': 4,
+            'type': True,
         })
         self.assertEqual(len(Portfolio.objects.all()), 1)
 
@@ -191,6 +189,7 @@ class OrderTest(APITestCase):
             'stock': 'TWTR',
             'price': 2,
             'amount': 4,
+            'type': True,
         })
         self.assertEqual(Portfolio.objects.get(pk=1).percentage, 100)
 
@@ -202,6 +201,7 @@ class OrderTest(APITestCase):
             'stock': 'OZON',
             'price': 2,
             'amount': 4,
+            'type': True,
         })
         self.assertEqual(Portfolio.objects.get(pk=1).count, 4)
 
@@ -213,6 +213,7 @@ class OrderTest(APITestCase):
             'stock': 'OZON',
             'price': 2,
             'amount': 4,
+            'type': False,
         })
 
         self.client = APIClient()
@@ -248,6 +249,7 @@ class OrderTest(APITestCase):
             'stock': 'OZON',
             'price': 2,
             'amount': 4,
+            'type': True,
         })
 
         self.client = APIClient()
@@ -283,6 +285,7 @@ class OrderTest(APITestCase):
             'stock': 'OZON',
             'price': 2,
             'amount': 4,
+            'type': True,
         })
 
         self.client = APIClient()
@@ -316,9 +319,6 @@ class LeverageTradingTest(APITestCase):
         resp = self.client.post(verification_url, {'username': 'Flopper', 'password': 'promprog'}, format='json')
         self.token = resp.data['access']
         self.quote = Quotes.objects.create(price=25, stock_id=1)
-
-    def test_error(self) -> None:
-        self.assertEqual(self.response.status_code, 200)
 
     def test_leverage_data_add(self) -> None:
         url = reverse('leverage_trading')
@@ -393,20 +393,3 @@ class LeverageTradingTest(APITestCase):
             'ratio': 42,
         })
         self.assertEqual(len(LeverageData.objects.all()), 2)
-
-
-class MarginCallTest(APITestCase):
-    fixtures = ['order_test_database.json']
-
-    def setUp(self) -> None:
-        self.client = APIClient()
-        self.response = self.client.get(reverse('add_order'))
-        self.user = User.objects.get(username='Floppy')
-        self.client.force_login(user=self.user)
-        verification_url = reverse('api_token')
-        resp = self.client.post(verification_url, {'username': 'Floppy', 'password': 'promprog'}, format='json')
-        self.token = resp.data['access']
-
-    def test_error(self) -> None:
-        self.assertEqual(self.response.status_code, 200)
-

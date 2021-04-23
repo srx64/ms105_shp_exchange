@@ -166,6 +166,7 @@ class OrderTest(APITestCase):
             'stock': 'OZON',
             'price': 2,
             'amount': 4,
+            'type': True,
         })
         self.assertEqual(len(Order.objects.all()), 1)
 
@@ -201,6 +202,13 @@ class OrderTest(APITestCase):
             'stock': 'OZON',
             'price': 2,
             'amount': 4,
+            'type': True,
+        })
+        resp = self.client.post(url, data={
+            'format': 'json',
+            'stock': 'AAPL',
+            'price': 2,
+            'amount': 6,
             'type': True,
         })
         self.assertEqual(Portfolio.objects.get(pk=1).count, 4)
@@ -386,7 +394,7 @@ class LeverageTradingTest(APITestCase):
             'stock': 'OZON',
             'ratio': 42,
         })
-        self.quote_two = Quotes.objects.create(price=25, stock_id=Stocks.objects.get(pk=2).pk)
+        self.quote_two = Quotes.objects.create(price=25, stock_id=4)
         resp = self.client.post(url, data={
             'format': 'json',
             'stock': 'AAPL',

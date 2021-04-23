@@ -276,7 +276,7 @@
         "is_active": true,
         "date_joined": "2021-04-22T16:48:39.988Z",
         "status": "",
-        "balance": 100000.0,
+        "balance": -100000.0,
         "avatar": "avatars/preset.jpg",
         "groups": [],
         "user_permissions": []
@@ -370,27 +370,21 @@
     }
 },
 {
-    "model": "main.portfolio",
-    "pk": 4,
+    "model": "main.quotes",
+    "pk": 1,
     "fields": {
-        "user": 3,
-        "stock": 1,
-        "count": 0,
-        "percentage": 100.0,
-        "short_balance": -100000.0,
-        "is_debt": false
+        "price": 42,
+        "date": "2021-04-23T18:16:31.878Z",
+        "stock_id": 1
     }
 },
 {
-    "model": "main.portfolio",
-    "pk": 5,
+    "model": "main.quotes",
+    "pk": 2,
     "fields": {
-        "user": 1,
-        "stock": 1,
-        "count": 0,
-        "percentage": 0.0,
-        "short_balance": -100000.0,
-        "is_debt": false
+        "price": 666,
+        "date": "2021-04-23T18:16:31.878Z",
+        "stock_id": 4
     }
 }
 ]

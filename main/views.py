@@ -75,6 +75,7 @@ class AddOrderView(APIView):
             return Response({"detail": "uncorrect data"}, status=status.HTTP_400_BAD_REQUEST)
         self.margin_call(user)
         portfolio, created = Portfolio.objects.get_or_create(user=user, stock=stock)
+        portfolio.count += amount
         self.set_percentage(portfolio)
         order = Order(user=user, stock=stock, type=type, price=price, is_closed=False, amount=amount)
         order_ops = Order.objects.filter(stock=stock, type=not type, price=price, is_closed=False)

@@ -51,7 +51,7 @@
     name: 'Home',
 
     components: {
-      About: () => import('@/components/home/footer/About.vue')
+      About: () => import('@/components/home/footer/Rules.vue')
     }, 
 
     data: () => ({

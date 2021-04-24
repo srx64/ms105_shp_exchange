@@ -48,12 +48,17 @@ class LoginTest(TestCase):
 
 
 class OrdersListTest(APITestCase):
+    fixtures = ['orders_list_test_database.json']
+
     def setUp(self) -> None:
         self.client = Client()
         self.response = self.client.get(reverse('orders'))
 
     def test_error(self) -> None:
         self.assertEqual(self.response.status_code, 200)
+
+    def test_empty_data(self):
+        self.assertEqual(len(Order.objects.all()), 0)
 
 
 class PricesListTest(APITestCase):
@@ -353,6 +358,22 @@ class LeverageTradingTest(APITestCase):
             'ratio': 13,
         })
         self.assertEqual(LeverageData.objects.get(pk=1).ratio, 13)
+
+    def test_big_leverage_data_ratio(self) -> None:
+        url = reverse('leverage_trading')
+        self.client.credentials(HTTP_AUTHORIZATION='Bearer ' + self.token)
+        resp = self.client.post(url, data={
+            'format': 'json',
+            'stock': 'OZON',
+            'ratio': 10000000000,
+        })
+        resp = self.client.get(url)
+        resp = self.client.post(url, data={
+            'format': 'json',
+            'stock': 'OZON',
+            'ratio': 666,
+        })
+        self.assertEqual(LeverageData.objects.get(pk=1).ratio, 666)
 
     def test_negative_balance(self) -> None:
         self.client = APIClient()

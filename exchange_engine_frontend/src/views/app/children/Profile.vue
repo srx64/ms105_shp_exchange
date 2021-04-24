@@ -30,8 +30,8 @@
       <v-card class="pa-6">
         <v-card-title> Изменить пароль </v-card-title>
         <v-form>
-          <v-text-field v-model="password" hint="" label="Старый пароль"></v-text-field>
-          <v-text-field v-model="password2" hint="" label="Новый пароль"></v-text-field>
+          <v-text-field v-model="password" hint="" type="password" label="Старый пароль"></v-text-field>
+          <v-text-field v-model="password2" hint="" type="password" label="Новый пароль"></v-text-field>
           <v-btn color="" @click="saveData"> Изменить </v-btn>
         </v-form>
       </v-card>

@@ -155,7 +155,7 @@ class StockDetailView(APIView):
 
     def get(self, request, pk):
         stock = Stocks.objects.get(id=pk)
-        serializer = serializers.StockDetailSerializer(stock)
+        serializer = serializers.StocksSerializer(stock)
         return Response(serializer.data)
 
 

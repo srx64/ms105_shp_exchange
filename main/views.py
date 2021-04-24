@@ -4,7 +4,7 @@ from django.utils import timezone
 from rest_framework.generics import ListAPIView
 from rest_framework.decorators import api_view
 from rest_framework import filters, status
-from main.forms import AddOrderForm, LeverageTradingForm, UserBalance
+from main.forms import LeverageTradingForm, UserBalance
 from rest_framework.response import Response
 from rest_framework.views import APIView
 

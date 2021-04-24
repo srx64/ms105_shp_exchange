@@ -1,6 +1,7 @@
 <template>
   <v-card
-    class="mx-auto"
+    class="mx-auto my-12"
+    max-width="500"
   >
     <v-toolbar
       flat
@@ -12,135 +13,183 @@
       </v-toolbar-title>
     </v-toolbar>
 
-    <v-card-text>
-      <v-form
-        ref="form"
-        v-model="valid"
-        lazy-validation
-      >
-        <v-text-field
-          v-model="name"
-          :rules="nameRules"
-          label="Имя"
-          required
-          placeholder="Введите имя"
-          outlined
-          dense
-        />
+    <v-card-text
+      class="pb-0"
+    >
 
-        <v-text-field
-          v-model="surname"
-          :rules="nameRules"
-          label="Фамилия"
-          required
-          placeholder="Введите фамилию"
-          outlined
-          dense
-        />
-      
-        <v-text-field
-          v-model="email"
-          :rules="emailRules"
-          label="E-mail"
-          required
-          placeholder="Введите E-mail"
-          outlined
-          dense
-        />
+    <validation-observer
+    ref="observer"
+    v-slot="{ invalid }">
 
-        <v-text-field
-          v-model="password"
-          label="Пароль"
-          :append-icon="show ? 'mdi-eye' : 'mdi-eye-off'"
-          :rules="PasswordRules"
-          :type="show ? 'text' : 'password'"
-          name="input-10-1"
-          hint="Минимум 8 символов"
-          counter
-          required
-          @click:append="show = !show"
-          placeholder="Введите пароль"
-          outlined
-          dense
-        />
+      <v-form>
+        <validation-provider
+          v-slot="{ errors }"
+          name="Никнейм"
+          rules="required|max:15|min:3"
+        >
+          <v-text-field
+            v-model="username"
+            :counter="15"
+            :error-messages="errors"
+            label="Никнейм"
+            placeholder="Введите никнейм"
+            required
+            outlined
+            dense
 
-        <v-text-field
-          label="Подтвердите пароль"
-          :rules="[v => !!v || 'Подтвердите пароль']"
-          :type="'password'"
-          name="input-10-1"
-          counter
-          required
-          placeholder="Подтвердите пароль"
-          outlined
-          dense
-        />
+          ></v-text-field>
+        </validation-provider>
+        <validation-provider
+          v-slot="{ errors }"
+          name="E-mail"
+          rules="required|email"
+        >
+          <v-text-field
+            v-model="email"
+            :error-messages="errors"
+            label="E-mail"
+            placeholder="Введите E-mail"
+            required
+            outlined
+            dense
 
-        <v-row>
-          <v-col
-            cols="12"
-            md="6"
-          >
-            <v-btn
-              :disabled="!valid"
-              color="success"
-              to="/app"
-              @click="validate"
-            >
-              Зарегистрироваться
-            </v-btn>
-          </v-col>
-          <v-col
-            cols="12"
-            md="6"
-          >
-            <v-btn
+          ></v-text-field>
+        </validation-provider>
+
+        <validation-provider
+          v-slot="{ errors }"
+          name="password"
+          rules="required|password:@confirm"
+        >
+          <v-text-field
+            v-model="password"
+            :error-messages="errors"
+            label="Пароль"
+            placeholder="Введите пароль"
+            :type="show ? 'text' : 'password'"
+            :append-icon="show ? 'mdi-eye' : 'mdi-eye-off'"
+            @click:append="show = !show"
+            required
+            outlined
+            dense
+
+          ></v-text-field>
+        </validation-provider>
+
+        <validation-provider
+          v-slot="{ errors }"
+          name="confirm"
+          rules="required"
+        >
+          <v-text-field
+            v-model="password2"
+            :type="false ? 'text' : 'password'"
+            :error-messages="errors"
+            label="Подтверждение"
+            name="Подтверждение"
+            placeholder="Подтвердите пароль"
+            required
+            outlined
+            dense
+          ></v-text-field>
+        </validation-provider>
+        
+        <v-divider class="mx-4"></v-divider>
+
+      <v-container 
+        class="d-flex flex-wrap justify-space-between pa-0">
+
+        <v-btn
+              @click="register"
               color="primary"
-              outlined
+              class="mx-auto my-3"
+              :disabled="invalid"
+            >
+              Создать аккаунт
+            </v-btn>
+
+            <v-btn
               to="/auth/login"
+              color="primary"
+              class="mx-auto my-3"
+              outlined
             >
               Войти
             </v-btn>
-          </v-col>
-        </v-row>
-      </v-form>
+        </v-container>
+    </v-form>
+  </validation-observer>
+
     </v-card-text>
   </v-card>
 </template>
 
 <script>
+import { required, email, max, min } from 'vee-validate/dist/rules'
+import { extend, ValidationObserver, ValidationProvider, setInteractionMode } from 'vee-validate'
+
+setInteractionMode('eager')
+
+  extend('required', {
+    ...required,
+    message: 'Это поле не может быть пустым',
+  })
+
+  extend('max', {
+    ...max,
+    message: 'Поле "{_field_}" не может быть больше {length} символов',
+  })
+
+  extend('min', {
+    ...min,
+    message: 'Поле "{_field_}" не может быть меньше {length} символов',
+  })
+
+  extend('email', {
+    ...email,
+    message: 'Введите корректный E-mail',
+  })
+
+  extend('password', {
+  params: ['target'],
+  validate(value, { target }) {
+    return value === target;
+  },
+  message: 'Пароли не совпадают'
+});
+
   export default {
     name: 'RegForm',
+    props: [
+      'onReg',
+    ],
+
+    components: {
+      ValidationProvider,
+      ValidationObserver,
+    },
 
     data() {
       return {
-        valid: true,
-        name: '',
-        surname: '',
-        show: false,
-        PasswordRules: [
-          v => !!v || 'Введите пароль',
-          v => (v && v.length >= 8) || 'Минимум 8 символов',
-        ],
-        nameRules: [
-          v => !!v || 'Введите имя',
-          v => (v && v.length <= 15) || 'Максимум 15 символов',
-        ],
+        username: '',
         email: '',
-        emailRules: [
-          v => !!v || 'Введите E-mail',
-          v => /.+@.+\..+/.test(v) || 'Введите правильный E-mail',
-        ],
+        password: '',
+        password2: '',
+        show: false,
       }
     },
-
     methods: {
-      validate () {
-        this.$refs.form.validate()
-      },
-      reset () {
-        this.$refs.form.reset()
-      },
-    },
+      // submit () {
+      //   this.$refs.observer.validate()
+      // },
+      register() { 
+        this.onReg({
+          email: this.email,
+          username: this.username,
+          password: this.password,
+          password2: this.password2,
+        })
+      }
+    }
   }
 </script>

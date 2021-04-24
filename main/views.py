@@ -2,15 +2,32 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.utils import timezone
 from rest_framework.generics import ListAPIView
-from rest_framework import filters
-from main.forms import ProfileEditingForm, PasswordEditingForm, AddOrderForm, LeverageTradingForm, UserBalance
+from rest_framework.decorators import api_view
+from rest_framework import filters, status
+from main.forms import LeverageTradingForm, UserBalance
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from main.models import Stocks, Order, Portfolio, User, UserSettings, Quotes, LeverageData
+from main.models import Stocks, Order, Portfolio, User, Quotes, LeverageData
 from main import serializers
 
 from rest_framework.permissions import IsAuthenticated
+from django.db.models import Q
+
+
+@api_view(['POST',])
+def registration_view(request):
+    if request.method == 'POST':
+        serializer = serializers.RegistrationSerializer(data=request.data)
+        data = {}
+        if serializer.is_valid():
+            account = serializer.save()
+            data['response'] = "succefully"
+            data['email'] = account.email
+            data['username'] = account.username
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response(data)
 
 
 class AddOrderView(APIView):
@@ -22,29 +39,16 @@ class AddOrderView(APIView):
     :param type: Тип ордера
     :param amount: Количество ордеров
     """
-
-    def get(self, request):
-        form = AddOrderForm(initial={
-            'price': 0,
-            'stock': '',
-            'type': 0,
-            'amount': 0,
-        })
-        context = {
-            'form': form,
-        }
-        return render(request, 'orders/add_order.html', context)
+    permission_classes = (IsAuthenticated,)
 
     @staticmethod
     def margin_call(user):
-        try:
+        if LeverageData.objects.filter(user=user):
             user_data = LeverageData.objects.get(user=user)
             if user.balance <= 0:
                 for object in Order.objects.filter(user=user, stock=user_data.stock):
                     object.is_closed = True
                     object.save()
-        except:
-            pass
 
     @staticmethod
     def set_percentage(user_portfolio):
@@ -60,14 +64,18 @@ class AddOrderView(APIView):
         user_portfolio.save()
 
     def post(self, request):
+        data = request.data
         user = request.user
-        name = request.POST.get('stock')
+        name = data['stock']
         stock = Stocks.objects.get(name=name)
-        type = True if request.POST.get('type') else False
-        price = float(request.POST.get('price'))
-        amount = int(request.POST.get('amount'))
+        type = data['type']
+        price = float(data['price'])
+        amount = int(data['amount'])
+        if price <= 0 or amount <= 0:
+            return Response({"detail": "uncorrect data"}, status=status.HTTP_400_BAD_REQUEST)
         self.margin_call(user)
         portfolio, created = Portfolio.objects.get_or_create(user=user, stock=stock)
+        portfolio.count += amount
         self.set_percentage(portfolio)
         order = Order(user=user, stock=stock, type=type, price=price, is_closed=False, amount=amount)
         order_ops = Order.objects.filter(stock=stock, type=not type, price=price, is_closed=False)
@@ -81,23 +89,31 @@ class AddOrderView(APIView):
                 order.amount -= abs(min_count)
                 order_op.amount -= abs(min_count)
 
-                if portfolio.count > 0:
-                    user_op.balance += min_count * price
-                    user.balance -= min_count * price
-
                 portfolio.count += min_count
                 portfolio_op.count -= min_count
 
+                user_op.balance += min_count * price
+                user.balance -= min_count * price
+
                 if portfolio.count < 0:
-                    user.short_balance -= portfolio.count * price
-                    user.balance += (min_count + portfolio.count) * price
-                    user.is_debt = True
+                    portfolio.short_balance -= min_count * price
+                    user.balance += min_count * price
+                    portfolio.is_debt = True
 
-                if portfolio.count >= 0 and user.is_debt:
+                if portfolio_op.count < 0:
+                    portfolio_op.short_balance += min_count * price
+                    user_op.balance -= min_count * price
+                    portfolio_op.is_debt = True
 
-                    user.balance += 100000+user.short_balance
-                    user.short_balance = -100000
-                    user.is_debt = False
+                if portfolio.count == 0 and portfolio.is_debt:
+                    user.balance += 100000 + portfolio.short_balance
+                    portfolio.short_balance = -100000
+                    portfolio.is_debt = False
+
+                if portfolio_op.count == 0 and portfolio_op.is_debt:
+                    user.balance += 100000 + portfolio.short_balance
+                    portfolio_op.short_balance = -100000
+                    portfolio_op.is_debt = False
 
                 if order_op.amount == 0:
                     order_op.is_closed = True
@@ -119,7 +135,7 @@ class AddOrderView(APIView):
         user.save()
         portfolio.save()
         order.save()
-        return HttpResponseRedirect("/api/v1/orders/")
+        return Response("/api/v1/orders/")
 
 
 class StocksListView(ListAPIView):
@@ -139,7 +155,7 @@ class StockDetailView(APIView):
 
     def get(self, request, pk):
         stock = Stocks.objects.get(id=pk)
-        serializer = serializers.StockDetailSerializer(stock)
+        serializer = serializers.StocksSerializer(stock)
         return Response(serializer.data)
 
 
@@ -154,13 +170,29 @@ class ProfileDetailView(APIView):
 
     def get(self, request):
         user = request.user
-        user_avatar = UserSettings.objects.get(user_id=user.id)
-        return Response(
-            {
-                'profile': serializers.ProfileDetailSerializer(user).data,
-                'avatar': serializers.ProfileUserAvatarSerializer(user_avatar).data,
-            }
-        )
+        return Response(serializers.ProfileDetailSerializer(user).data)
+
+    def patch(self, request):
+        user = request.user
+        data = request.data
+
+        user.email = data.get("email", user.email)
+        user.first_name = data.get("first_name", user.first_name)
+        user.last_name = data.get("last_name", user.last_name)
+        password2 = data.get("password2", user.password)
+        if password2:
+            if user.check_password(data.get("password", user.password)):
+                user.set_password(password2)
+            # else:
+            #     return Response({"detail": "password must match"}, status=status.HTTP_400_BAD_REQUEST)
+
+        if request.FILES:
+            user.avatar = request.FILES['file']
+
+        user.save()
+        serializer = serializers.ProfileDetailSerializer(user)
+
+        return Response(serializer.data)
 
 
 class OrdersView(APIView):
@@ -180,97 +212,16 @@ class PortfolioUserView(APIView):
     """
 
     def get(self, request):
-        portfolio = Portfolio.objects.filter(user_id=request.user.id)
+        portfolio = Portfolio.objects.filter(~Q(count=0), user_id=request.user.id,)
         serializer = serializers.PortfolioUserSerializer(portfolio, many=True)
         return Response(serializer.data)
 
 
-class ProfileEditingView(APIView):
-    """
-        Профиль пользователя
-
-        :param username: Никнейм пользователя
-        :param first.name: Имя пользователя
-        :param last.name: Фамилия пользователя
-        :param user.email: Почта пользователя
-        :param user_avatar: Аватарка пользователя
-    """
-
-    def get(self, request):
-        user = User.objects.get(id=request.user.pk)
-        user_avatar = UserSettings.objects.get(user_id=user.id).avatar
-        form = ProfileEditingForm(
-            initial={
-                'username': user.username,
-                'first_name': user.first_name,
-                'last_name': user.last_name,
-                'email': user.email,
-                'avatar': user_avatar,
-            }
-        )
-        context = {
-            'form': form,
-        }
-        return render(request, 'profile/profile_editing.html', context)
-
-    def post(self, request):
-        form = ProfileEditingForm(request.POST, request.FILES)
-        if form.is_valid():
-            user = User.objects.get(id=request.user.pk)
-            user.username = form.data['username']
-            user.first_name = form.data['first_name']
-            user.last_name = form.data['last_name']
-            user.email = form.data['email']
-            user.save()
-            if request.FILES:
-                user_avatar = UserSettings.objects.get(user_id=user.id)
-                user_avatar.avatar = request.FILES['avatar']
-                user_avatar.save()
-            return HttpResponseRedirect("/api/v1/profile/")
-        else:
-            return HttpResponseRedirect("/profile/editing/")
-
-
-class PasswordEditingView(APIView):
-    """
-    Страница восстановления пароля
-    """
-
-    def get(self, request):
-        form = PasswordEditingForm()
-        context = {
-            'form': form,
-        }
-        return render(request, 'profile/password_editing.html', context)
-
-    def post(self, request):
-        form = PasswordEditingForm(request.POST)
-        if form.is_valid():
-            context = {
-                'form': form,
-                'is_old_password_wrong': True,
-                'is_new_password_wrong': True,
-                'is_repeat_password_wrong': True,
-            }
-            user = User.objects.get(id=request.user.pk)
-            password = form.data['old_password']
-            if user.check_password(password):
-                new_password = form.data['new_password']
-                repeat_new_password = form.data['repeat_new_password']
-                context['is_old_password_wrong'] = False
-                if new_password == repeat_new_password:
-                    context['is_repeat_password_wrong'] = False
-                    if len(new_password) > 7 and len(repeat_new_password) > 7:
-                        context['is_new_password_wrong'] = False
-                        user.set_password(new_password)
-                        user.save()
-                        return HttpResponseRedirect("api/v1/profile/")
-            return render(request, 'profile/password_editing.', context)
-        else:
-            return HttpResponseRedirect("profile/editing/change_password/")
-
-
 class LeverageTradingView(APIView):
+    """
+    Торговля с плечом
+    """
+
     def get(self, request):
         form = LeverageTradingForm(initial={
             'type': 0,
@@ -317,6 +268,10 @@ class LeverageTradingView(APIView):
 
 
 class ProfileBalanceAdd(APIView):
+    """
+    Пополнение баланса пользователя
+    """
+
     def get(self, request):
         context = {}
         form = UserBalance()
@@ -329,14 +284,19 @@ class ProfileBalanceAdd(APIView):
         if form.is_valid():
             context = {'form': form}
             money = request.POST['money']
-            if money.replace(',', '.', 1).replace('.', '', 1).isdigit() and float(money.replace(',', '.', 1)) > 0:
+            try:
                 user.balance = float(money.replace(',', '.', 1)) + float(user.balance)
                 user.save()
                 return render(request, 'profile/balance_add_successfully.html', context)
+            except ValueError:
+                return render(request, 'profile/balance_add_failed.html')
         return render(request, 'profile/balance_add_failed.html')
 
 
 class PricesView(APIView):
+    """
+    Страница с текущими и предыдущими котировками акций
+    """
     def get(self, request):
         prices = Quotes.objects.all()
         serializer = serializers.PriceSerializer(prices, many=True)

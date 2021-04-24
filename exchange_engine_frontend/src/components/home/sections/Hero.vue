@@ -6,7 +6,7 @@
       class="white--text"
       gradient="to bottom, rgba(11, 28, 61, .9), rgba(0,0,0,.4)"
     >  
-      <v-container class="fill-height px-4 py-12">
+      <v-container class="fill-height px-6 py-12">
         <v-responsive
           class="d-flex align-center mx-auto"
           height="100%"
@@ -26,30 +26,19 @@
             ДОБРО ПОЖАЛОВАТЬ НА БИРЖУ EXCHANGE ENGINE
           </BaseHeading>
 
-          <p
-            class="grey--text mb-6"
-          >
+          <BaseBody>
             Lorem ipsum dolor sit amet consectetur adipisicing elit. Repudiandae nobis neque aspernatur in quas iure id aliquid, esse debitis, quibusdam mollitia! Quia ea expedita magnam totam, earum omnis et perspiciatis?
-          </p>
+          </BaseBody>
 
           <div
             class="align-center d-flex flex-wrap"
           >
-            <v-tooltip left>
-              <template v-slot:activator="{ on, attrs }">
-                <div
-                  v-bind="attrs"
-                  v-on="on"
-                >
-                  <BaseBtn
-                    x-large
-                  >
-                    Узнайте больше
-                  </BaseBtn>
-                </div>
-              </template>
-              <span>Извините, раздел в разработке</span>
-            </v-tooltip>
+            <BaseBtn
+              href="#features"
+              x-large
+            >
+              Узнайте больше
+            </BaseBtn>
 
             <span class="font-weight-bold ml-6 mr-4 my-4">или</span>
 

@@ -8,7 +8,7 @@
     v-bind="$attrs"
     v-on="$listeners"
   >
-    <slot/>
+    <slot />
   </v-btn>
 </template>
 
@@ -32,7 +32,7 @@
       tile: {
         type: Boolean,
         default: true,
-      }
-    }
+      },
+    },
   }
 </script>

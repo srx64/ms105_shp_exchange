@@ -8,7 +8,8 @@ export default new Vuex.Store({
   state: {
     accessToken: null,
     refreshToken: null,
-    APIData: ''
+    APIData: '',
+    snackbarText: ''
   },
 
   mutations: {
@@ -29,6 +30,12 @@ export default new Vuex.Store({
     destroyToken (state) {
       state.accessToken = null
       state.refreshToken = null
+    },
+    showSnackbar (state, payload) {
+      state.snackbarText = payload.text
+    },
+    changeProfile () {
+      
     }
   },
 
@@ -56,6 +63,23 @@ export default new Vuex.Store({
           .then(response => {
             context.commit('updateStorage', { access: response.data.access, refresh: response.data.refresh }) 
             resolve()
+          })
+          .catch(err => {
+            reject(err)
+          })
+      })
+    },
+    userReg (context, usercredentials) {
+      return new Promise((resolve, reject) => {
+        getAPI.post('api/v1/register/', {
+          email: usercredentials.email,
+          username: usercredentials.username,
+          password: usercredentials.password,
+          password2: usercredentials.password2
+        })
+          .then(response => {
+            console.log(response);
+            resolve(response)
           })
           .catch(err => {
             reject(err)

@@ -1,20 +1,17 @@
 <template>
   <v-app>
 		<v-main
-      class="pa-5"
+      class="pa-10  "
     >
-      <v-row
-        justify="center"
-      >
-        <v-col
-          cols="4"
-        >
-          <v-fade-transition mode="out-in">
-            <router-view/>
-          </v-fade-transition>
-        </v-col>
-      </v-row>
+      <v-fade-transition mode="out-in">
+        <router-view/>
+      </v-fade-transition>
     </v-main>
+
+    <BaseSnackbar
+      align="center"
+      dark
+    />
   </v-app>
 </template>
 
@@ -30,7 +27,7 @@
     },
 
     data: () => ({
-      sections: []
-    })
+      sections: [],
+    }),
   }
 </script>

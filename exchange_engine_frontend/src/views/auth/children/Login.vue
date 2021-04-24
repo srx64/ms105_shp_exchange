@@ -1,5 +1,7 @@
 <template>
-  <LoginForm :onLogin="onLogin" />
+  <div>
+    <LoginForm :onLogin="onLogin"/>
+  </div>
 </template>
 
 <script>
@@ -14,6 +16,7 @@
       name: '',
       show: false,
       email: '',
+      text: 'Ошибка! Неверный логин или пароль!'
     }),
 
     methods: {
@@ -27,7 +30,10 @@
         })
         .catch(err => {
           console.log(err)
-          alert('Ошибка! Возможно введен неверный логин или пароль')
+          this.$store.commit({
+            type: 'showSnackbar',
+            text: 'Неправильный логин или пароль'
+          })
           data.incorrectAuth = true
         })
       }

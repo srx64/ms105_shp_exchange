@@ -21,7 +21,7 @@ from django.urls import path, include
 from django_registration.backends.one_step.views import RegistrationView
 from main.forms import CustomRegistrationForm, EmailValidationOnForgotPassword
 from django.contrib.auth import views as auth_views
-from main.views import StocksListView, StockDetailView, OrdersView, PortfolioUserView, ProfileDetailView, PricesView
+from main.views import StocksListView, StockDetailView, OrdersView, PortfolioUserView, ProfileDetailView, PricesView, registration_view
 from django.conf import settings
 from django.conf.urls.static import static
 
@@ -29,12 +29,13 @@ from rest_framework_simplejwt.views import (TokenObtainPairView, TokenRefreshVie
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api-token/', TokenObtainPairView.as_view()),
+    path('api-token/', TokenObtainPairView.as_view(), name='api_token'),
     path('api-token-refresh/', TokenRefreshView.as_view()),
     path('api/v1/stocks/', StocksListView.as_view(), name='stocks'),
-    path('api/v1/stock/<int:pk>/', StockDetailView.as_view(), name='stock'),
+    path('api/v1/stocks/<int:pk>/', StockDetailView.as_view(), name='stock'),
+    path('api/v1/register/', registration_view, name='reg'),
     path('api/v1/orders/', OrdersView.as_view(), name='orders'),
-    path('trading/leverage/', views.LeverageTradingView.as_view(), name='add_order'),
+    path('trading/leverage/', views.LeverageTradingView.as_view(), name='leverage_trading'),
     path('api/v1/portfolio/', PortfolioUserView.as_view(), name='portfolio'),
     path('api/v1/profile/', ProfileDetailView.as_view(), name='profile'),
     path('orders/add', views.AddOrderView.as_view(), name='add_order'),
@@ -48,8 +49,6 @@ urlpatterns = [
          name='django_registration_register',
          ),
     path('accounts/', include('django_registration.backends.activation.urls')),
-    path('profile/editing/', login_required(views.ProfileEditingView.as_view()), name='profile_editing'),
-    path('profile/editing/change_password/', login_required(views.PasswordEditingView.as_view()), name='change_password'),
     path('reset_password/', auth_views.PasswordResetView.as_view(
         template_name='password/password_reset.html',
         form_class=EmailValidationOnForgotPassword
@@ -63,7 +62,7 @@ urlpatterns = [
     path('reset_password_complete/',
          auth_views.PasswordResetCompleteView.as_view(template_name='password/password_reset_complete.html'),
          name='password_reset_complete'),
-    path('profile/balance_add', login_required(views.ProfileBalanceAdd.as_view()))
+    path('profile/balance_add', login_required(views.ProfileBalanceAdd.as_view()), name='balance_add')
 ]
 
 if settings.DEBUG:

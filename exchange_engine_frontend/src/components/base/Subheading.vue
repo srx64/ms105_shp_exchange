@@ -18,7 +18,7 @@
       weight: {
         type: String,
         default: 'bold',
-      },
-    },
+      }
+    }
   }
 </script>

@@ -1,13 +1,16 @@
 <template>
   <v-app-bar
     id="home-app-bar"
+    color="grey lighten-4"
 		app
 		elevation="1"
 		elevate-on-scroll
 		height="80"
 	>
     <v-row>
-      <v-col>
+      <v-col
+        class="hidden-sm-and-down"
+      >
         <BaseImg
           :src="require('@/assets/logo.png')"
           contain
@@ -30,6 +33,11 @@
           >
             Профиль
           </v-tab>
+          <v-tab
+            to="/app/portfolio"
+          >
+            Портфель
+          </v-tab>
         </v-tabs>
       </v-col>
       <v-col
@@ -39,7 +47,12 @@
           size="40px"
           color="primary"
         >
+          <v-img 
+            v-if="avatar"
+            :src="avatar"
+          />
           <span 
+            v-else
             class="white--text headline"
           >
             {{ getInitials }}
@@ -70,26 +83,56 @@
 </template>
 
 <script>
+  import { getAPI } from '@/axios-api'
+  
 	export default {
 		name: 'HomeAppBar',
 
     data: () => ({
-      profile: {
-        avatar: '',
-        surname: 'Surname',
-        name: 'Name',
-        balance: '0   '
-      }
+      surname: 'Ф',
+      name: 'А',
+      balance: 0,
+      avatar: '@/assets/andrey.jpg'
     }),
+
+    methods: {
+      getProfile () {
+        getAPI.get('api/v1/profile/', {
+            headers: { 
+              Authorization: `Bearer ${this.$store.state.accessToken}` 
+            } 
+          })
+          .then(response => {
+            this.$store.state.APIData = response.data
+            let profile = response.data
+            this.surname = profile.first_name
+            this.name = profile.last_name
+            this.balance = profile.balance
+            this.avatar = 'http://127.0.0.1:8000' +profile.avatar
+          })
+          .catch(err => {
+            console.log(err)
+          })
+      },
+    },
 
     computed: {
       fullName() {
-        return this.profile.surname + ' ' + this.profile.name
+        return this.surname + ' ' + this.name
       },
       getInitials() {
-        let initials = this.profile.surname[0] + this.profile.name[0]
-        return initials.toUpperCase()
+        let initials = this.surname[0] + this.name[0]
+        return initials
       }
+    },
+
+    created () {
+      this.getProfile()
+      this.$store.subscribe((mutation) => {
+        if (mutation.type === 'changeProfile') {
+          this.getProfile()
+        }
+      })
     }
 	}
 </script>

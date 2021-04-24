@@ -101,12 +101,12 @@ class StockDetailTest(APITestCase):
 
     def test_error(self) -> None:
         for ind in range(1, len(Stocks.objects.all()) + 1):
-            response = self.client.get(f'/api/v1/stock/{ind}/')
+            response = self.client.get(f'/api/v1/stocks/{ind}/')
             self.assertEqual(response.status_code, 200)
 
     def test_is_not_empty(self) -> None:
         for ind in range(1, len(Stocks.objects.all()) + 1):
-            response = self.client.get(f'/api/v1/stock/{ind}/')
+            response = self.client.get(f'/api/v1/stocks/{ind}/')
             self.assertIsNotNone(response)
 
     def test_wrong_data(self) -> None:

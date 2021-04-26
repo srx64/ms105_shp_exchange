@@ -216,7 +216,7 @@ class OrderTest(APITestCase):
             'amount': 6,
             'type': True,
         })
-        self.assertEqual(Portfolio.objects.get(pk=1).count, 4)
+        self.assertEqual(Portfolio.objects.get(pk=1).count, 0)
 
     def test_order_closing(self) -> None:
         url = reverse('add_order')

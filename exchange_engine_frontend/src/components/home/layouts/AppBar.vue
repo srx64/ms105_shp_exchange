@@ -7,9 +7,9 @@
 		height="80"
 	>
 		<BaseImg
-			:src="require('@/assets/logo.png')"
+			:src="require('@/assets/logo_shp_exchange_horizontal.png')"
       contain
-      max-width="46"
+      max-width="150"
       width="100%"
 		/>
 

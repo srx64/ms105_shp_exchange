@@ -16,14 +16,14 @@
           <BaseTitle
             weight="regular"
           >
-            МЫ ХОТИМ СДЕЛАТЬ ПОКУПКУ АКЦИИ ПРОСТОЙ И ВЫГОДНОЙ
+            МЫ ХОТИМ НАУЧИТЬ ПОКУПАТЬ АКЦИИ ПРОСТО И ЛЕГКО
           </BaseTitle>          
 
           <BaseHeading
             size="text-h5"
             weight="medium"
           >
-            ДОБРО ПОЖАЛОВАТЬ НА БИРЖУ EXCHANGE ENGINE
+            ДОБРО ПОЖАЛОВАТЬ НА БИРЖУ ШКОЛЫ ПРОГРАММИСТОВ
           </BaseHeading>
 
           <BaseBody>
@@ -34,7 +34,7 @@
             class="align-center d-flex flex-wrap"
           >
             <BaseBtn
-              href="#features"
+              @click="$vuetify.goTo('#features', {duration: 300, offset: -10, easing: 'easeInOutCubic'})"
               x-large
             >
               Узнайте больше

@@ -9,7 +9,14 @@ export default new Vuex.Store({
     accessToken: null,
     refreshToken: null,
     APIData: '',
-    snackbarText: ''
+    snackbarText: '',
+    profile: {
+      surname: 'Иванченко',
+      name: 'Антон',
+      email: 'test@test.ru',
+      balance: 2303,
+      avatar: 'http://surl.li/sfip'
+    },
   },
 
   mutations: {
@@ -34,18 +41,13 @@ export default new Vuex.Store({
     showSnackbar (state, payload) {
       state.snackbarText = payload.text
     },
-    changeProfile () {
-      
-    }
+
   },
 
   getters: {
     loggedIn (state) {
       return state.accessToken != null
     },
-    getRefresh (state) {
-      return state.refreshToken
-    }
   },
 
   actions: {

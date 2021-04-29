@@ -42,7 +42,7 @@
           icon: 'mdi-cellphone',
         },
         {
-          title: 'Оптимизация',
+          title: 'Простота',
           icon: 'mdi-ice-pop',
         },
         {

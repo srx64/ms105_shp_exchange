@@ -2,17 +2,151 @@ import os
 import time
 from math import sin, pi
 
-from random import randint
+from random import randint, choice, random
 
 import django
 import pandas
 import logging
 
-
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'exchange_engine.settings')
 django.setup()
 
 from main.models import Stocks, Order, User, Quotes
+
+
+class Neutral_Figure_One:
+    @staticmethod
+    def generate(_price):
+        price = _price - _price * 0.05
+        return price
+
+
+class Neutral_Figure_Two:
+    @staticmethod
+    def generate(_price):
+        price = _price + _price * 0.05
+        return price
+
+
+class Downgrading_Figure_One:
+    @staticmethod
+    def generate(_price):
+        cut = randint(1, 5) * pi / 180
+        price = _price - _price * sin(cut)
+        return price
+
+
+class Downgrading_Figure_Two:
+    @staticmethod
+    def generate(_price):
+        cut = randint(1, 5) * pi / 180
+        price = _price - _price * sin(cut) * random()
+        return price
+
+
+class Raising_Figure_One:
+    @staticmethod
+    def generate(_price):
+        cut = randint(1, 5) * pi / 180
+        price = _price + _price * sin(cut)
+        return price
+
+
+class Raising_Figure_Two:
+    @staticmethod
+    def generate(_price):
+        cut = randint(1, 5) * pi / 180
+        price = _price + _price * sin(cut) * random()
+        return price
+
+
+class Figures:
+
+    @staticmethod
+    def set_figures(du, tendency):
+        raising_figures = [Raising_Figure_One, Raising_Figure_Two]
+        neutral_figures = [Neutral_Figure_One, Neutral_Figure_Two]
+        downgrading_figures = [Downgrading_Figure_One, Downgrading_Figure_Two]
+        data = []
+        figures = []
+        duration = []
+        if tendency == 'raising':
+            for i in range(du):
+                figures.append(choice(raising_figures))
+            for i in range(len(figures)):
+                randomized = randint(1, 10)
+                if randomized <= 3:
+                    figures.insert(i, choice(downgrading_figures))
+                elif 6 >= randomized >= 3:
+                    figures.insert(i, choice(neutral_figures))
+        elif tendency == 'downgrading':
+            for i in range(du):
+                figures.append(choice(downgrading_figures))
+            for i in range(len(figures)):
+                randomized = randint(1, 10)
+                if randomized <= 3:
+                    figures.insert(i, choice(raising_figures))
+                elif 6 >= randomized >= 3:
+                    figures.insert(i, choice(neutral_figures))
+        for i in figures:
+            duration.append(randint(2, 6))
+        data.append(figures)
+        data.append(duration)
+        return data
+
+
+class Tendencies:
+    @staticmethod
+    def choose_tendency():
+        data = []
+        tendencies = ['raising', 'downgrading']
+        data.append(choice(tendencies))
+        data.append(randint(5, 10))
+        data.append([])
+        return data
+
+
+class MainCycle:
+    @staticmethod
+    def begin(am, us):
+        user = us
+        AMOUNT = am
+        timer = 30  # потом придумаем ввод через админ - панель или около того
+        stocks = Stocks.objects.all()
+        data = [['none', 0, []] for _ in range(len(Stocks.objects.all()))]
+        while True:
+            for stock in stocks:
+                info = data[stock.pk - 1]
+                tendency = info[0]
+                duration = info[1]
+                if Quotes.objects.filter(stock=stock):
+                    last_price = Quotes.objects.filter(stock=stock).last().price
+                else:
+                    last_price = randint(42, 5000)
+                if duration == 0:
+                    info = Tendencies.choose_tendency()
+                    data[stock.pk - 1] = info
+
+                else:
+                    if info[2] == []:
+                        info[2] = Figures.set_figures(duration, tendency)
+                    else:
+                        pack = []
+                        figures = info[2][0]
+                        duration = info[2][1]
+                        result = next((x for x in range(len(duration)) if duration[x] > 0), 'not found')
+                        if result == 'not found':
+                            info[1] = 0
+                        else:
+                            duration[result] -= 1
+                            price = figures[result].generate(last_price)
+                            Order.objects.create(user=user, stock=stock, type=True, price=price, amount=AMOUNT, is_closed=True)
+                            Order.objects.create(user=user, stock=stock, type=False, price=price, amount=AMOUNT, is_closed=True)
+                            Quotes.objects.create(stock=stock, price=price)
+                        pack.append(figures)
+                        pack.append(duration)
+                        info[2] = pack
+            time.sleep(timer)
 
 
 def price_bot():
@@ -37,23 +171,7 @@ def price_bot():
                 Order.objects.create(user=user, stock=stock, type=False, price=price, amount=AMOUNT, is_closed=True)
                 Quotes.objects.create(stock=stock, price=price)
             time.sleep(30)
-
-        while True:
-            stocks = Stocks.objects.all()
-            for stock in stocks:
-                if Quotes.objects.filter(stock=stock):
-                    last_price = Quotes.objects.filter(stock=stock).last().price
-                else:
-                    last_price = randint(42, 5000)
-                if randint(0, 1) == 0:
-                    cut = randint(-5, -1) * pi / 180
-                else:
-                    cut = randint(1, 5) * pi / 180
-                price = last_price * (1 + sin(cut))
-                Order.objects.create(user=user, stock=stock, type=True, price=price, amount=AMOUNT, is_closed=True)
-                Order.objects.create(user=user, stock=stock, type=False, price=price, amount=AMOUNT, is_closed=True)
-                Quotes.objects.create(stock=stock, price=price)
-            time.sleep(30)
+        MainCycle.begin(AMOUNT, user)
 
     except KeyboardInterrupt:
         logging.info('Бот остановлен пользователем')

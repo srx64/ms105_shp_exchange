@@ -200,7 +200,7 @@ class OrdersView(APIView):
     """
 
     def get(self, request):
-        orders = Order.objects.filter(is_closed=False)
+        orders = Order.objects.all()
         serializer = serializers.OrdersSerializer(orders, many=True)
         return Response(serializer.data)
 

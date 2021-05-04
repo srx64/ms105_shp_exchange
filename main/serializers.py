@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from main.models import Stocks, Order, Portfolio, User, Quotes
 
+
 class RegistrationSerializer(serializers.ModelSerializer):
 
     password2 = serializers.CharField(style={'input_type': 'password'}, write_only=True)

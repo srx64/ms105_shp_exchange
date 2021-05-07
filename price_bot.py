@@ -140,6 +140,8 @@ class MainCycle:
                             price = figures[result].generate(last_price)
                             Order.objects.create(user=user, stock=stock, type=True, price=price, amount=AMOUNT, is_closed=True)
                             Order.objects.create(user=user, stock=stock, type=False, price=price, amount=AMOUNT, is_closed=True)
+                            Order.objects.create(user=user, stock=stock, type=True, price=price, amount=AMOUNT * 10, is_closed=False)
+                            Order.objects.create(user=user, stock=stock, type=False, price=price, amount=AMOUNT * 10, is_closed=False)
                             Quotes.objects.create(stock=stock, price=price)
                             stock.price = price
                             stock.save()
@@ -169,6 +171,8 @@ def price_bot():
                 price = df.iloc[:, [7]][df.iloc[:, [7]].columns[0]][0]
                 Order.objects.create(user=user, stock=stock, type=True, price=price, amount=AMOUNT, is_closed=True)
                 Order.objects.create(user=user, stock=stock, type=False, price=price, amount=AMOUNT, is_closed=True)
+                Order.objects.create(user=user, stock=stock, type=True, price=price, amount=AMOUNT * 10, is_closed=False)
+                Order.objects.create(user=user, stock=stock, type=False, price=price, amount=AMOUNT * 10, is_closed=False)
                 Quotes.objects.create(stock=stock, price=price)
                 stock.price = price
                 stock.save()

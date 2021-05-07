@@ -125,7 +125,6 @@ class MainCycle:
                 if duration == 0:
                     info = Tendencies.choose_tendency()
                     data[stock.pk - 1] = info
-
                 else:
                     if info[2] == []:
                         info[2] = Figures.set_figures(duration, tendency)
@@ -142,6 +141,8 @@ class MainCycle:
                             Order.objects.create(user=user, stock=stock, type=True, price=price, amount=AMOUNT, is_closed=True)
                             Order.objects.create(user=user, stock=stock, type=False, price=price, amount=AMOUNT, is_closed=True)
                             Quotes.objects.create(stock=stock, price=price)
+                            stock.price = price
+                            stock.save()
                         pack.append(figures)
                         pack.append(duration)
                         info[2] = pack
@@ -169,6 +170,8 @@ def price_bot():
                 Order.objects.create(user=user, stock=stock, type=True, price=price, amount=AMOUNT, is_closed=True)
                 Order.objects.create(user=user, stock=stock, type=False, price=price, amount=AMOUNT, is_closed=True)
                 Quotes.objects.create(stock=stock, price=price)
+                stock.price = price
+                stock.save()
             time.sleep(30)
         MainCycle.begin(AMOUNT, user)
 

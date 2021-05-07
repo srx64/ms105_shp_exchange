@@ -12,127 +12,109 @@
         class="hidden-sm-and-down"
       >
         <BaseImg
-          :src="require('@/assets/logo.png')"
+          :src="require('@/assets/logo_shp_exchange_horizontal.png')"
           contain
-          max-width="46"
+          max-width="150"
           width="100%"
         />
       </v-col>
       <v-col>
-        <v-tabs
-          centered
-          background-color="grey lighten-4"
-        >
-          <v-tab
-            to="/app"
-          >
-            Главная
-          </v-tab>
-          <v-tab
-            to="/app/profile"
-          >
-            Профиль
-          </v-tab>
-          <v-tab
-            to="/app/portfolio"
-          >
-            Портфель
-          </v-tab>
-        </v-tabs>
+        <v-btn value="recent">
+          <span>Recent</span>
+
+          <v-icon>mdi-history</v-icon>
+        </v-btn>
+
+        <v-btn value="favorites">
+          <span>Favorites</span>
+
+          <v-icon>mdi-heart</v-icon>
+        </v-btn>
+
+        <v-btn value="nearby">
+          <span>Nearby</span>
+
+          <v-icon>mdi-map-marker</v-icon>
+        </v-btn>
       </v-col>
       <v-col
         class="d-flex justify-end "
       >
-        <v-avatar
-          size="40px"
-          color="primary"
+        <v-menu
+          bottom
+          min-width="200px"
+          rounded
+          offset-y
         >
-          <v-img 
-            v-if="avatar"
-            :src="avatar"
-          />
-          <span 
-            v-else
-            class="white--text headline"
-          >
-            {{ getInitials }}
-          </span>
-        </v-avatar>
-
-        <div
-          class="text-center"
-        >
-          <strong>
-            {{ fullName }}
-          </strong>
-          <br>
-          <BaseBtn
-            to="/auth/logout"
-            class="pa-1"
-            color="red"
-            height="auto"
-            small 
-            text  
-          >
-            Выйти
-          </BaseBtn>
-        </div> 
+          <template v-slot:activator="{ on }">
+            <v-btn
+              icon
+              x-large
+              v-on="on"
+            >
+              <v-avatar
+                color="brown"
+                size="48"
+              >
+                <span class="white--text headline">{{ getInitials }}</span>
+              </v-avatar>
+            </v-btn>
+          </template>
+          <v-card>
+            <v-list-item-content class="justify-center">
+              <div class="mx-auto text-center">
+                <v-avatar
+                  color="brown"
+                >
+                  <span class="white--text headline">{{ getInitials }}</span>
+                </v-avatar>
+                <h3>{{ fullName }}</h3>
+                <p class="caption mt-1">
+                  {{ profile.email }}
+                </p>
+                <v-divider class="my-3"></v-divider>
+                <v-btn
+                
+                  to="/app/profile"
+                  depressed
+                  text
+                >
+                  Профиль
+                </v-btn>
+                <v-divider class="my-3"></v-divider>
+                <v-btn
+                  to="/auth/logout"
+                  depressed
+                  color="red"
+                  text
+                >
+                  Выйти
+                </v-btn>
+              </div>
+            </v-list-item-content>
+          </v-card>
+        </v-menu>
+        
       </v-col>
     </v-row>
   </v-app-bar>
 </template>
 
 <script>
-  import { getAPI } from '@/axios-api'
+  import { mapState } from 'vuex'
   
 	export default {
 		name: 'HomeAppBar',
 
-    data: () => ({
-      surname: 'Ф',
-      name: 'А',
-      balance: 0,
-      avatar: '@/assets/andrey.jpg'
-    }),
-
-    methods: {
-      getProfile () {
-        getAPI.get('api/v1/profile/', {
-            headers: { 
-              Authorization: `Bearer ${this.$store.state.accessToken}` 
-            } 
-          })
-          .then(response => {
-            this.$store.state.APIData = response.data
-            let profile = response.data
-            this.surname = profile.first_name
-            this.name = profile.last_name
-            this.balance = profile.balance
-            this.avatar = 'http://127.0.0.1:8000' +profile.avatar
-          })
-          .catch(err => {
-            console.log(err)
-          })
-      },
-    },
-
     computed: {
+      ...mapState(['profile']),
       fullName() {
-        return this.surname + ' ' + this.name
+        return this.profile.surname + ' ' + this.profile.name
       },
       getInitials() {
-        let initials = this.surname[0] + this.name[0]
+        let initials = this.profile.surname[0] + this.profile.name[0]
         return initials
       }
-    },
-
-    created () {
-      this.getProfile()
-      this.$store.subscribe((mutation) => {
-        if (mutation.type === 'changeProfile') {
-          this.getProfile()
-        }
-      })
     }
 	}
 </script>

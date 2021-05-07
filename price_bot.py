@@ -14,21 +14,21 @@ django.setup()
 from main.models import Stocks, Order, User, Quotes
 
 
-class Neutral_Figure_One:
+class NeutralFigureOne:
     @staticmethod
     def generate(_price):
         price = _price - _price * 0.05
         return price
 
 
-class Neutral_Figure_Two:
+class NeutralFigureTwo:
     @staticmethod
     def generate(_price):
         price = _price + _price * 0.05
         return price
 
 
-class Downgrading_Figure_One:
+class DowngradingFigureOne:
     @staticmethod
     def generate(_price):
         cut = randint(1, 5) * pi / 180
@@ -36,7 +36,7 @@ class Downgrading_Figure_One:
         return price
 
 
-class Downgrading_Figure_Two:
+class DowngradingFigureTwo:
     @staticmethod
     def generate(_price):
         cut = randint(1, 5) * pi / 180
@@ -44,7 +44,7 @@ class Downgrading_Figure_Two:
         return price
 
 
-class Raising_Figure_One:
+class RaisingFigureOne:
     @staticmethod
     def generate(_price):
         cut = randint(1, 5) * pi / 180
@@ -52,7 +52,7 @@ class Raising_Figure_One:
         return price
 
 
-class Raising_Figure_Two:
+class RaisingFigureTwo:
     @staticmethod
     def generate(_price):
         cut = randint(1, 5) * pi / 180
@@ -61,12 +61,11 @@ class Raising_Figure_Two:
 
 
 class Figures:
-
     @staticmethod
     def set_figures(du, tendency):
-        raising_figures = [Raising_Figure_One, Raising_Figure_Two]
-        neutral_figures = [Neutral_Figure_One, Neutral_Figure_Two]
-        downgrading_figures = [Downgrading_Figure_One, Downgrading_Figure_Two]
+        raising_figures = [RaisingFigureOne, RaisingFigureTwo]
+        neutral_figures = [NeutralFigureOne, NeutralFigureTwo]
+        downgrading_figures = [DowngradingFigureOne, DowngradingFigureTwo]
         data = []
         figures = []
         duration = []
@@ -126,7 +125,6 @@ class MainCycle:
                 if duration == 0:
                     info = Tendencies.choose_tendency()
                     data[stock.pk - 1] = info
-
                 else:
                     if info[2] == []:
                         info[2] = Figures.set_figures(duration, tendency)
@@ -142,7 +140,11 @@ class MainCycle:
                             price = figures[result].generate(last_price)
                             Order.objects.create(user=user, stock=stock, type=True, price=price, amount=AMOUNT, is_closed=True)
                             Order.objects.create(user=user, stock=stock, type=False, price=price, amount=AMOUNT, is_closed=True)
+                            Order.objects.create(user=user, stock=stock, type=True, price=price, amount=AMOUNT * 10, is_closed=False)
+                            Order.objects.create(user=user, stock=stock, type=False, price=price, amount=AMOUNT * 10, is_closed=False)
                             Quotes.objects.create(stock=stock, price=price)
+                            stock.price = price
+                            stock.save()
                         pack.append(figures)
                         pack.append(duration)
                         info[2] = pack
@@ -169,7 +171,11 @@ def price_bot():
                 price = df.iloc[:, [7]][df.iloc[:, [7]].columns[0]][0]
                 Order.objects.create(user=user, stock=stock, type=True, price=price, amount=AMOUNT, is_closed=True)
                 Order.objects.create(user=user, stock=stock, type=False, price=price, amount=AMOUNT, is_closed=True)
+                Order.objects.create(user=user, stock=stock, type=True, price=price, amount=AMOUNT * 10, is_closed=False)
+                Order.objects.create(user=user, stock=stock, type=False, price=price, amount=AMOUNT * 10, is_closed=False)
                 Quotes.objects.create(stock=stock, price=price)
+                stock.price = price
+                stock.save()
             time.sleep(30)
         MainCycle.begin(AMOUNT, user)
 

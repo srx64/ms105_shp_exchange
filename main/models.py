@@ -29,6 +29,7 @@ class Stocks(models.Model):
     name = models.CharField(max_length=255)
     description = models.TextField()
     is_active = models.BooleanField()
+    price = models.FloatField(default=0)
 
 
 class Order(models.Model):

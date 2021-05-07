@@ -30,13 +30,6 @@ class StocksSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class StockDetailSerializer(serializers.ModelSerializer):
-    """ Детальная информация об акции"""
-    class Meta:
-        model = Stocks
-        fields = '__all__'
-
-
 class ProfileDetailSerializer(serializers.ModelSerializer):
     """ Детальная информация о пользователе"""
     class Meta:

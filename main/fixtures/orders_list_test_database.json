@@ -220,6 +220,72 @@
     }
 },
 {
+    "model": "token_blacklist.outstandingtoken",
+    "pk": 21,
+    "fields": {
+        "user": 1,
+        "jti": "aa2facaf01494e83bc668594e53095d6",
+        "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTYxOTI5MTQzOCwianRpIjoiYWEyZmFjYWYwMTQ5NGU4M2JjNjY4NTk0ZTUzMDk1ZDYiLCJ1c2VyX2lkIjoxfQ.vWhvEopRrXharEgcSFITtHaKaIYe2_ECzqLUWmoyCHs",
+        "created_at": "2021-04-23T19:10:38.461Z",
+        "expires_at": "2021-04-24T19:10:38Z"
+    }
+},
+{
+    "model": "token_blacklist.outstandingtoken",
+    "pk": 22,
+    "fields": {
+        "user": 3,
+        "jti": "326941fdf1f24b98a71b06c4adaf5034",
+        "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTYxOTMwNzMwNCwianRpIjoiMzI2OTQxZmRmMWYyNGI5OGE3MWIwNmM0YWRhZjUwMzQiLCJ1c2VyX2lkIjozfQ.g8PRW2j5Ml8PuadrseXB2oQkU0W4QnOvqUZqBkl6v1s",
+        "created_at": "2021-04-23T23:35:04.638Z",
+        "expires_at": "2021-04-24T23:35:04Z"
+    }
+},
+{
+    "model": "token_blacklist.outstandingtoken",
+    "pk": 23,
+    "fields": {
+        "user": 1,
+        "jti": "1e4073c4b01d41df8c3ae1f8fc8c22a2",
+        "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTYxOTMwNzUzMCwianRpIjoiMWU0MDczYzRiMDFkNDFkZjhjM2FlMWY4ZmM4YzIyYTIiLCJ1c2VyX2lkIjoxfQ.p84U9UUvrIxOxT1c4dKFvWAyts3x9oTvCXvZfTYqTSQ",
+        "created_at": "2021-04-23T23:38:50.677Z",
+        "expires_at": "2021-04-24T23:38:50Z"
+    }
+},
+{
+    "model": "token_blacklist.outstandingtoken",
+    "pk": 24,
+    "fields": {
+        "user": 1,
+        "jti": "e7ffa46195ea486c8e4fda69e1ddd2e0",
+        "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTYxOTMwNzU0MCwianRpIjoiZTdmZmE0NjE5NWVhNDg2YzhlNGZkYTY5ZTFkZGQyZTAiLCJ1c2VyX2lkIjoxfQ.S3ntDNFftrBPxnGmaAG5R6EJ5a4c45arT6xioShns_Q",
+        "created_at": "2021-04-23T23:39:00.745Z",
+        "expires_at": "2021-04-24T23:39:00Z"
+    }
+},
+{
+    "model": "token_blacklist.outstandingtoken",
+    "pk": 25,
+    "fields": {
+        "user": 3,
+        "jti": "c506413422274a41bcd92bfde2703870",
+        "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTYxOTMwNzU3OSwianRpIjoiYzUwNjQxMzQyMjI3NGE0MWJjZDkyYmZkZTI3MDM4NzAiLCJ1c2VyX2lkIjozfQ.2VDcvIEYqtJV-C7Fi3PZvEUUkQQ1U88kPEHxus7oyho",
+        "created_at": "2021-04-23T23:39:39.039Z",
+        "expires_at": "2021-04-24T23:39:39Z"
+    }
+},
+{
+    "model": "token_blacklist.outstandingtoken",
+    "pk": 26,
+    "fields": {
+        "user": 3,
+        "jti": "6d9536eeafa2449f9e98844cad5fa344",
+        "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTYxOTMwNzcwOCwianRpIjoiNmQ5NTM2ZWVhZmEyNDQ5ZjllOTg4NDRjYWQ1ZmEzNDQiLCJ1c2VyX2lkIjozfQ.-SWdt00oDdXkWGbgCRAyXVhZeeHQD4GZj-TGb368fPU",
+        "created_at": "2021-04-23T23:41:48.511Z",
+        "expires_at": "2021-04-24T23:41:48Z"
+    }
+},
+{
     "model": "main.user",
     "pk": 1,
     "fields": {
@@ -235,7 +301,7 @@
         "date_joined": "2021-04-22T15:49:15.947Z",
         "status": "",
         "balance": 90000.0,
-        "avatar": "avatars/preset.jpg",
+        "avatar": "avatars/AA.jpg",
         "groups": [],
         "user_permissions": []
     }
@@ -244,19 +310,19 @@
     "model": "main.user",
     "pk": 3,
     "fields": {
-        "password": "pbkdf2_sha256$216000$QD7pmsDDeA7q$MSmROHf+QxqSK9XkDOXXwVz4IW8sOMwtRXYWd3SUuPE=",
+        "password": "pbkdf2_sha256$216000$M2fxxlTFU5vb$f1twwqZwJCtUhmBncgRbM3bMlhXF7VCPx1peWG0vErw=",
         "last_login": null,
         "is_superuser": true,
         "username": "petya",
-        "first_name": "",
-        "last_name": "",
+        "first_name": "Андрей",
+        "last_name": "Смирнов",
         "email": "1@abc.net",
         "is_staff": true,
         "is_active": true,
         "date_joined": "2021-04-22T16:43:44.296Z",
         "status": "",
         "balance": 100000.0,
-        "avatar": "avatars/preset.jpg",
+        "avatar": "avatars/AA_6YNscjx.jpg",
         "groups": [],
         "user_permissions": []
     }
@@ -275,48 +341,6 @@
         "is_staff": true,
         "is_active": true,
         "date_joined": "2021-04-22T16:48:39.988Z",
-        "status": "",
-        "balance": -100000.0,
-        "avatar": "avatars/preset.jpg",
-        "groups": [],
-        "user_permissions": []
-    }
-},
-{
-    "model": "main.user",
-    "pk": 5,
-    "fields": {
-        "password": "pbkdf2_sha256$216000$h1rpdAEj6cOS$4956L9x6IolDZStMbaesfwwoU+97O25EpMc7qsktV8E=",
-        "last_login": null,
-        "is_superuser": true,
-        "username": "Floppy",
-        "first_name": "",
-        "last_name": "",
-        "email": "1@abc.net",
-        "is_staff": true,
-        "is_active": true,
-        "date_joined": "2021-04-23T18:16:16.462Z",
-        "status": "",
-        "balance": 100000.0,
-        "avatar": "avatars/preset.jpg",
-        "groups": [],
-        "user_permissions": []
-    }
-},
-{
-    "model": "main.user",
-    "pk": 6,
-    "fields": {
-        "password": "pbkdf2_sha256$216000$o6uq0hr8Lhsj$YxdDJTJOxQtAEycoj40FWL/FEGlhpeNA0XDz0Xaoe6Q=",
-        "last_login": null,
-        "is_superuser": true,
-        "username": "Flopper",
-        "first_name": "",
-        "last_name": "",
-        "email": "1@abc.net",
-        "is_staff": true,
-        "is_active": true,
-        "date_joined": "2021-04-23T18:16:31.878Z",
         "status": "",
         "balance": 100000.0,
         "avatar": "avatars/preset.jpg",
@@ -370,21 +394,27 @@
     }
 },
 {
-    "model": "main.quotes",
-    "pk": 1,
+    "model": "main.portfolio",
+    "pk": 4,
     "fields": {
-        "price": 42,
-        "date": "2021-04-23T18:16:31.878Z",
-        "stock_id": 1
+        "user": 3,
+        "stock": 1,
+        "count": 5,
+        "percentage": 100.0,
+        "short_balance": -100000.0,
+        "is_debt": false
     }
 },
 {
-    "model": "main.quotes",
-    "pk": 2,
+    "model": "main.portfolio",
+    "pk": 5,
     "fields": {
-        "price": 666,
-        "date": "2021-04-23T18:16:31.878Z",
-        "stock_id": 4
+        "user": 1,
+        "stock": 1,
+        "count": 0,
+        "percentage": 0.0,
+        "short_balance": -100000.0,
+        "is_debt": false
     }
 }
 ]

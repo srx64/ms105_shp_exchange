@@ -1,5 +1,3 @@
-from django.db.models.signals import post_save
-
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.utils import timezone
@@ -21,13 +19,15 @@ class Stocks(models.Model):
     """
     Модель со всеми акциями
 
+    :param index: Индекс акции
     :param name: Название акции
     :param description: Описание акции
     :param is_active: Поле, означающее, активна ли акция
     """
 
+    index = models.CharField(max_length=255)
     name = models.CharField(max_length=255)
-    description = models.CharField(max_length=255)
+    description = models.TextField()
     is_active = models.BooleanField()
 
 

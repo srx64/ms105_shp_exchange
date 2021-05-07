@@ -4,7 +4,7 @@ from django.utils import timezone
 from rest_framework.generics import ListAPIView
 from rest_framework.decorators import api_view
 from rest_framework import filters, status
-from main.forms import AddOrderForm, LeverageTradingForm, UserBalance
+from main.forms import LeverageTradingForm, UserBalance
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -105,12 +105,12 @@ class AddOrderView(APIView):
                     portfolio_op.is_debt = True
 
                 if portfolio.count == 0 and portfolio.is_debt:
-                    user.balance += 100000+portfolio.short_balance
+                    user.balance += 100000 + portfolio.short_balance
                     portfolio.short_balance = -100000
                     portfolio.is_debt = False
 
                 if portfolio_op.count == 0 and portfolio_op.is_debt:
-                    user.balance += 100000+portfolio.short_balance
+                    user.balance += 100000 + portfolio.short_balance
                     portfolio_op.short_balance = -100000
                     portfolio_op.is_debt = False
 
@@ -154,7 +154,7 @@ class StockDetailView(APIView):
 
     def get(self, request, pk):
         stock = Stocks.objects.get(id=pk)
-        serializer = serializers.StockDetailSerializer(stock)
+        serializer = serializers.StocksSerializer(stock)
         return Response(serializer.data)
 
 

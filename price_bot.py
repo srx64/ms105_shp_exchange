@@ -1,8 +1,9 @@
 import os
 import time
+from datetime import datetime
 from math import sin, pi
 
-from random import randint, choice, random
+from random import randint, choice, random, uniform
 
 import django
 import pandas
@@ -12,6 +13,27 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'exchange_engine.settings')
 django.setup()
 
 from main.models import Stocks, Order, User, Quotes
+
+
+class CrisisFigureOne:
+    @staticmethod
+    def generate(_price):
+        price = _price - _price * uniform(0.30, 0.39)
+        return price
+
+
+class CrisisFigureTwo:
+    @staticmethod
+    def generate(_price):
+        price = _price - _price * uniform(0.40, 0.49)
+        return price
+
+
+class CrisisFigureThree:
+    @staticmethod
+    def generate(_price):
+        price = _price - _price * uniform(0.50, 0.59)
+        return price
 
 
 class NeutralFigureOne:
@@ -93,6 +115,32 @@ class Figures:
         data.append(duration)
         return data
 
+    @staticmethod
+    def get_crisis_figure():
+        crisis_figures = [CrisisFigureOne, CrisisFigureTwo, CrisisFigureThree]
+        randomized = choice(crisis_figures)
+        return randomized
+
+
+class HandlingFunctions:
+    @staticmethod
+    def get_last_price(stock):
+        if Quotes.objects.filter(stock=stock):
+            last_price = Quotes.objects.filter(stock=stock).last().price
+        else:
+            last_price = randint(42, 5000)
+        return last_price
+
+    @staticmethod
+    def generate_orders(user, stock, price, AMOUNT):
+        Order.objects.create(user=user, stock=stock, type=True, price=price, amount=AMOUNT, is_closed=True)
+        Order.objects.create(user=user, stock=stock, type=False, price=price, amount=AMOUNT, is_closed=True)
+        Order.objects.create(user=user, stock=stock, type=True, price=price, amount=AMOUNT * 10, is_closed=False)
+        Order.objects.create(user=user, stock=stock, type=False, price=price, amount=AMOUNT * 10, is_closed=False)
+        Quotes.objects.create(stock=stock, price=price)
+        stock.price = price
+        stock.save()
+
 
 class Tendencies:
     @staticmethod
@@ -104,13 +152,24 @@ class Tendencies:
         data.append([])
         return data
 
+    @staticmethod
+    def crisis_check(c_begin, c_end, stock, user, AMOUNT, last_price):
+        now = datetime.now()
+        if c_end >= now <= c_begin:
+            figure = Figures.get_crisis_figure()
+            price = figure.generate(last_price)
+            HandlingFunctions.generate_orders(user, stock, price, AMOUNT)
+            return True
+        else:
+            return False
+
 
 class MainCycle:
     @staticmethod
-    def begin(am, us):
+    def begin(am, us, t, c_b, c_e):
         user = us
         AMOUNT = am
-        timer = 30  # потом придумаем ввод через админ - панель или около того
+        timer = t
         stocks = Stocks.objects.all()
         data = [['none', 0, []] for _ in range(len(Stocks.objects.all()))]
         while True:
@@ -118,66 +177,63 @@ class MainCycle:
                 info = data[stock.pk - 1]
                 tendency = info[0]
                 duration = info[1]
-                if Quotes.objects.filter(stock=stock):
-                    last_price = Quotes.objects.filter(stock=stock).last().price
-                else:
-                    last_price = randint(42, 5000)
-                if duration == 0:
-                    info = Tendencies.choose_tendency()
-                    data[stock.pk - 1] = info
-                else:
-                    if info[2] == []:
-                        info[2] = Figures.set_figures(duration, tendency)
+                last_price = HandlingFunctions.get_last_price(stock)
+                if not Tendencies.crisis_check(c_b, c_e, stock, user, AMOUNT, last_price):
+                    if duration == 0:
+                        info = Tendencies.choose_tendency()
+                        data[stock.pk - 1] = info
                     else:
-                        pack = []
-                        figures = info[2][0]
-                        duration = info[2][1]
-                        result = next((x for x in range(len(duration)) if duration[x] > 0), 'not found')
-                        if result == 'not found':
-                            info[1] = 0
+                        if info[2] == []:
+                            info[2] = Figures.set_figures(duration, tendency)
                         else:
-                            duration[result] -= 1
-                            price = figures[result].generate(last_price)
-                            Order.objects.create(user=user, stock=stock, type=True, price=price, amount=AMOUNT, is_closed=True)
-                            Order.objects.create(user=user, stock=stock, type=False, price=price, amount=AMOUNT, is_closed=True)
-                            Order.objects.create(user=user, stock=stock, type=True, price=price, amount=AMOUNT * 10, is_closed=False)
-                            Order.objects.create(user=user, stock=stock, type=False, price=price, amount=AMOUNT * 10, is_closed=False)
-                            Quotes.objects.create(stock=stock, price=price)
-                            stock.price = price
-                            stock.save()
-                        pack.append(figures)
-                        pack.append(duration)
-                        info[2] = pack
-            time.sleep(timer)
+                            pack = []
+                            figures = info[2][0]
+                            duration = info[2][1]
+                            index = next((x for x in range(len(duration)) if duration[x] > 0), 'not found')
+                            if index == 'not found':
+                                info[1] = 0
+                            else:
+                                duration[index] -= 1
+                                price = figures[index].generate(last_price)
+                                HandlingFunctions.generate_orders(user, stock, price, AMOUNT)
+                            pack.append(figures)
+                            pack.append(duration)
+                            info[2] = pack
+                time.sleep(timer)
 
 
 def price_bot():
     logging.basicConfig(format='', level=logging.INFO)
     try:
+        crisis_start = datetime.now()
+        crisis_end = datetime.now()  # потом сделаем ввод через админ - панель или около того
         logging.info('Бот начал работу')
         files = next(os.walk('data/'))[2]
         min_file_length = min([len(open(f'data/{file}', 'r').readlines()) for file in files])
         user = User.objects.get(username='admin')
         AMOUNT = 10000
+        timer = 30  # потом придумаем ввод через админ - панель или около того
+        crisis_interruption = 0
         for i in range(min_file_length - 1):
-            for file in files:
-                df = pandas.read_csv(f'data/{file}', nrows=1, skiprows=i, sep=';')
-                name = df.iloc[0][0]
-                if name[len(name) - 3:] != '-RM':
-                    name = name.split('.')[1].split(':')[0]
-                else:
-                    name = name[:-3]
-                stock = Stocks.objects.get(name=name)
-                price = df.iloc[:, [7]][df.iloc[:, [7]].columns[0]][0]
-                Order.objects.create(user=user, stock=stock, type=True, price=price, amount=AMOUNT, is_closed=True)
-                Order.objects.create(user=user, stock=stock, type=False, price=price, amount=AMOUNT, is_closed=True)
-                Order.objects.create(user=user, stock=stock, type=True, price=price, amount=AMOUNT * 10, is_closed=False)
-                Order.objects.create(user=user, stock=stock, type=False, price=price, amount=AMOUNT * 10, is_closed=False)
-                Quotes.objects.create(stock=stock, price=price)
-                stock.price = price
-                stock.save()
-            time.sleep(30)
-        MainCycle.begin(AMOUNT, user)
+            if crisis_interruption == 0:
+                for file in files:
+                    df = pandas.read_csv(f'data/{file}', nrows=1, skiprows=i, sep=';')
+                    name = df.iloc[0][0]
+                    if name[len(name) - 3:] != '-RM':
+                        name = name.split('.')[1].split(':')[0]
+                    else:
+                        name = name[:-3]
+                    stock = Stocks.objects.get(name=name)
+                    price = df.iloc[:, [7]][df.iloc[:, [7]].columns[0]][0]
+                    last_price = HandlingFunctions.get_last_price(stock)
+                    if not Tendencies.crisis_check(crisis_start, crisis_end, stock, user, AMOUNT, last_price):
+                        HandlingFunctions.generate_orders(user, stock, price, AMOUNT)
+                    else:
+                        crisis_interruption = 1
+                time.sleep(timer)
+            else:
+                break
+        MainCycle.begin(AMOUNT, user, timer, crisis_start, crisis_end)
 
     except KeyboardInterrupt:
         logging.info('Бот остановлен пользователем')

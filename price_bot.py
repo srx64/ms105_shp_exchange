@@ -66,6 +66,21 @@ class DowngradingFigureTwo:
         return price
 
 
+class DowngradingFigureThree:
+    @staticmethod
+    def generate(_price):
+        cut = randint(1, 5) * pi / 180
+        price = _price - _price * sin(cut) * uniform(0.8, 0.99)
+        return price
+
+
+class DowngradingFigureFour:
+    @staticmethod
+    def generate(_price):
+        price = _price - _price * uniform(0.02, 0.09)
+        return price
+
+
 class RaisingFigureOne:
     @staticmethod
     def generate(_price):
@@ -82,12 +97,27 @@ class RaisingFigureTwo:
         return price
 
 
+class RaisingFigureThree:
+    @staticmethod
+    def generate(_price):
+        cut = randint(1, 5) * pi / 180
+        price = _price + _price * sin(cut) * uniform(0.8, 0.99)
+        return price
+
+
+class RaisingFigureFour:
+    @staticmethod
+    def generate(_price):
+        price = _price + _price * uniform(0.02, 0.09)
+        return price
+
+
 class Figures:
     @staticmethod
     def set_figures(du, tendency):
-        raising_figures = [RaisingFigureOne, RaisingFigureTwo]
+        raising_figures = [RaisingFigureOne, RaisingFigureTwo, RaisingFigureThree, RaisingFigureFour]
         neutral_figures = [NeutralFigureOne, NeutralFigureTwo]
-        downgrading_figures = [DowngradingFigureOne, DowngradingFigureTwo]
+        downgrading_figures = [DowngradingFigureOne, DowngradingFigureTwo, DowngradingFigureThree, DowngradingFigureFour]
         data = []
         figures = []
         duration = []

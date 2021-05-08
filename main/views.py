@@ -196,11 +196,12 @@ class ProfileDetailView(APIView):
 
 class OrdersView(APIView):
     """
-    Все заявки
+    Все заявки пользователя
     """
 
     def get(self, request):
-        orders = Order.objects.all()
+        user = request.user
+        orders = Order.objects.filter(user_id=user)
         serializer = serializers.OrdersSerializer(orders, many=True)
         return Response(serializer.data)
 

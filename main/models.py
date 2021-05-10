@@ -122,3 +122,9 @@ class Candles(models.Model):
     date = models.DateTimeField(default=timezone.now)
     stock = models.ForeignKey(to=Stocks, on_delete=models.CASCADE)
     type = models.IntegerField(default=1)
+
+
+class Statistics(models.Model):
+    name = models.CharField(max_length=255, default='')
+    open_orders = models.IntegerField(default=0)
+    closed_orders = models.IntegerField(default=0)

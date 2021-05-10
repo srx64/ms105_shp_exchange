@@ -1,3 +1,4 @@
+from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.utils import timezone
@@ -8,7 +9,7 @@ from main.forms import LeverageTradingForm, UserBalance
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from main.models import Stocks, Order, Portfolio, User, Quotes, LeverageData
+from main.models import Stocks, Order, Portfolio, User, Quotes, LeverageData, Statistics
 from main import serializers
 
 from rest_framework.permissions import IsAuthenticated
@@ -126,7 +127,6 @@ class AddOrderView(APIView):
                 user_op.save()
                 order_op.save()
                 portfolio_op.save()
-
             if order.amount == 0:
                 order.is_closed = True
                 order.date_closed = timezone.now()
@@ -158,12 +158,40 @@ class StockDetailView(APIView):
         return Response(serializer.data)
 
 
+class StatisticsView(APIView):
+    """
+    Статистика биржи
+    """
+    def get(self, request):
+        open_orders = 0
+        closed_orders = 0
+
+        orders = Order.objects.all()
+
+        for order in orders:
+            if order.is_closed:
+                open_orders += 1
+            else:
+                closed_orders += 1
+        name = 'orders_count'
+        try:
+            statistics = Statistics.objects.get(name=name)
+            statistics.open_orders = open_orders
+            statistics.closed_orders = closed_orders
+            statistics.save()
+        except ObjectDoesNotExist:
+            Statistics.objects.create(name=name, open_orders=open_orders, closed_orders=closed_orders)
+        statistics = Statistics.objects.all()
+        serializer = serializers.StatisticsSerializer(statistics, many=True)
+        return Response(serializer.data)
+
+
 class ProfileDetailView(APIView):
     """
         Информация о пользователе
 
         :param profile: Профиль
-        :param avatar: Аватарка пользователя
+        :param avatar: Аватарка пользователяstatistics = Statistics(open_orders=open_orders, closed_orders=closed_orders)
     """
     permission_classes = (IsAuthenticated,)
 

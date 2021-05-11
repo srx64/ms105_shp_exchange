@@ -17,6 +17,9 @@ from django.db.models import Q
 
 @api_view(['POST',])
 def registration_view(request):
+    """
+    Регистрация
+    """
     if request.method == 'POST':
         serializer = serializers.RegistrationSerializer(data=request.data)
         data = {}
@@ -43,6 +46,9 @@ class AddOrderView(APIView):
 
     @staticmethod
     def margin_call(user):
+        """
+        Margin call
+        """
         if LeverageData.objects.filter(user=user):
             user_data = LeverageData.objects.get(user=user)
             if user.balance <= 0:
@@ -52,6 +58,9 @@ class AddOrderView(APIView):
 
     @staticmethod
     def set_percentage(user_portfolio):
+        """
+        Установка процента в портфолио
+        """
         sum = 0
         portfolios = Portfolio.objects.filter(stock_id=user_portfolio.stock_id)
         for object in portfolios:
@@ -64,6 +73,9 @@ class AddOrderView(APIView):
         user_portfolio.save()
 
     def post(self, request):
+        """
+        Добавление акции и обработка данных при POST запросе
+        """
         data = request.data
         user = request.user
         name = data['stock']
@@ -153,6 +165,9 @@ class StockDetailView(APIView):
     """
 
     def get(self, request, pk):
+        """
+        Отображение данных о конкретной акции при GET запросе
+        """
         stock = Stocks.objects.get(id=pk)
         serializer = serializers.StocksSerializer(stock)
         return Response(serializer.data)
@@ -168,10 +183,16 @@ class ProfileDetailView(APIView):
     permission_classes = (IsAuthenticated,)
 
     def get(self, request):
+        """
+        Отображение профиля пользователя при GET запросе
+        """
         user = request.user
         return Response(serializers.ProfileDetailSerializer(user).data)
 
     def patch(self, request):
+        """
+        Заполнение профиля
+        """
         user = request.user
         data = request.data
 
@@ -196,10 +217,13 @@ class ProfileDetailView(APIView):
 
 class OrdersView(APIView):
     """
-    Все заявки
+    Все заявки пользователя
     """
 
     def get(self, request):
+        """
+        Отображение всех ордеров пользователя при GET запросе
+        """
         orders = Order.objects.all()
         serializer = serializers.OrdersSerializer(orders, many=True)
         return Response(serializer.data)
@@ -211,6 +235,9 @@ class PortfolioUserView(APIView):
     """
 
     def get(self, request):
+        """
+        Отображение портфолио пользователя при GET запросе
+        """
         portfolio = Portfolio.objects.filter(~Q(count=0), user_id=request.user.id,)
         serializer = serializers.PortfolioUserSerializer(portfolio, many=True)
         return Response(serializer.data)
@@ -222,6 +249,9 @@ class LeverageTradingView(APIView):
     """
 
     def get(self, request):
+        """
+        Отображение формы при GET запросе
+        """
         form = LeverageTradingForm(initial={
             'type': 0,
             'stock': 0,
@@ -236,6 +266,9 @@ class LeverageTradingView(APIView):
         return render(request, 'trading/leverage.html', context)
 
     def post(self, request):
+        """
+        Торговля с плечом и обработка данных при POST запросе
+        """
         form = LeverageTradingForm(request.POST)
 
         user = User.objects.get(id=request.user.pk)
@@ -272,12 +305,18 @@ class ProfileBalanceAdd(APIView):
     """
 
     def get(self, request):
+        """
+        Отображение формы для пополнения баланса пользователя при GET запросе
+        """
         context = {}
         form = UserBalance()
         context['form'] = form
         return render(request, 'profile/balance_add.html', context)
 
     def post(self, request):
+        """
+        Пополение баланса пользователя и обработка данных при POST запросе
+        """
         form = UserBalance(request.POST)
         user = User.objects.get(id=request.user.pk)
         if form.is_valid():
@@ -297,6 +336,9 @@ class PricesView(APIView):
     Страница с текущими и предыдущими котировками акций
     """
     def get(self, request):
+        """
+        Отображение всех котировок акций при GET запросе
+        """
         prices = Quotes.objects.all()
         serializer = serializers.PriceSerializer(prices, many=True)
         return Response(serializer.data)

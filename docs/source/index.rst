@@ -11,6 +11,7 @@
    :caption: Оглавление:
 
    overview.rst
+   work_with_website.rst
    exchange.rst
    function_exchange.rst
    authors.rst

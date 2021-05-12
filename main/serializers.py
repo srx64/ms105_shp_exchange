@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from main.models import Stocks, Order, Portfolio, User, Quotes
+from main.models import Stocks, Order, Portfolio, User, Quotes, Statistics
 
 
 class RegistrationSerializer(serializers.ModelSerializer):
@@ -44,6 +44,14 @@ class OrdersSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Order
+        fields = '__all__'
+
+
+class StatisticsSerializer(serializers.ModelSerializer):
+    statistics = serializers.SlugRelatedField(slug_field="name", read_only=True)
+
+    class Meta:
+        model = Statistics
         fields = '__all__'
 
 

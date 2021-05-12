@@ -1,3 +1,4 @@
+from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.utils import timezone
@@ -8,7 +9,7 @@ from main.forms import LeverageTradingForm, UserBalance
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from main.models import Stocks, Order, Portfolio, User, Quotes, LeverageData
+from main.models import Stocks, Order, Portfolio, User, Quotes, LeverageData, Statistics
 from main import serializers
 
 from rest_framework.permissions import IsAuthenticated
@@ -126,7 +127,6 @@ class AddOrderView(APIView):
                 user_op.save()
                 order_op.save()
                 portfolio_op.save()
-
             if order.amount == 0:
                 order.is_closed = True
                 order.date_closed = timezone.now()
@@ -158,12 +158,81 @@ class StockDetailView(APIView):
         return Response(serializer.data)
 
 
+class StatisticsView(APIView):
+    """
+    Статистика биржи
+    """
+    def get(self, request):
+        open_orders = 0
+        closed_orders = 0
+        user_active = 0
+        count_stocks = 0
+        count_long = 0
+        count_short = 0
+        max_balance = 0
+        the_richest = ''
+
+        id_admin = User.objects.get(username='admin')
+        orders = Order.objects.all()
+        users = User.objects.all()
+        stocks = Stocks.objects.all()
+        portfolio = Portfolio.objects.all()
+        for order in orders:
+            if order.is_closed:
+                if order.user_id != id_admin.id:
+                    open_orders += 1
+            else:
+                if order.user_id != id_admin.id:
+                    closed_orders += 1
+
+        for user in users:
+            if user.is_active:
+                user_active += 1
+            if user.balance > max_balance:
+                if user.username != 'admin':
+                    max_balance = user.balance
+                    the_richest = user.username
+
+        for stock in stocks:
+            if stock.is_active:
+                count_stocks += 1
+
+        for port in portfolio:
+            if port.short_balance == -100000:
+                if port.user_id != id_admin.id:
+                    count_long += 1
+            else:
+                if port.user_id != id_admin.id:
+                    count_short += 1
+
+        name = 'orders_count'
+
+        try:
+            statistics = Statistics.objects.get(name=name)
+            statistics.open_orders = open_orders
+            statistics.user_active = user_active
+            statistics.closed_orders = closed_orders
+            statistics.count_stocks = count_stocks
+            statistics.count_short = count_short
+            statistics.count_long = count_long
+            statistics.max_balance = max_balance
+            statistics.the_richest = the_richest
+            statistics.save()
+        except ObjectDoesNotExist:
+            Statistics.objects.create(name=name, open_orders=open_orders, closed_orders=closed_orders, user_active=user_active,\
+                                      count_stocks=count_stocks, count_long=count_long, count_short=count_short, max_balance=max_balance,\
+                                      the_richest=the_richest)
+        statistics = Statistics.objects.all()
+        serializer = serializers.StatisticsSerializer(statistics, many=True)
+        return Response(serializer.data)
+
+
 class ProfileDetailView(APIView):
     """
         Информация о пользователе
 
         :param profile: Профиль
-        :param avatar: Аватарка пользователя
+        :param avatar: Аватарка пользователяstatistics = Statistics(open_orders=open_orders, closed_orders=closed_orders)
     """
     permission_classes = (IsAuthenticated,)
 

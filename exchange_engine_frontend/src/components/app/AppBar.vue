@@ -18,23 +18,28 @@
           width="100%"
         />
       </v-col>
-      <v-col>
-        <v-btn value="recent">
-          <span>Recent</span>
+      <v-col
+        class="d-flex justify-center"
+      >
+        <v-btn 
+          to="/app"
+          value="exchange"
+          class="mx-2"
+          exact
+        >
+          <span>Биржа</span>
 
-          <v-icon>mdi-history</v-icon>
+          <v-icon>mdi-finance</v-icon>
         </v-btn>
+        <v-btn 
+          to="/app/portfolio"
+          value="portfolio"
+          class="mx-2"
+          exact
+        >
+          <span>Портфель</span>
 
-        <v-btn value="favorites">
-          <span>Favorites</span>
-
-          <v-icon>mdi-heart</v-icon>
-        </v-btn>
-
-        <v-btn value="nearby">
-          <span>Nearby</span>
-
-          <v-icon>mdi-map-marker</v-icon>
+          <v-icon>mdi-briefcase-account-outline</v-icon>
         </v-btn>
       </v-col>
       <v-col
@@ -118,3 +123,9 @@
     }
 	}
 </script>
+
+<style scoped>
+  .redbtn {
+    color: red;
+  }
+</style>

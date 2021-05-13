@@ -26,6 +26,7 @@
           value="exchange"
           class="mx-2"
           exact
+          text
         >
           <span>Биржа</span>
 
@@ -36,6 +37,7 @@
           value="portfolio"
           class="mx-2"
           exact
+          text
         >
           <span>Портфель</span>
 
@@ -61,7 +63,8 @@
                 color="brown"
                 size="48"
               >
-                <span class="white--text headline">{{ getInitials }}</span>
+                <v-img v-if="profile.avatar" :src="profile.avatar"/>
+                <span v-else class="white--text headline">{{ getInitials }}</span>
               </v-avatar>
             </v-btn>
           </template>
@@ -71,7 +74,8 @@
                 <v-avatar
                   color="brown"
                 >
-                  <span class="white--text headline">{{ getInitials }}</span>
+                  <v-img v-if="profile.avatar" :src="profile.avatar"/>
+                  <span v-else class="white--text headline">{{ getInitials }}</span>
                 </v-avatar>
                 <h3>{{ fullName }}</h3>
                 <p class="caption mt-1">
@@ -79,7 +83,6 @@
                 </p>
                 <v-divider class="my-3"></v-divider>
                 <v-btn
-                
                   to="/app/profile"
                   depressed
                   text
@@ -106,13 +109,13 @@
 </template>
 
 <script>
-  import { mapState } from 'vuex'
-  
 	export default {
 		name: 'HomeAppBar',
 
     computed: {
-      ...mapState(['profile']),
+      profile() {
+        return this.$store.getters.PROFILE
+      },
       fullName() {
         return this.profile.surname + ' ' + this.profile.name
       },

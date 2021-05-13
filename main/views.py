@@ -16,7 +16,7 @@ from rest_framework.permissions import IsAuthenticated
 from django.db.models import Q
 
 
-@api_view(['POST',])
+@api_view(['POST'])
 def registration_view(request):
     """
     Регистрация
@@ -281,8 +281,6 @@ class ProfileDetailView(APIView):
         if password2:
             if user.check_password(data.get("password", user.password)):
                 user.set_password(password2)
-            # else:
-            #     return Response({"detail": "password must match"}, status=status.HTTP_400_BAD_REQUEST)
 
         if request.FILES:
             user.avatar = request.FILES['file']

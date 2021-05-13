@@ -9,7 +9,7 @@ from main.forms import LeverageTradingForm, UserBalance
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from main.models import Stocks, Order, Portfolio, User, Quotes, LeverageData, Statistics
+from main.models import Stocks, Order, Portfolio, User, Quotes, LeverageData, Statistics, Settings
 from main import serializers
 
 from rest_framework.permissions import IsAuthenticated
@@ -173,6 +173,14 @@ class StockDetailView(APIView):
         return Response(serializer.data)
 
 
+class SettingsView(APIView):
+
+    def get(self, request):
+        settings = Settings.objects.all()
+        serializer = serializers.SettingsSerializer(settings, many=True)
+        return Response(serializer.data)
+
+
 class StatisticsView(APIView):
     """
     Статистика биржи
@@ -192,6 +200,7 @@ class StatisticsView(APIView):
         users = User.objects.all()
         stocks = Stocks.objects.all()
         portfolio = Portfolio.objects.all()
+
         for order in orders:
             if order.is_closed:
                 if order.user_id != id_admin.id:

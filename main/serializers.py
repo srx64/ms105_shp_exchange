@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from main.models import Stocks, Order, Portfolio, User, Quotes, Statistics
+from main.models import Stocks, Order, Portfolio, User, Quotes, Statistics, Settings
 
 
 class RegistrationSerializer(serializers.ModelSerializer):
@@ -28,6 +28,13 @@ class StocksSerializer(serializers.ModelSerializer):
     """ Список всех акций"""
     class Meta:
         model = Stocks
+        fields = '__all__'
+
+
+class SettingsSerializer(serializers.ModelSerializer):
+    """Настройки биржи"""
+    class Meta:
+        model = Settings
         fields = '__all__'
 
 

@@ -134,3 +134,10 @@ class Statistics(models.Model):
     count_short = models.IntegerField(default=0)
     max_balance = models.IntegerField(default=0)
     the_richest = models.CharField(max_length=255, default='')
+
+
+class Settings(models.Model):
+    name = models.CharField(max_length=255, default='')
+    description = models.TextField(default='')
+    stock_id = models.IntegerField(default=0)
+    data = models.JSONField()

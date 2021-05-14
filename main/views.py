@@ -9,7 +9,7 @@ from main.forms import LeverageTradingForm, UserBalance
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from main.models import Stocks, Order, Portfolio, User, Quotes, LeverageData, Statistics
+from main.models import Stocks, Order, Portfolio, User, Quotes, LeverageData, Statistics, Candles
 from main import serializers
 
 from rest_framework.permissions import IsAuthenticated
@@ -285,6 +285,17 @@ class ProfileDetailView(APIView):
 
         return Response(serializer.data)
 
+class CandlesView(APIView):
+    """
+    Свечи
+    """
+    def get(self, request, pk):
+        """
+        Отображение всех ордеров пользователя при GET запросе
+        """
+        candles = Candles.objects.filter(stock_id=pk)
+        serializer = serializers.CandlesSerializer(candles, many=True)
+        return Response(serializer.data)
 
 class OrdersView(APIView):
     """

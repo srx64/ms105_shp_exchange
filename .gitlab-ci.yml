@@ -39,3 +39,11 @@ sphinx:
     - develop
   tags:
     - django
+
+coverage:
+  stage: test
+  script:
+    - coverage run manage.py test
+    - coverage report -m --omit=manage.py
+  tags:
+    - django

@@ -27,3 +27,6 @@ pytz
 
 # pylint
 pylint-django==2.4.3
+
+# tests
+coverage==5.5

@@ -177,7 +177,16 @@
         })
       }
     },
-
+    computed: {
+      generateAlert: function(){
+        var str = 'Вы хотите создать '
+        str += this.limit_order ? 'отложенную заявку по цене ' + this.price : 'заявку по текущей цене '
+        str += this.leverage_trade ? 'с плечом  ' : ''
+        //str += получить количество акций, если 0 то к строке прибавить <в шорт> иначе <в лонг>
+        // сделать dialog component https://vuetifyjs.com/en/components/dialogs/#transitions
+        return str
+      }
+    },
     created () {
       this.getStocks()
     }

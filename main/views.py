@@ -295,6 +295,7 @@ class OrdersView(APIView):
     """
     Все заявки пользователя
     """
+    permission_classes = (IsAuthenticated,)
 
     def get(self, request):
         """

@@ -51,11 +51,27 @@ class OrdersListTest(APITestCase):
     fixtures = ['orders_list_test_database.json']
 
     def setUp(self) -> None:
-        self.client = Client()
-        self.response = self.client.get(reverse('orders'))
+        self.client = APIClient()
+        self.page_name = 'orders'
+        self.response = self.client.get(reverse(self.page_name))
 
     def test_error(self) -> None:
-        self.assertEqual(self.response.status_code, 200)
+        self.assertEqual(self.response.status_code, 401)
+
+    def test_error_with_token(self):
+        self.user = User.objects.get(username='vasya')
+        self.client.force_login(user=self.user)
+        verification_url = reverse('api_token')
+        resp = self.client.post(verification_url, {'username': 'vasya', 'password': 'promprog'}, format='json')
+        # получаем токен
+        token = resp.data['access']
+        self.assertEqual(resp.status_code, 200)
+        self.assertTrue('access' in resp.data)
+        # делаем get-запрос на профиль с помощью токена
+        url = reverse(self.page_name)
+        self.client.credentials(HTTP_AUTHORIZATION='Bearer ' + token)
+        resp = self.client.get(url, data={'format': 'json'})
+        self.assertEqual(resp.status_code, 200)
 
     def test_empty_data(self):
         self.assertEqual(len(Order.objects.all()), 0)

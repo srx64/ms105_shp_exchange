@@ -60,7 +60,7 @@ export default {
           })
       })
     },
-    userReg (context, usercredentials) {
+    userReg (usercredentials) {
       return new Promise((resolve, reject) => {
         getAPI.post('api/v1/register/', {
           email: usercredentials.email,
@@ -89,6 +89,7 @@ export default {
         })
           .then(response => {
             context.commit('updateStorage', { access: response.data.access, refresh: context.getters.getRefresh })
+            
             console.log(response.data.access)
             resolve()
           })
@@ -97,6 +98,23 @@ export default {
           })
       })
     },
-    
+    getProfile(context) {
+      return new Promise((resolve, reject) => {
+        getAPI.get('/api/v1/profile/', {
+          headers: { 
+            Authorization: `Bearer ${context.getters.accessToken}` 
+          } 
+        })
+          .then(response => {
+            context.commit('updateProfile', response.data) 
+            console.log(response.data)
+            resolve()
+          })
+          .catch(err => {
+            console.log(context.getters.profile)
+            reject(err)
+          })
+      })
+    }
   }
 }

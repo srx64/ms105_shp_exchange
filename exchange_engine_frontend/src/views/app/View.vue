@@ -31,17 +31,20 @@
       },
     },
 
-    data: () => ({
-      sections: [],
-    }),
-
     methods: {
       showSnackbar () {
         this.$store.commit({
           type: 'showSnackbar',
           text: 'Hello'
         })
+      },
+      getUserInfo () {
+        this.$store.dispatch('getProfile')
       }
+    },
+
+    mounted() {
+      this.getUserInfo()
     },
 
     onIdle () {

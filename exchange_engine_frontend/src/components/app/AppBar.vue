@@ -63,8 +63,12 @@
                 color="grey lighten-3"
                 size="48"
               >
-                <v-img v-if="profile.avatar" :src="profile.avatar"/>
-                <span v-else class="white--text headline">{{ getInitials }}</span>
+                <v-img class="d-flex align-center" :src="profile.avatar">
+                  <template v-slot:placeholder>
+                    <span class="white--text headline">{{ getInitials }}</span>
+                  </template>
+                </v-img>
+                <!-- <span v-else class="white--text headline">{{ getInitials }}</span> -->
               </v-avatar>
             </v-btn>
           </template>
@@ -117,10 +121,10 @@
         return this.$store.getters.profile
       },
       fullName() {
-        return this.profile.surname + ' ' + this.profile.name
+        return this.profile.last_name + ' ' + this.profile.first_name
       },
       getInitials() {
-        let initials = this.profile.surname[0] + this.profile.name[0]
+        let initials = this.profile.last_name[0] + this.profile.first_name[0]
         return initials
       }
     }

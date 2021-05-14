@@ -8,8 +8,9 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   modules: {
+    token: Token,
     user: User,
-    token: Token
+   
   },
   state: {
   },
@@ -23,12 +24,7 @@ export default new Vuex.Store({
         state.refreshToken = localStorage.getItem('refreshToken')
       }
     },
-    updateStorage (state, { access, refresh }) {
-      state.accessToken = access
-      state.refreshToken = refresh
-      localStorage.setItem('accessToken', access);
-      localStorage.setItem('refreshToken', refresh)
-    },
+    
     
     showSnackbar (state, payload) {
       state.snackbarText = payload.text

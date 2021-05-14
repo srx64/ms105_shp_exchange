@@ -73,6 +73,13 @@
       >
         <v-card-title> {{stocks[selectedItem].name}} </v-card-title>
         <v-card-text>Описание: {{stocks[selectedItem].description}}</v-card-text>
+        <v-container>
+          <trading-vue 
+            :data="this.$data"
+            title-txt="NAME"
+            :toolbar="true"
+          />
+        </v-container>
         <v-form>
           <v-text-field v-model="amount" hint="" label="Количество" type="number"></v-text-field>
           <v-checkbox
@@ -114,10 +121,6 @@
         </BaseBody>
       </v-container>
     </v-col>
-    <div>
-      <trading-vue :data="this.$data"></trading-vue>
-    </div>
-    <p> {{ohclv}} </p>
   </v-row>
 </template>
 

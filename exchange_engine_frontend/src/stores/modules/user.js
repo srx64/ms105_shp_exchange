@@ -8,14 +8,42 @@ export default {
       email: 'test@test.ru',
       balance: 2303,
       avatar: 'http://surl.li/sfip'
-    }
+    },
+    portfolio: [
+      {
+        "id": 2,
+        "index": "0",
+        "name": "FB",
+        "description": "Facebook",
+        "is_active": true,
+        "price": 5316.452990988047
+      },
+      {
+          "id": 3,
+          "index": "0",
+          "name": "MSFT",
+          "description": "Microsoft",
+          "is_active": true,
+          "price": 5607.362115399917
+      }
+    ]
   },
   getters: {
-    PROFILE: state => {
+    profile: state => {
       return state.profile
+    },
+    portfolio: state => {
+      return state.portfolio
     }
   },
-  mutations: {},
+  mutations: {
+    updateProfile(state, payload) {
+      state.profile = payload
+    },
+    updatePortfolio(state, payload) {
+      state.portfolio = payload
+    }
+  },
   actions: {
     userLogin (context, usercredentials) {
       return new Promise((resolve, reject) => {
@@ -49,6 +77,11 @@ export default {
           })
       })
     },
+    userLogout (context) {
+      if (context.getters.loggedIn) {
+          context.commit('destroyToken')
+      }
+    },
     refreshToken (context) {
       return new Promise((resolve, reject) => {
         getAPI.post('/api-token-refresh/', {
@@ -64,10 +97,6 @@ export default {
           })
       })
     },
-    userLogout (context) {
-      if (context.getters.loggedIn) {
-          context.commit('destroyToken')
-      }
-    },
+    
   }
 }

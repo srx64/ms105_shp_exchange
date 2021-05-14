@@ -9,7 +9,7 @@
 	>
     <v-row>
       <v-col
-        class="hidden-sm-and-down"
+        class="d-flex align-center hidden-sm-and-down"
       >
         <BaseImg
           :src="require('@/assets/logo_shp_exchange_horizontal.png')"
@@ -19,7 +19,7 @@
         />
       </v-col>
       <v-col
-        class="d-flex justify-center"
+        class="d-flex justify-center align-center"
       >
         <v-btn 
           to="/app"
@@ -45,7 +45,7 @@
         </v-btn>
       </v-col>
       <v-col
-        class="d-flex justify-end "
+        class="d-flex justify-end align-center"
       >
         <v-menu
           bottom
@@ -60,7 +60,7 @@
               v-on="on"
             >
               <v-avatar
-                color="brown"
+                color="grey lighten-3"
                 size="48"
               >
                 <v-img v-if="profile.avatar" :src="profile.avatar"/>
@@ -72,7 +72,7 @@
             <v-list-item-content class="justify-center">
               <div class="mx-auto text-center">
                 <v-avatar
-                  color="brown"
+                  color="grey lighten-3"
                 >
                   <v-img v-if="profile.avatar" :src="profile.avatar"/>
                   <span v-else class="white--text headline">{{ getInitials }}</span>
@@ -114,7 +114,7 @@
 
     computed: {
       profile() {
-        return this.$store.getters.PROFILE
+        return this.$store.getters.profile
       },
       fullName() {
         return this.profile.surname + ' ' + this.profile.name

@@ -12,8 +12,6 @@ export default new Vuex.Store({
     token: Token
   },
   state: {
-    APIData: '',
-    snackbarText: ''
   },
 
   mutations: {
@@ -37,15 +35,4 @@ export default new Vuex.Store({
     },
 
   },
-
-  getters: {
-    
-  },
-
-  actions: {
-    
-    
-    
-    
-  }
 })

@@ -84,7 +84,9 @@ class AddOrderView(APIView):
         type = data['type']
         price = float(data['price'])
         amount = int(data['amount'])
-        if price <= 0 or amount <= 0:
+        if price == 0:
+            price = Quotes.objects.filter(stock=stock.id).last().price
+        if price < 0 or amount <= 0:
             return Response({"detail": "uncorrect data"}, status=status.HTTP_400_BAD_REQUEST)
         self.margin_call(user)
         portfolio, created = Portfolio.objects.get_or_create(user=user, stock=stock)
@@ -340,12 +342,12 @@ class LeverageTradingView(APIView):
         Торговля с плечом и обработка данных при POST запросе
         """
         form = LeverageTradingForm(request.POST)
-
+        data = request.data
         user = User.objects.get(id=request.user.pk)
-        ratio = int(request.POST.get('ratio'))
-        stock = Stocks.objects.get(name=request.POST.get('stock'))
+        ratio = int(data['ratio']) #int(request.POST.get('ratio'))
+        stock = Stocks.objects.get(name=data['stock'])
         quote = Quotes.objects.filter(stock=stock.id).last()
-        type = True if request.POST.get('type') else False
+        type = True if data['type'] else False
         cash = user.balance * ratio
         AddOrderView.margin_call(user)
         if cash // quote.price >= 1:

@@ -74,8 +74,22 @@
         <v-card-title> {{stocks[selectedItem].name}} </v-card-title>
         <v-card-text>Описание: {{stocks[selectedItem].description}}</v-card-text>
         <v-form>
-          <v-text-field v-model="price" hint="" label="Цена" type="number"></v-text-field>
           <v-text-field v-model="amount" hint="" label="Количество" type="number"></v-text-field>
+          <v-checkbox
+          v-model="limit_order"
+          hide-details
+          label="Отложенная заявка"
+          class="shrink mr-2 mt-0"
+        ></v-checkbox>
+          <v-text-field v-if="limit_order" :disabled="!limit_order" v-model="price" hint="" label="Цена" type="number"></v-text-field>
+          <v-checkbox
+          hide-details
+          label="Торговля с плечом"
+          class="shrink mr-2 mt-0"
+          :disabled="limit_order"
+          v-model="leverage_trade"
+        ></v-checkbox>
+        <v-text-field v-model="ratio" v-if="leverage_trade" hint="" label="Размер плеча" type="number"></v-text-field>
           <v-card-actions>
             <v-btn color="success" @click="trade(0)"> Купить </v-btn> 
             <v-btn color="error" @click="trade(1)"> Продать </v-btn>
@@ -111,9 +125,12 @@
 
     data: () => ({
       selectedItem: undefined,
+      limit_order: false,
+      leverage_trade: false,
       price: 0,
       amount: 0,
       stocks: [],
+      ratio: 0,
     }),
 
     methods: {
@@ -131,11 +148,13 @@
           })
       },
       trade(type){
-        getAPI.post('orders/add', {
+        var url_trade = this.leverage_trade && !this.leverage_trade ? 'trading/leverage/' : 'orders/add'
+        getAPI.post(url_trade, {
           stock: this.stocks[this.selectedItem].name.toString(),
           type: type,
-          price: this.price,
+          price: this.limit_order ? this.price : 0,
           amount: this.amount,
+          ratio: this.ratio,
         },
         {
           headers: { 

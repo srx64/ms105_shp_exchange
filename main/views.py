@@ -355,6 +355,20 @@ class LeverageTradingView(APIView):
         quote = Quotes.objects.filter(stock=stock.id).last()
         type = True if request.POST.get('type') else False
         cash = user.balance * ratio
+        setting = 'None'
+        if Settings.objects.filter(stock_id=-1, name='leverage'):
+            setting = Settings.objects.filter(stock_id=-1, name='leverage').last()
+        elif Settings.objects.filter(stock_id=stock.pk, name='leverage'):
+            setting = Settings.objects.filter(stock_id=stock.pk, name='leverage').last()
+        if setting != 'None':
+            ratio_minimum = setting.data['min_leverage']
+            ratio_maximum = setting.data['max_leverage']
+            if ratio_minimum is not None:
+                if ratio < ratio_minimum:
+                    ratio = ratio_minimum
+            if ratio_maximum is not None:
+                if ratio > ratio_maximum:
+                    ratio = ratio_maximum
         AddOrderView.margin_call(user)
         if cash // quote.price >= 1:
             amount = cash // quote.price

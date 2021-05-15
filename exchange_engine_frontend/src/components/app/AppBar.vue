@@ -30,7 +30,11 @@
         >
           <span>Биржа</span>
 
-          <v-icon>mdi-finance</v-icon>
+          <v-icon
+            class="ml-1"
+          >
+            mdi-finance
+          </v-icon>
         </v-btn>
         <v-btn 
           to="/app/portfolio"
@@ -41,7 +45,26 @@
         >
           <span>Портфель</span>
 
-          <v-icon>mdi-briefcase-account-outline</v-icon>
+          <v-icon
+            class="ml-1"
+          >
+            mdi-briefcase-account-outline
+          </v-icon>
+        </v-btn>
+        <v-btn 
+          to="/app/orders"
+          value="orders"
+          class="mx-2"
+          exact
+          text
+        >
+          <span>Заявки</span>
+
+          <v-icon
+            class="ml-1"
+          >
+            mdi-order-bool-descending-variant
+          </v-icon>
         </v-btn>
       </v-col>
       <v-col

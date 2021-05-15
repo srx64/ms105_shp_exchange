@@ -8,8 +8,10 @@ from rest_framework import filters, status
 from main.forms import LeverageTradingForm, UserBalance
 from rest_framework.response import Response
 from rest_framework.views import APIView
+import requests
+from bs4 import BeautifulSoup
 
-from main.models import Stocks, Order, Portfolio, User, Quotes, LeverageData, Statistics, Settings
+from main.models import Stocks, Order, Portfolio, User, Quotes, LeverageData, Statistics, Settings, Cryptocurrencies
 from main import serializers
 
 from rest_framework.permissions import IsAuthenticated
@@ -184,6 +186,39 @@ class SettingsView(APIView):
     def get(self, request):
         settings = Settings.objects.all()
         serializer = serializers.SettingsSerializer(settings, many=True)
+        return Response(serializer.data)
+
+
+class CryptocurrenciesView(APIView):
+
+    def get(self, request):
+        cryptocurrencies = Cryptocurrencies.objects.all()
+
+        URL = 'https://coinmarketcap.com/ru/all/views/all/'
+        HEADERS = {
+            'User-Agent': 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.132 Mobile Safari/537.36'
+        }
+        response = requests.get(URL, headers=HEADERS)
+        soup = BeautifulSoup(response.content, 'html.parser')
+        items = soup.find_all('tr', class_='cmc-table-row')
+        comps = []
+        for item in items:
+            comps.append({
+                'title': item.find('a', class_='cmc-link').get_text(strip=True),
+                'pric': item.find('div', class_='price___3rj7O')
+            })
+
+        for comp in comps:
+            if comp['pric']:
+                try:
+                    cryptocurrencies = Cryptocurrencies.objects.get(name=comp['title'])
+                    cryptocurrencies.name = comp['title']
+                    cryptocurrencies.price = comp['pric'].string
+                    cryptocurrencies.save()
+                except ObjectDoesNotExist:
+                    Cryptocurrencies.objects.create(name=comp['title'], price=comp['pric'].string)
+        cryptocurrencies = Cryptocurrencies.objects.all()
+        serializer = serializers.CryptocurrenciesSerializer(cryptocurrencies, many=True)
         return Response(serializer.data)
 
 

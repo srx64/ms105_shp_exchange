@@ -11,7 +11,7 @@ from rest_framework.views import APIView
 import requests
 from bs4 import BeautifulSoup
 
-from main.models import Stocks, Order, Portfolio, User, Quotes, LeverageData, Statistics, Settings, Cryptocurrencies
+from main.models import Stocks, Order, Portfolio, User, Quotes, LeverageData, Statistics, Candles, Settings, Cryptocurrencies
 from main import serializers
 
 from rest_framework.permissions import IsAuthenticated
@@ -86,6 +86,8 @@ class AddOrderView(APIView):
         type = data['type']
         price = float(data['price'])
         amount = int(data['amount'])
+        if price == 0:
+            price = Quotes.objects.filter(stock=stock.id).last().price
         setting = None
         if Settings.objects.filter(stock_id=-1, name='short_switch'):
             setting = Settings.objects.filter(stock_id=-1, name='short_switch').last()
@@ -332,6 +334,19 @@ class ProfileDetailView(APIView):
         return Response(serializer.data)
 
 
+class CandlesView(APIView):
+    """
+    Свечи
+    """
+    def get(self, request, pk):
+        """
+        Отображение всех ордеров пользователя при GET запросе
+        """
+        candles = Candles.objects.filter(stock_id=pk)
+        serializer = serializers.CandlesSerializer(candles, many=True)
+        return Response(serializer.data)
+
+
 class OrdersView(APIView):
     """
     Все заявки пользователя
@@ -389,12 +404,12 @@ class LeverageTradingView(APIView):
         Торговля с плечом и обработка данных при POST запросе
         """
         form = LeverageTradingForm(request.POST)
-
+        data = request.data
         user = User.objects.get(id=request.user.pk)
-        ratio = int(request.POST.get('ratio'))
-        stock = Stocks.objects.get(name=request.POST.get('stock'))
+        ratio = int(data['ratio']) #int(request.POST.get('ratio'))
+        stock = Stocks.objects.get(name=data['stock'])
         quote = Quotes.objects.filter(stock=stock.id).last()
-        type = True if request.POST.get('type') else False
+        type = True if data['type'] else False
         cash = user.balance * ratio
         setting = 'None'
         if Settings.objects.filter(stock_id=-1, name='leverage'):

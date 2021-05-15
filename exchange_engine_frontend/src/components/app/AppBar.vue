@@ -9,7 +9,7 @@
 	>
     <v-row>
       <v-col
-        class="hidden-sm-and-down"
+        class="d-flex align-center hidden-sm-and-down"
       >
         <BaseImg
           :src="require('@/assets/logo_shp_exchange_horizontal.png')"
@@ -18,27 +18,57 @@
           width="100%"
         />
       </v-col>
-      <v-col>
-        <v-btn value="recent">
-          <span>Recent</span>
+      <v-col
+        class="d-flex justify-center align-center"
+      >
+        <v-btn 
+          to="/app"
+          value="exchange"
+          class="mx-2"
+          exact
+          text
+        >
+          <span>Биржа</span>
 
-          <v-icon>mdi-history</v-icon>
+          <v-icon
+            class="ml-1"
+          >
+            mdi-finance
+          </v-icon>
         </v-btn>
+        <v-btn 
+          to="/app/portfolio"
+          value="portfolio"
+          class="mx-2"
+          exact
+          text
+        >
+          <span>Портфель</span>
 
-        <v-btn value="favorites">
-          <span>Favorites</span>
-
-          <v-icon>mdi-heart</v-icon>
+          <v-icon
+            class="ml-1"
+          >
+            mdi-briefcase-account-outline
+          </v-icon>
         </v-btn>
+        <v-btn 
+          to="/app/orders"
+          value="orders"
+          class="mx-2"
+          exact
+          text
+        >
+          <span>Заявки</span>
 
-        <v-btn value="nearby">
-          <span>Nearby</span>
-
-          <v-icon>mdi-map-marker</v-icon>
+          <v-icon
+            class="ml-1"
+          >
+            mdi-order-bool-descending-variant
+          </v-icon>
         </v-btn>
       </v-col>
       <v-col
-        class="d-flex justify-end "
+        class="d-flex justify-end align-center"
       >
         <v-menu
           bottom
@@ -53,10 +83,15 @@
               v-on="on"
             >
               <v-avatar
-                color="brown"
+                color="grey lighten-3"
                 size="48"
               >
-                <span class="white--text headline">{{ getInitials }}</span>
+                <v-img class="d-flex align-center" :src="profile.avatar">
+                  <template v-slot:placeholder>
+                    <span class="white--text headline">{{ getInitials }}</span>
+                  </template>
+                </v-img>
+                <!-- <span v-else class="white--text headline">{{ getInitials }}</span> -->
               </v-avatar>
             </v-btn>
           </template>
@@ -64,9 +99,10 @@
             <v-list-item-content class="justify-center">
               <div class="mx-auto text-center">
                 <v-avatar
-                  color="brown"
+                  color="grey lighten-3"
                 >
-                  <span class="white--text headline">{{ getInitials }}</span>
+                  <v-img v-if="profile.avatar" :src="profile.avatar"/>
+                  <span v-else class="white--text headline">{{ getInitials }}</span>
                 </v-avatar>
                 <h3>{{ fullName }}</h3>
                 <p class="caption mt-1">
@@ -74,7 +110,6 @@
                 </p>
                 <v-divider class="my-3"></v-divider>
                 <v-btn
-                
                   to="/app/profile"
                   depressed
                   text
@@ -101,20 +136,25 @@
 </template>
 
 <script>
-  import { mapState } from 'vuex'
-  
 	export default {
 		name: 'HomeAppBar',
 
     computed: {
-      ...mapState(['profile']),
+      profile() {
+        return this.$store.getters.profile
+      },
       fullName() {
-        return this.profile.surname + ' ' + this.profile.name
+        return this.profile.last_name + ' ' + this.profile.first_name
       },
       getInitials() {
-        let initials = this.profile.surname[0] + this.profile.name[0]
-        return initials
+        return this.profile.last_name[0] + this.profile.first_name[0]
       }
     }
 	}
 </script>
+
+<style scoped>
+  .redbtn {
+    color: red;
+  }
+</style>

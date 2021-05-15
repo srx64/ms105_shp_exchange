@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from main.models import Stocks, Order, Portfolio, User, Quotes, Statistics, Settings, Cryptocurrencies
+from main.models import Stocks, Order, Portfolio, User, Quotes, Statistics, Candles, Settings, Cryptocurrencies
 
 
 class RegistrationSerializer(serializers.ModelSerializer):
@@ -22,6 +22,11 @@ class RegistrationSerializer(serializers.ModelSerializer):
         account.save()
         return account
 
+class CandlesSerializer(serializers.ModelSerializer):
+    """ Свечи графика """
+    class Meta:
+        model = Candles
+        fields = ('date', 'open', 'close', 'high', 'low')
 
 class StocksSerializer(serializers.ModelSerializer):
     """ Список всех акций"""

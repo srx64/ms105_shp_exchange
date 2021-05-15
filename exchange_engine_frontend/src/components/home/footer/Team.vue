@@ -1,74 +1,76 @@
 <template>
-    <div>
-        <v-card
-            class="mx-auto"
-            max-width="380"
-        >
-            <v-list-item three-line>
-                <v-list-item-content>
-                    <div class="overline mb-4">
-                        Your name
-                    </div>
+  <v-list>
+    <v-list-item
+      v-for="person in team"
+      :key="person.nick"
+    >
+      <v-card
+        class="mx-auto"
+        max-width="344"
+      >
+        <v-img
+          :src="person.photo"
+          height="200px"
+        ></v-img>
 
-                    <v-list-item-title class="headline mb-1">
-                        Developer
-                    </v-list-item-title>
+        <v-card-title>
+          {{ person.name }}
+        </v-card-title>
 
-                    <v-list-item-subtitle>Lorem ipsum dolor sit amet, consectetur adipiscing elit Integer sit amet mi blandit, molestie tortor ac, lacinia sem. Cras id scelerisque neque. Lorem ipsum dolor sit amet, consectetur adipiscing elit Integer sit amet mi blandit, molestie tortor ac, lacinia sem. Cras id scelerisque neque.Curabitur eget tortor eu purus tristique ultrices in sit amet tortor. Proin nisi metus, sodales ac velit a, tempor rhoncus nisi. Aliquam eget urna libero. Proin ac tellus non nisi consectetur efficitur ultricies vestibulum metus. Cras eget imperdiet lacus.</v-list-item-subtitle>
-                </v-list-item-content>
+        <v-card-subtitle>
+          {{ person.post }}
+        </v-card-subtitle>
 
-                <v-list-item-avatar
-                    tile
-                    size="80"
-                    color="grey"
-            ></v-list-item-avatar>
-            </v-list-item>
-            
-            <v-card-actions>
-            <v-btn
-                text
-                color="teal accent-4"
-                @click="reveal = true"
+        <v-card-text>
+          {{ person.description }}
+        </v-card-text>
+
+        <v-card-actions>
+          <v-spacer></v-spacer>
+
+          <v-btn
+            icon
+            @click="person.show = !person.show"
+          >
+            <v-icon>{{ person.show ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>
+          </v-btn>
+        </v-card-actions>
+
+        <v-expand-transition>
+          <div v-show="person.show">
+            <v-divider></v-divider>
+
+            <v-card-text
+              class="font-italic"
             >
-                Learn More
-            </v-btn>
-            </v-card-actions>
-
-            <v-expand-transition>
-            <v-card
-                v-if="reveal"
-                class="transition-fast-in-fast-out v-card--reveal"
-                style="height: 100%"
-            >
-                <v-card-text class="pb-0">
-                <div class="overline mb-4">
-                    Your name
-                </div>
-                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer sit amet mi blandit, molestie tortor ac, lacinia sem. Cras id scelerisque neque. </p>
-                </v-card-text>
-                
-                <v-card-actions class="pt-0">
-                <v-btn
-                    text
-                    color="teal accent-4"
-                    @click="reveal = false"
-                >
-                    Close
-                </v-btn>
-                </v-card-actions>
-            </v-card>
-            </v-expand-transition>
-        </v-card>
-    </div>
+              "{{ person.quote }}"
+            </v-card-text>
+          </div>
+        </v-expand-transition>
+      </v-card>
+    </v-list-item>
+  </v-list>
 </template>
 
 <script>
-    export default {
-        name: 'Team',
-        data: () => ({
-            reveal: false,
-    }),
-    }
+export default {
+  name: 'Team',
+
+  data: () => ({
+    team: [
+      {
+        nick: 'Rechnoi',
+        name: 'Иванченко Антон',
+        post: 'Фронтенд-разработчик',
+        photo: 'https://i.pinimg.com/564x/0f/14/85/0f148590b392d21b4cc7d1d51193dc45.jpg',
+        description: 'Описание',
+        quote: 'Хехе, работает',
+        show: false
+      }
+    ],
+    reveal: false,
+  }),
+}
 </script>
 
 <style>

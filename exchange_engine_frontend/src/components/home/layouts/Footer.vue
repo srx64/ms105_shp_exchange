@@ -22,8 +22,11 @@
               <BaseDialog
                 :dialog="dialog.state"
                 :title="dialog.title"
+                width="1000"
               >
-              <About/>
+                <component
+                  :is="dialog.component"
+                />
               </BaseDialog>
               <span
                 v-if="i < dialogs.length - 1"
@@ -51,7 +54,9 @@
     name: 'Home',
 
     components: {
-      About: () => import('@/components/home/footer/Rules.vue')
+      About: () => import('@/components/home/footer/About.vue'),
+      Team: () => import('@/components/home/footer/Team.vue'),
+      Rules: () => import('@/components/home/footer/Rules.vue')
     }, 
 
     data: () => ({
@@ -59,14 +64,17 @@
         {
           title: 'О нас',
           state: false,
+          component: 'About'
         },
         {
           title: 'Наша команда',
           state: false,
+          component: 'Team'
         },
         {
           title: 'Правила',
           state: false,
+          component: 'Rules'
         },
       ],
     }),

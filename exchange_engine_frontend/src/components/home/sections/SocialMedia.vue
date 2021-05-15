@@ -2,24 +2,24 @@
   <v-theme-provider dark>
     <base-section
       id="social"
-      class="light-blue darken-4 text-center"
+      class="blue text-center"
       space="56"
     >
       <base-icon class="mb-8">
-        mdi-vk
+        mdi-telegram
       </base-icon>
 
       <base-section-heading
         color="transparent"
-        title="Наш Вконтакте"
+        title="Наш телеграмм"
       >
-        Lorem, ipsum dolor sit amet consectetur adipisicing elit. Excepturi aspernatur recusandae aut repudiandae illo error obcaecati dolores voluptate, tempore.
+        Следите за новостями и обновлениями на нашем канале Telegram
       </base-section-heading>
 
       <v-btn
         class="font-weight-bold"
         color="white"
-        href="https://vk.com/"
+        href="https://web.telegram.org//"
         light
         min-width="168"
         target="_blank"

@@ -23,7 +23,7 @@
                 :dialog="dialog.state"
                 :title="dialog.title"
               >
-                Извините, данный раздел в разработке 
+              <About/>
               </BaseDialog>
               <span
                 v-if="i < dialogs.length - 1"
@@ -49,6 +49,10 @@
 <script>
   export default {
     name: 'Home',
+
+    components: {
+      About: () => import('@/components/home/footer/Rules.vue')
+    }, 
 
     data: () => ({
       dialogs: [

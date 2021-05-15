@@ -406,7 +406,7 @@ class LeverageTradingView(APIView):
         form = LeverageTradingForm(request.POST)
         data = request.data
         user = User.objects.get(id=request.user.pk)
-        ratio = int(data['ratio']) #int(request.POST.get('ratio'))
+        ratio = int(data['ratio'])
         stock = Stocks.objects.get(name=data['stock'])
         quote = Quotes.objects.filter(stock=stock.id).last()
         type = True if data['type'] else False

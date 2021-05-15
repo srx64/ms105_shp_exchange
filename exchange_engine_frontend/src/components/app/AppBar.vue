@@ -124,8 +124,7 @@
         return this.profile.last_name + ' ' + this.profile.first_name
       },
       getInitials() {
-        let initials = this.profile.last_name[0] + this.profile.first_name[0]
-        return initials
+        return this.profile.last_name[0] + this.profile.first_name[0]
       }
     }
 	}

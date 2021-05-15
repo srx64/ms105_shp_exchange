@@ -106,6 +106,8 @@ export default {
           } 
         })
           .then(response => {
+            if (response.data.avatar.indexOf(getAPI.defaults.baseURL) != 0)
+              response.data.avatar = getAPI.defaults.baseURL + response.data.avatar
             context.commit('updateProfile', response.data) 
             console.log(response.data)
             resolve()

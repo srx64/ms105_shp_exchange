@@ -31,6 +31,10 @@
       },
     },
 
+    data: () => ({
+      userInfoInterval: undefined
+    }),
+
     methods: {
       showSnackbar () {
         this.$store.commit({
@@ -46,11 +50,13 @@
 
     mounted() {
       this.getUserInfo()
+      this.userInfoInterval = setInterval(function() {
+        this.getUserInfo()
+      }.bind(this), 1000)
     },
 
-    onIdle () {
-      console.log('refresh')
-      this.$store.dispatch('userRefresh')
+    destroyed() {
+      clearInterval(this.userInfoInterval)
     }
   }
 </script>

@@ -38,6 +38,10 @@
             </v-list-item-content>
 
             <v-list-item-action>
+              <v-list-item-title v-text="stock.price.toFixed(4)"/>
+            </v-list-item-action>
+            <v-list-item-action>
+              
               <v-icon 
                 v-if="stock.is_active"
                 color="green"
@@ -71,7 +75,7 @@
         elevation="0"
         tile
       >
-        <v-card-title> {{stocks[selectedItem].name}} </v-card-title>
+        <v-card-title> {{stocks[selectedItem].name}} ({{stocks[selectedItem].price.toFixed(2) }})</v-card-title>
         <v-card-text>{{stocks[selectedItem].description}}</v-card-text>
         <v-container
           hidden
@@ -151,6 +155,7 @@ import TradingVue from "trading-vue-js";
       candles: [],
       ohlcv: [ [ 1620822279181, 2820, 3188.5, 3188.5, 2820 ], [ 1620822333716, 3090, 3085, 3090, 3085 ], [ 1620822395534, 3037.5, 3033, 3037.5, 3033 ]],
       item: '',
+      stocksInterval: undefined
     }),
     watch: {
       'selectedItem': function(val){
@@ -171,6 +176,7 @@ import TradingVue from "trading-vue-js";
           })
           .catch(err => {
             console.log(err)
+            clearInterval(this.stocksInterval)
           })
       },
       getCandles(){
@@ -219,8 +225,15 @@ import TradingVue from "trading-vue-js";
       }
     },
 
-    created () {
+    mounted () {
       this.getStocks()
+      this.stocksInterval = setInterval(function() {
+        this.getStocks()
+      }.bind(this), 30000)
+    },
+
+    destroyed () {
+      clearInterval(this.stocksInterval)
     }
   }
 </script>

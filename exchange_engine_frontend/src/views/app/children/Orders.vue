@@ -171,7 +171,8 @@ export default {
   name: 'Orders',
 
   data: () => ({
-    orders: {}
+    orders: {},
+    ordersInterval: undefined
   }),
 
   methods: {
@@ -183,10 +184,10 @@ export default {
           })
           .then(response => {
             this.orders = response.data
-            console.log(response.data)
           })
           .catch(err => {
             console.log(err)
+            clearInterval(this.ordersInterval)
           })
       },
       orderClosed (order) {
@@ -211,6 +212,13 @@ export default {
 
     mounted () {
       this.getOrders()
+      this.ordersInterval = setInterval(function() {
+        this.getOrders()
+      }.bind(this), 1000)
+    },
+
+    destroyed () {
+      clearInterval(this.ordersInterval)
     }
   }
 </script>

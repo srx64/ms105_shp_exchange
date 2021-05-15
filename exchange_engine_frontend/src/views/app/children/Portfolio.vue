@@ -75,6 +75,10 @@ import { getAPI } from '@/axios-api'
 export default {
   name: 'Portfolio',
 
+  data: () => ({
+    portfolioInterval: undefined
+  }),
+
   computed: {
     portfolio() {
       return this.$store.getters.portfolio
@@ -101,7 +105,7 @@ export default {
 
       return sum.toFixed(2)
     }
-  }
+  },
 }
 </script>
 <style scoped>

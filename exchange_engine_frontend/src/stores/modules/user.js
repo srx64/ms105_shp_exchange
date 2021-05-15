@@ -10,8 +10,6 @@ export default {
       return state.profile
     },
     portfolio: state => {
-      console.log('port getting')
-      console.log(state.portfolio)
       return state.portfolio
     }
   },
@@ -88,11 +86,9 @@ export default {
             if (response.data.avatar.indexOf(getAPI.defaults.baseURL) != 0)
               response.data.avatar = getAPI.defaults.baseURL + response.data.avatar
             context.commit('updateProfile', response.data) 
-            console.log(response.data)
             resolve()
           })
           .catch(err => {
-            console.log(context.getters.profile)
             reject(err)
           })
       })
@@ -106,11 +102,9 @@ export default {
         })
           .then(response => {
             context.commit('updatePortfolio', response.data) 
-            console.log(response.data)
             resolve()
           })
           .catch(err => {
-            console.log(context.getters.profile)
             reject(err)
           })
       })

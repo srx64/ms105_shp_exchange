@@ -78,81 +78,80 @@ class AddOrderView(APIView):
         Добавление акции и обработка данных при POST запросе
         """
         data = request.data
-        user = User.objects.get(id=1)
+        user = User.objects.get(id=request.user.pk)
         name = data['stock']
         stock = Stocks.objects.get(name=name)
         type = data['type']
         price = float(data['price'])
         amount = int(data['amount'])
         setting = None
-        # if Settings.objects.filter(stock_id=-1, name='short_switch'):
-        #     setting = Settings.objects.filter(stock_id=-1, name='short_switch').last()
-        # elif Settings.objects.filter(stock_id=stock.id, name='short_switch'):
-        #     setting = Settings.objects.filter(stock_id=stock.id, name='short_switch').last()
+        if Settings.objects.filter(stock_id=-1, name='short_switch'):
+            setting = Settings.objects.filter(stock_id=-1, name='short_switch').last()
+        elif Settings.objects.filter(stock_id=stock.id, name='short_switch'):
+            setting = Settings.objects.filter(stock_id=stock.id, name='short_switch').last()
         if price <= 0 or amount <= 0:
             return Response({"detail": "uncorrect data"}, status=status.HTTP_400_BAD_REQUEST)
         self.margin_call(user)
         portfolio, created = Portfolio.objects.get_or_create(user=user, stock=stock)
         self.set_percentage(portfolio)
-        # if portfolio.count > 0 and type == 0:
-        order = Order(user=user, stock=stock, type=type, price=price, is_closed=False, amount=amount)
-        order_ops = Order.objects.filter(stock=stock, type=not type, price=price, is_closed=False)
-        for order_op in order_ops:
-            if order.amount != 0:
-                user_op = order_op.user
-                portfolio_op = Portfolio.objects.get(user=user_op, stock=stock)
+        if (setting is None or setting.data['is_active']) or not setting.data['is_active'] and (type == '0' or portfolio.count > 0):
+            order = Order(user=user, stock=stock, type=type, price=price, is_closed=False, amount=amount)
+            order_ops = Order.objects.filter(stock=stock, type=not type, price=price, is_closed=False)
+            for order_op in order_ops:
+                if order.amount != 0:
+                    user_op = order_op.user
+                    portfolio_op = Portfolio.objects.get(user=user_op, stock=stock)
 
-                min_count = min(order.amount, order_op.amount) if type == 0 else -min(order.amount, order_op.amount)
+                    min_count = min(order.amount, order_op.amount) if type == 0 else -min(order.amount, order_op.amount)
 
-                order.amount -= abs(min_count)
-                order_op.amount -= abs(min_count)
+                    order.amount -= abs(min_count)
+                    order_op.amount -= abs(min_count)
 
-                portfolio.count += min_count
-                portfolio_op.count -= min_count
+                    portfolio.count += min_count
+                    portfolio_op.count -= min_count
 
-                user_op.balance += min_count * price
-                user.balance -= min_count * price
+                    user_op.balance += min_count * price
+                    user.balance -= min_count * price
 
-                    # if setting is None or setting.data['is_active']:
-                if portfolio.count < 0:
-                    portfolio.short_balance -= min_count * price
-                    user.balance += min_count * price
-                    portfolio.is_debt = True
+                    if portfolio.count < 0:
+                        portfolio.short_balance -= min_count * price
+                        user.balance += min_count * price
+                        portfolio.is_debt = True
 
-                if portfolio_op.count < 0:
-                    portfolio_op.short_balance += min_count * price
-                    user_op.balance -= min_count * price
-                    portfolio_op.is_debt = True
+                    if portfolio_op.count < 0:
+                        portfolio_op.short_balance += min_count * price
+                        user_op.balance -= min_count * price
+                        portfolio_op.is_debt = True
 
-                if portfolio.count == 0 and portfolio.is_debt:
-                    user.balance += 100000 + portfolio.short_balance
-                    portfolio.short_balance = -100000
-                    portfolio.is_debt = False
+                    if portfolio.count == 0 and portfolio.is_debt:
+                        user.balance += 100000 + portfolio.short_balance
+                        portfolio.short_balance = -100000
+                        portfolio.is_debt = False
 
-                if portfolio_op.count == 0 and portfolio_op.is_debt:
-                    user.balance += 100000 + portfolio.short_balance
-                    portfolio_op.short_balance = -100000
-                    portfolio_op.is_debt = False
+                    if portfolio_op.count == 0 and portfolio_op.is_debt:
+                        user.balance += 100000 + portfolio.short_balance
+                        portfolio_op.short_balance = -100000
+                        portfolio_op.is_debt = False
 
-                if order_op.amount == 0:
-                    order_op.is_closed = True
-                    order_op.date_closed = timezone.now()
+                    if order_op.amount == 0:
+                        order_op.is_closed = True
+                        order_op.date_closed = timezone.now()
 
-                self.margin_call(user)
-                self.margin_call(user_op)
-                self.set_percentage(portfolio)
-                self.set_percentage(portfolio_op)
+                    self.margin_call(user)
+                    self.margin_call(user_op)
+                    self.set_percentage(portfolio)
+                    self.set_percentage(portfolio_op)
 
-                user_op.save()
-                order_op.save()
-                portfolio_op.save()
-            if order.amount == 0:
-                order.is_closed = True
-                order.date_closed = timezone.now()
+                    user_op.save()
+                    order_op.save()
+                    portfolio_op.save()
+                if order.amount == 0:
+                    order.is_closed = True
+                    order.date_closed = timezone.now()
 
+            order.save()
         user.save()
         portfolio.save()
-        order.save()
         return Response("/api/v1/orders/")
 
 

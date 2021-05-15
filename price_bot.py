@@ -156,19 +156,16 @@ class Figures:
         randomized = 0
         num = randint(1, 13)
         if f_t == 'raising':
-            print('Going up')
             if 13 >= num >= 10:
                 randomized = choice(neutral_figures)
             else:
                 randomized = choice(raising_figures)
         elif f_t == 'downgrading':
-            print('Going down')
             if 13 >= num >= 10:
                 randomized = choice(neutral_figures)
             else:
                 randomized = choice(downgrading_figures)
         elif f_t == 'crisis':
-            print('Crisis occurred')
             randomized = choice(crisis_figures)
         return randomized
 
@@ -287,7 +284,6 @@ class MainCycle:
         data = [['none', 0, []] for _ in range(len(Stocks.objects.all()))]
         while True:
             for stock in stocks:
-                print(is_frozen)
                 info = data[stock.pk - 1]
                 tendency = info[0]
                 duration = info[1]
@@ -332,7 +328,6 @@ def price_bot():
         timer = 30
 
         for i in range(min_file_length - 1):
-            print(is_frozen)
             if not is_frozen:
                 if settings_interruption == 0:
                     for file in files:

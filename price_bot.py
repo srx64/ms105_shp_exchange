@@ -12,7 +12,7 @@ import logging
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'exchange_engine.settings')
 django.setup()
 
-from main.models import Stocks, Order, User, Quotes, Portfolio
+from main.models import Stocks, Order, User, Quotes, Portfolio, Settings
 
 
 class CrisisFigureOne:
@@ -117,7 +117,8 @@ class Figures:
     def set_figures(du, tendency):
         raising_figures = [RaisingFigureOne, RaisingFigureTwo, RaisingFigureThree, RaisingFigureFour]
         neutral_figures = [NeutralFigureOne, NeutralFigureTwo]
-        downgrading_figures = [DowngradingFigureOne, DowngradingFigureTwo, DowngradingFigureThree, DowngradingFigureFour]
+        downgrading_figures = [DowngradingFigureOne, DowngradingFigureTwo, DowngradingFigureThree,
+                               DowngradingFigureFour]
         data = []
         figures = []
         duration = []
@@ -146,13 +147,68 @@ class Figures:
         return data
 
     @staticmethod
-    def get_crisis_figure():
+    def get_figure(f_t):
         crisis_figures = [CrisisFigureOne, CrisisFigureTwo, CrisisFigureThree]
-        randomized = choice(crisis_figures)
+        raising_figures = [RaisingFigureOne, RaisingFigureTwo, RaisingFigureThree, RaisingFigureFour]
+        neutral_figures = [NeutralFigureOne, NeutralFigureTwo]
+        downgrading_figures = [DowngradingFigureOne, DowngradingFigureTwo, DowngradingFigureThree,
+                               DowngradingFigureFour]
+        randomized = 0
+        num = randint(1, 13)
+        if f_t == 'raising':
+            if 13 >= num >= 10:
+                randomized = choice(neutral_figures)
+            else:
+                randomized = choice(raising_figures)
+        elif f_t == 'downgrading':
+            if 13 >= num >= 10:
+                randomized = choice(neutral_figures)
+            else:
+                randomized = choice(downgrading_figures)
+        elif f_t == 'crisis':
+            randomized = choice(crisis_figures)
         return randomized
 
 
 class HandlingFunctions:
+
+    @staticmethod
+    def get_settings(stock_id):
+        if Settings.objects.filter(stock_id=-1, name='algo_quotes'):
+            setting = Settings.objects.filter(stock_id=-1, name='algo_quotes').last()
+            return setting
+        elif Settings.objects.filter(stock_id=stock_id, name='algo_quotes'):
+            setting = Settings.objects.filter(stock_id=stock_id, name='algo_quotes').last()
+            return setting
+        return None
+
+    @staticmethod
+    def get_timer(stock_id):
+        setting = None
+        if Settings.objects.filter(stock_id=-1, name='frequency_generating_quotes'):
+            setting = Settings.objects.filter(stock_id=-1, name='frequency_generating_quotes').last()
+        elif Settings.objects.filter(stock_id=stock_id, name='frequency_generating_quotes'):
+            setting = Settings.objects.filter(stock_id=stock_id, name='frequency_generating_quotes').last()
+        if setting is not None:
+            timer = setting.data['timer']
+        else:
+            timer = 2
+        return timer
+
+    @staticmethod
+    def get_pause(stock_id):
+        setting = None
+        if Settings.objects.filter(stock_id=-1, name='quotes_generation_switch'):
+            setting = Settings.objects.filter(stock_id=-1, name='quotes_generation_switch').last()
+        elif Settings.objects.filter(stock_id=stock_id, name='quotes_generation_switch'):
+            setting = Settings.objects.filter(stock_id=stock_id, name='quotes_generation_switch').last()
+        if setting is None:
+            return False
+        elif setting.data['is_stop']:
+            return True
+        else:
+            return False
+
     @staticmethod
     def get_last_price(stock):
         if Quotes.objects.filter(stock=stock):
@@ -186,12 +242,32 @@ class Tendencies:
         return data
 
     @staticmethod
-    def crisis_check(c_begin, c_end, stock, user, AMOUNT, last_price):
-        now = datetime.now()
-        if c_end >= now <= c_begin:
-            figure = Figures.get_crisis_figure()
-            price = figure.generate(last_price)
-            HandlingFunctions.generate_orders(user, stock, price, AMOUNT)
+    def settings_check(stock, user, AMOUNT, last_price, t):
+        if HandlingFunctions.get_settings(stock.id) is not None:
+            setting = HandlingFunctions.get_settings(stock.id)
+            if setting.data['start_after_time'] is not None:
+                if setting.data['start_after_time'] > 0:
+                    setting.data['start_after_time'] -= t
+                elif setting.data['duration'] is not None:
+                    if setting.data['duration'] > 0:
+                        setting.data['duration'] -= t
+                        if setting.data['type'] is not None:
+                            coefficient = setting.data['coefficient']
+                            f_type = setting.data['type']
+                            figure = Figures.get_figure(f_type)
+                            price = figure.generate(last_price) * coefficient
+                            HandlingFunctions.generate_orders(user, stock, price, AMOUNT)
+
+            elif setting.data['duration'] is not None:
+                if setting.data['duration'] > 0:
+                    setting.data['duration'] -= t
+                    if setting.data['type'] is not None:
+                        coefficient = setting.data['coefficient']
+                        f_type = setting.data['type']
+                        figure = Figures.get_figure(f_type)
+                        price = figure.generate(last_price) * coefficient
+                        HandlingFunctions.generate_orders(user, stock, price, AMOUNT)
+            setting.save()
             return True
         else:
             return False
@@ -199,10 +275,11 @@ class Tendencies:
 
 class MainCycle:
     @staticmethod
-    def begin(am, us, t, c_b, c_e):
+    def begin(am, us):
+        is_frozen = False
         user = us
         AMOUNT = am
-        timer = t
+        t = 30
         stocks = Stocks.objects.all()
         data = [['none', 0, []] for _ in range(len(Stocks.objects.all()))]
         while True:
@@ -211,65 +288,71 @@ class MainCycle:
                 tendency = info[0]
                 duration = info[1]
                 last_price = HandlingFunctions.get_last_price(stock)
-                if not Tendencies.crisis_check(c_b, c_e, stock, user, AMOUNT, last_price):
-                    if duration == 0:
-                        info = Tendencies.choose_tendency()
-                        data[stock.pk - 1] = info
-                    else:
-                        if info[2] == []:
-                            info[2] = Figures.set_figures(duration, tendency)
+                t = HandlingFunctions.get_timer(stock.pk)
+                is_frozen = HandlingFunctions.get_pause(stock.pk)
+                if not is_frozen:
+                    if not Tendencies.settings_check(stock, user, AMOUNT, last_price, t):
+                        if duration == 0:
+                            info = Tendencies.choose_tendency()
+                            data[stock.pk - 1] = info
                         else:
-                            pack = []
-                            figures = info[2][0]
-                            duration = info[2][1]
-                            index = next((x for x in range(len(duration)) if duration[x] > 0), 'not found')
-                            if index == 'not found':
-                                info[1] = 0
+                            if info[2] == []:
+                                info[2] = Figures.set_figures(duration, tendency)
                             else:
-                                duration[index] -= 1
-                                price = figures[index].generate(last_price)
-                                HandlingFunctions.generate_orders(user, stock, price, AMOUNT)
-                            pack.append(figures)
-                            pack.append(duration)
-                            info[2] = pack
-                time.sleep(timer)
+                                pack = []
+                                figures = info[2][0]
+                                duration = info[2][1]
+                                index = next((x for x in range(len(duration)) if duration[x] > 0), 'not found')
+                                if index == 'not found':
+                                    info[1] = 0
+                                else:
+                                    duration[index] -= 1
+                                    price = figures[index].generate(last_price)
+                                    HandlingFunctions.generate_orders(user, stock, price, AMOUNT)
+                                pack.append(figures)
+                                pack.append(duration)
+                                info[2] = pack
+                    time.sleep(t)
 
 
 def price_bot():
     logging.basicConfig(format='', level=logging.INFO)
     try:
-        crisis_start = datetime.now()
-        crisis_end = datetime.now()  # потом сделаем ввод через админ - панель или около того
         logging.info('Бот начал работу')
         files = next(os.walk('data/'))[2]
         min_file_length = min([len(open(f'data/{file}', 'r').readlines()) for file in files])
         user = User.objects.get(username='admin')
         AMOUNT = 10000
-        timer = 30  # потом придумаем ввод через админ - панель или около того
-        crisis_interruption = 0
+        is_frozen = False
+        settings_interruption = 0
+        timer = 30
+
         for i in range(min_file_length - 1):
-            if crisis_interruption == 0:
-                for file in files:
-                    df = pandas.read_csv(f'data/{file}', nrows=1, skiprows=i, sep=';')
-                    name = df.iloc[0][0]
-                    if name[len(name) - 3:] != '-RM':
-                        name = name.split('.')[1].split(':')[0]
-                    else:
-                        name = name[:-3]
-                    stock = Stocks.objects.get(name=name)
-                    portfolio, created = Portfolio.objects.get_or_create(user=user, stock=stock)
-                    portfolio.count = 100000
-                    portfolio.save()
-                    price = df.iloc[:, [7]][df.iloc[:, [7]].columns[0]][0]
-                    last_price = HandlingFunctions.get_last_price(stock)
-                    if not Tendencies.crisis_check(crisis_start, crisis_end, stock, user, AMOUNT, last_price):
-                        HandlingFunctions.generate_orders(user, stock, price, AMOUNT)
-                    else:
-                        crisis_interruption = 1
-                time.sleep(timer)
-            else:
-                break
-        MainCycle.begin(AMOUNT, user, timer, crisis_start, crisis_end)
+            if not is_frozen:
+                if settings_interruption == 0:
+                    for file in files:
+                        df = pandas.read_csv(f'data/{file}', nrows=1, skiprows=i, sep=';')
+                        name = df.iloc[0][0]
+                        if name[len(name) - 3:] != '-RM':
+                            name = name.split('.')[1].split(':')[0]
+                        else:
+                            name = name[:-3]
+                        stock = Stocks.objects.get(name=name)
+                        portfolio, created = Portfolio.objects.get_or_create(user=user, stock=stock)
+                        portfolio.count = 100000
+                        portfolio.save()
+                        price = df.iloc[:, [7]][df.iloc[:, [7]].columns[0]][0]
+                        last_price = HandlingFunctions.get_last_price(stock)
+                        timer = HandlingFunctions.get_timer(stock.pk)
+                        is_frozen = HandlingFunctions.get_pause(stock.pk)
+                        if not Tendencies.settings_check(stock, user, AMOUNT, last_price, timer):
+                            HandlingFunctions.generate_orders(user, stock, price, AMOUNT)
+                        else:
+                            settings_interruption = 1
+                    time.sleep(timer)
+                else:
+                    break
+            MainCycle.begin(AMOUNT, user)
 
     except KeyboardInterrupt:
         logging.info('Бот остановлен пользователем')

@@ -65,7 +65,7 @@ class AddOrderView(APIView):
         sum = 0
         portfolios = Portfolio.objects.filter(stock_id=user_portfolio.stock_id)
         for object in portfolios:
-                sum += object.count
+            sum += object.count
         if sum == 0:
             per_stocks = 100
         else:
@@ -78,17 +78,23 @@ class AddOrderView(APIView):
         Добавление акции и обработка данных при POST запросе
         """
         data = request.data
-        user = request.user
+        user = User.objects.get(id=1)
         name = data['stock']
         stock = Stocks.objects.get(name=name)
         type = data['type']
         price = float(data['price'])
         amount = int(data['amount'])
+        setting = None
+        # if Settings.objects.filter(stock_id=-1, name='short_switch'):
+        #     setting = Settings.objects.filter(stock_id=-1, name='short_switch').last()
+        # elif Settings.objects.filter(stock_id=stock.id, name='short_switch'):
+        #     setting = Settings.objects.filter(stock_id=stock.id, name='short_switch').last()
         if price <= 0 or amount <= 0:
             return Response({"detail": "uncorrect data"}, status=status.HTTP_400_BAD_REQUEST)
         self.margin_call(user)
         portfolio, created = Portfolio.objects.get_or_create(user=user, stock=stock)
         self.set_percentage(portfolio)
+        # if portfolio.count > 0 and type == 0:
         order = Order(user=user, stock=stock, type=type, price=price, is_closed=False, amount=amount)
         order_ops = Order.objects.filter(stock=stock, type=not type, price=price, is_closed=False)
         for order_op in order_ops:
@@ -107,6 +113,7 @@ class AddOrderView(APIView):
                 user_op.balance += min_count * price
                 user.balance -= min_count * price
 
+                    # if setting is None or setting.data['is_active']:
                 if portfolio.count < 0:
                     portfolio.short_balance -= min_count * price
                     user.balance += min_count * price

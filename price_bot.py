@@ -186,6 +186,33 @@ class HandlingFunctions:
         return None
 
     @staticmethod
+    def get_timer(stock_id):
+        setting = None
+        if Settings.objects.filter(stock_id=-1, name='frequency_generating_quotes'):
+            setting = Settings.objects.filter(stock_id=-1, name='frequency_generating_quotes').last()
+        elif Settings.objects.filter(stock_id=stock_id, name='frequency_generating_quotes'):
+            setting = Settings.objects.filter(stock_id=stock_id, name='frequency_generating_quotes').last()
+        if setting is not None:
+            timer = setting.data['timer']
+        else:
+            timer = 2
+        return timer
+
+    @staticmethod
+    def get_pause(stock_id):
+        setting = None
+        if Settings.objects.filter(stock_id=-1, name='quotes_generation_switch'):
+            setting = Settings.objects.filter(stock_id=-1, name='quotes_generation_switch').last()
+        elif Settings.objects.filter(stock_id=stock_id, name='quotes_generation_switch'):
+            setting = Settings.objects.filter(stock_id=stock_id, name='quotes_generation_switch').last()
+        if setting is None:
+            return False
+        elif setting.data['is_stop']:
+            return True
+        else:
+            return False
+
+    @staticmethod
     def get_last_price(stock):
         if Quotes.objects.filter(stock=stock):
             last_price = Quotes.objects.filter(stock=stock).last().price
@@ -251,40 +278,45 @@ class Tendencies:
 
 class MainCycle:
     @staticmethod
-    def begin(am, us, t):
+    def begin(am, us):
+        is_frozen = False
         user = us
         AMOUNT = am
-        timer = t
+        t = 30
         stocks = Stocks.objects.all()
         data = [['none', 0, []] for _ in range(len(Stocks.objects.all()))]
         while True:
             for stock in stocks:
+                print(is_frozen)
                 info = data[stock.pk - 1]
                 tendency = info[0]
                 duration = info[1]
                 last_price = HandlingFunctions.get_last_price(stock)
-                if not Tendencies.settings_check(stock, user, AMOUNT, last_price, t):
-                    if duration == 0:
-                        info = Tendencies.choose_tendency()
-                        data[stock.pk - 1] = info
-                    else:
-                        if info[2] == []:
-                            info[2] = Figures.set_figures(duration, tendency)
+                t = HandlingFunctions.get_timer(stock.pk)
+                is_frozen = HandlingFunctions.get_pause(stock.pk)
+                if not is_frozen:
+                    if not Tendencies.settings_check(stock, user, AMOUNT, last_price, t):
+                        if duration == 0:
+                            info = Tendencies.choose_tendency()
+                            data[stock.pk - 1] = info
                         else:
-                            pack = []
-                            figures = info[2][0]
-                            duration = info[2][1]
-                            index = next((x for x in range(len(duration)) if duration[x] > 0), 'not found')
-                            if index == 'not found':
-                                info[1] = 0
+                            if info[2] == []:
+                                info[2] = Figures.set_figures(duration, tendency)
                             else:
-                                duration[index] -= 1
-                                price = figures[index].generate(last_price)
-                                HandlingFunctions.generate_orders(user, stock, price, AMOUNT)
-                            pack.append(figures)
-                            pack.append(duration)
-                            info[2] = pack
-                time.sleep(timer)
+                                pack = []
+                                figures = info[2][0]
+                                duration = info[2][1]
+                                index = next((x for x in range(len(duration)) if duration[x] > 0), 'not found')
+                                if index == 'not found':
+                                    info[1] = 0
+                                else:
+                                    duration[index] -= 1
+                                    price = figures[index].generate(last_price)
+                                    HandlingFunctions.generate_orders(user, stock, price, AMOUNT)
+                                pack.append(figures)
+                                pack.append(duration)
+                                info[2] = pack
+                    time.sleep(t)
 
 
 def price_bot():
@@ -295,32 +327,37 @@ def price_bot():
         min_file_length = min([len(open(f'data/{file}', 'r').readlines()) for file in files])
         user = User.objects.get(username='admin')
         AMOUNT = 10000
-        timer = 5  # потом придумаем ввод через админ - панель или около того
+        is_frozen = False
         settings_interruption = 0
+        timer = 30
 
         for i in range(min_file_length - 1):
-            if settings_interruption == 0:
-                for file in files:
-                    df = pandas.read_csv(f'data/{file}', nrows=1, skiprows=i, sep=';')
-                    name = df.iloc[0][0]
-                    if name[len(name) - 3:] != '-RM':
-                        name = name.split('.')[1].split(':')[0]
-                    else:
-                        name = name[:-3]
-                    stock = Stocks.objects.get(name=name)
-                    portfolio, created = Portfolio.objects.get_or_create(user=user, stock=stock)
-                    portfolio.count = 100000
-                    portfolio.save()
-                    price = df.iloc[:, [7]][df.iloc[:, [7]].columns[0]][0]
-                    last_price = HandlingFunctions.get_last_price(stock)
-                    if not Tendencies.settings_check(stock, user, AMOUNT, last_price, timer):
-                        HandlingFunctions.generate_orders(user, stock, price, AMOUNT)
-                    else:
-                        settings_interruption = 1
-                time.sleep(timer)
-            else:
-                break
-        MainCycle.begin(AMOUNT, user, timer)
+            print(is_frozen)
+            if not is_frozen:
+                if settings_interruption == 0:
+                    for file in files:
+                        df = pandas.read_csv(f'data/{file}', nrows=1, skiprows=i, sep=';')
+                        name = df.iloc[0][0]
+                        if name[len(name) - 3:] != '-RM':
+                            name = name.split('.')[1].split(':')[0]
+                        else:
+                            name = name[:-3]
+                        stock = Stocks.objects.get(name=name)
+                        portfolio, created = Portfolio.objects.get_or_create(user=user, stock=stock)
+                        portfolio.count = 100000
+                        portfolio.save()
+                        price = df.iloc[:, [7]][df.iloc[:, [7]].columns[0]][0]
+                        last_price = HandlingFunctions.get_last_price(stock)
+                        timer = HandlingFunctions.get_timer(stock.pk)
+                        is_frozen = HandlingFunctions.get_pause(stock.pk)
+                        if not Tendencies.settings_check(stock, user, AMOUNT, last_price, timer):
+                            HandlingFunctions.generate_orders(user, stock, price, AMOUNT)
+                        else:
+                            settings_interruption = 1
+                    time.sleep(timer)
+                else:
+                    break
+            MainCycle.begin(AMOUNT, user)
 
     except KeyboardInterrupt:
         logging.info('Бот остановлен пользователем')

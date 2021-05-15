@@ -1,7 +1,7 @@
 from django.test import TestCase, Client
 from rest_framework.test import APITestCase, APIClient
 from django.urls import reverse
-from main.models import User, Order, Portfolio, Quotes, Stocks, LeverageData
+from main.models import User, Order, Portfolio, Quotes, Stocks, LeverageData, Settings
 
 
 class ProfileTest(APITestCase):
@@ -178,6 +178,7 @@ class OrderTest(APITestCase):
         verification_url = reverse('api_token')
         resp = self.client.post(verification_url, {'username': 'Flopper', 'password': 'promprog'}, format='json')
         self.token = resp.data['access']
+
 
     def test_add_order(self) -> None:
         url = reverse('add_order')

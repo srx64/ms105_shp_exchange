@@ -140,3 +140,8 @@ class Settings(models.Model):
     description = models.TextField(default='')
     stock_id = models.IntegerField(default=0)
     data = models.JSONField()
+
+
+class Cryptocurrencies(models.Model):
+    name = models.CharField(max_length=255, default='')
+    price = models.CharField(max_length=255, default='')

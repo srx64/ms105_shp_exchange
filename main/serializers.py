@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from main.models import Stocks, Order, Portfolio, User, Quotes, Statistics, Settings
+from main.models import Stocks, Order, Portfolio, User, Quotes, Statistics, Settings, Cryptocurrencies
 
 
 class RegistrationSerializer(serializers.ModelSerializer):
@@ -58,6 +58,14 @@ class StatisticsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Statistics
+        fields = '__all__'
+
+
+class CryptocurrenciesSerializer(serializers.ModelSerializer):
+    cryptocurrencies = serializers.SlugRelatedField(slug_field="name", read_only=True)
+
+    class Meta:
+        model = Cryptocurrencies
         fields = '__all__'
 
 

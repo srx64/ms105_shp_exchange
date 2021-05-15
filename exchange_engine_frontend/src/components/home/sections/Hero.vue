@@ -27,7 +27,9 @@
           </BaseHeading>
 
           <BaseBody>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Repudiandae nobis neque aspernatur in quas iure id aliquid, esse debitis, quibusdam mollitia! Quia ea expedita magnam totam, earum omnis et perspiciatis?
+            Данный проект позволит вам научиться основам финансирования, 
+            наглядно и просто научит базовым приёмам, необходимым для умения 
+            грамотно приобретать акции, распоряжаться ими для своей выгоды.
           </BaseBody>
 
           <div

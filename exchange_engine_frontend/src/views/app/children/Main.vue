@@ -72,9 +72,12 @@
         tile
       >
         <v-card-title> {{stocks[selectedItem].name}} </v-card-title>
-        <v-card-text>Описание: {{stocks[selectedItem].description}}</v-card-text>
-        <v-container>
+        <v-card-text>{{stocks[selectedItem].description}}</v-card-text>
+        <v-container
+          hidden
+        >
           <trading-vue 
+            hidden
             :data="this.$data"
             title-txt="NAME"
             :toolbar="true"

@@ -40,6 +40,7 @@
       },
       getUserInfo () {
         this.$store.dispatch('getProfile')
+        this.$store.dispatch('getPortfolio')
       }
     },
 

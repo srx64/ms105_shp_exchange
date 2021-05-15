@@ -1,5 +1,7 @@
 <template>
-  <v-container>
+  <v-container
+    class="px-10"
+  >
     <h1>
       Портфель
     </h1>
@@ -16,9 +18,9 @@
           Акции
         </span>
         <v-spacer/>
-        <span>
+        <!-- <span>
           {{ sumSecurities(portfolio) }}
-        </span>
+        </span> -->
       </v-subheader>
 
       <v-list-item
@@ -37,22 +39,25 @@
             v-else
             class="text-center mx-auto"
           >
-            {{ security.name }}
+            {{ security.stock }}
           </span>
         </v-list-item-avatar>
 
         <v-list-item-content>
-          <v-list-item-title v-text="security.name"/>
-
-          <v-list-item-subtitle v-text="security.description"/>
+          <v-list-item-title v-text="security.stock"/>
         </v-list-item-content>
 
         <v-list-item-action>
-          <v-list-item-action
-            class="font-weight-medium"
+          <v-list-item-subtitle
+            class="font-weight-medium mb-n2"
           >
-            {{ security.price.toFixed(2) }}
-          </v-list-item-action>
+            Количество:
+          </v-list-item-subtitle>
+          <v-list-item-title
+            
+          >
+            {{ security.count }}
+          </v-list-item-title>
         </v-list-item-action>
       </v-list-item>
     </v-list>
@@ -77,34 +82,27 @@ export default {
   },
 
   methods: {
-      getPortfolio () {
-        getAPI.get('api/v1/portfolio/', {
-            headers: { 
-              Authorization: `Bearer ${this.$store.state.accessToken}` 
-            } 
-          })
+    getSecurityPrice(id) {
+      getAPI.get('api/v1/stocks/' + id)
           .then(response => {
             console.log(response.data)
+            return response.data.price
           })
           .catch(err => {
             console.log(err)
           })
-      },
-      sumSecurities(securities) {
-        let sum = 0
-
-        for (let key in securities) {
-          sum += securities[key].price
-        }
-
-        return sum.toFixed(2)
-      }
     },
+    sumSecurities(securities) {
+      let sum = 0
 
-    mounted () {
-      this.getPortfolio()
+      for (let key in securities) {
+        sum += securities[key].price
+      }
+
+      return sum.toFixed(2)
     }
   }
+}
 </script>
 <style scoped>
 </style>

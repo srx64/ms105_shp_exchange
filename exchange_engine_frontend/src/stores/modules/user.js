@@ -2,37 +2,16 @@ import { getAPI } from '@/axios-api'
 
 export default {
   state: {
-    profile: {
-      surname: 'Иванченко',
-      name: 'Антон',
-      email: 'test@test.ru',
-      balance: 2303,
-      avatar: 'http://surl.li/sfip'
-    },
-    portfolio: [
-      {
-        "id": 2,
-        "index": "0",
-        "name": "FB",
-        "description": "Facebook",
-        "is_active": true,
-        "price": 5316.452990988047
-      },
-      {
-          "id": 3,
-          "index": "0",
-          "name": "MSFT",
-          "description": "Microsoft",
-          "is_active": true,
-          "price": 5607.362115399917
-      }
-    ]
+    profile: {},
+    portfolio: []
   },
   getters: {
     profile: state => {
       return state.profile
     },
     portfolio: state => {
+      console.log('port getting')
+      console.log(state.portfolio)
       return state.portfolio
     }
   },
@@ -109,6 +88,24 @@ export default {
             if (response.data.avatar.indexOf(getAPI.defaults.baseURL) != 0)
               response.data.avatar = getAPI.defaults.baseURL + response.data.avatar
             context.commit('updateProfile', response.data) 
+            console.log(response.data)
+            resolve()
+          })
+          .catch(err => {
+            console.log(context.getters.profile)
+            reject(err)
+          })
+      })
+    },
+    getPortfolio(context) {
+      return new Promise((resolve, reject) => {
+        getAPI.get('/api/v1/portfolio/', {
+          headers: { 
+            Authorization: `Bearer ${context.getters.accessToken}` 
+          } 
+        })
+          .then(response => {
+            context.commit('updatePortfolio', response.data) 
             console.log(response.data)
             resolve()
           })

@@ -1,6 +1,6 @@
 <template>
   <v-dialog
-    width="500"
+    :width="width"
     v-model="dialog"
   >
     <template v-slot:activator="{ on, attrs }">
@@ -50,7 +50,11 @@
         type: Boolean,
         default: false,
       },
-      title: String
+      title: String,
+      width: {
+        type: [String, Number],
+        default: 700
+      }
     },
   }
 </script>

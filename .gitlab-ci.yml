@@ -1,0 +1,55 @@
+image: python:latest
+
+variables:
+  PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache"
+
+cache:
+  paths:
+    - cache/pip
+
+stages:
+  - test
+  - docs
+
+before_script:
+  - pip install -r requirements.txt
+
+django_test:
+  stage: test
+  script:
+    - python manage.py test
+  tags:
+    - django
+  only:
+    - master
+    - develop
+
+sphinx:
+  stage: docs
+  before_script:
+    - pip install -r requirements.txt
+    - mkdir public
+    - cd docs
+  script:
+    - make html
+    - cd ..
+    - mv docs/build/html public/docs
+  artifacts:
+    paths:
+      - public
+  only:
+    - master
+    - develop
+  tags:
+    - django
+
+coverage:
+  stage: test
+  script:
+    - coverage run manage.py test
+    - coverage report -m --omit=manage.py
+  tags:
+    - django
+  only:
+    - master
+    - develop

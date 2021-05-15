@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from main.models import Stocks, Order, Portfolio, User, Quotes, Statistics
+from main.models import Stocks, Order, Portfolio, User, Quotes, Statistics, Candles, Settings, Cryptocurrencies
 
 
 class RegistrationSerializer(serializers.ModelSerializer):
@@ -12,8 +12,7 @@ class RegistrationSerializer(serializers.ModelSerializer):
         extra_kwargs = {'password': {'write_only':True}}
 
     def save(self):
-        account = User(email=self.validated_data['email'],
-                      username=self.validated_data['username'],)
+        account = User(email=self.validated_data['email'], username=self.validated_data['username'])
         password = self.validated_data['password']
         password2 = self.validated_data['password2']
 
@@ -23,11 +22,23 @@ class RegistrationSerializer(serializers.ModelSerializer):
         account.save()
         return account
 
+class CandlesSerializer(serializers.ModelSerializer):
+    """ Свечи графика """
+    class Meta:
+        model = Candles
+        fields = ('date', 'open', 'close', 'high', 'low')
 
 class StocksSerializer(serializers.ModelSerializer):
     """ Список всех акций"""
     class Meta:
         model = Stocks
+        fields = '__all__'
+
+
+class SettingsSerializer(serializers.ModelSerializer):
+    """Настройки биржи"""
+    class Meta:
+        model = Settings
         fields = '__all__'
 
 
@@ -52,6 +63,14 @@ class StatisticsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Statistics
+        fields = '__all__'
+
+
+class CryptocurrenciesSerializer(serializers.ModelSerializer):
+    cryptocurrencies = serializers.SlugRelatedField(slug_field="name", read_only=True)
+
+    class Meta:
+        model = Cryptocurrencies
         fields = '__all__'
 
 

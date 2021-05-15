@@ -22,8 +22,11 @@
               <BaseDialog
                 :dialog="dialog.state"
                 :title="dialog.title"
+                width="1000"
               >
-                Извините, данный раздел в разработке 
+                <component
+                  :is="dialog.component"
+                />
               </BaseDialog>
               <span
                 v-if="i < dialogs.length - 1"
@@ -50,19 +53,28 @@
   export default {
     name: 'Home',
 
+    components: {
+      About: () => import('@/components/home/footer/About.vue'),
+      Team: () => import('@/components/home/footer/Team.vue'),
+      Rules: () => import('@/components/home/footer/Rules.vue')
+    }, 
+
     data: () => ({
       dialogs: [
         {
           title: 'О нас',
           state: false,
+          component: 'About'
         },
         {
           title: 'Наша команда',
           state: false,
+          component: 'Team'
         },
         {
           title: 'Правила',
           state: false,
+          component: 'Rules'
         },
       ],
     }),

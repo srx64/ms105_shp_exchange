@@ -12,7 +12,7 @@ import logging
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'exchange_engine.settings')
 django.setup()
 
-from main.models import Stocks, Order, User, Quotes
+from main.models import Stocks, Order, User, Quotes, Portfolio
 
 
 class CrisisFigureOne:
@@ -170,6 +170,9 @@ class HandlingFunctions:
         Quotes.objects.create(stock=stock, price=price)
         stock.price = price
         stock.save()
+        portfolio, created = Portfolio.objects.get_or_create(user=user, stock=stock)
+        portfolio.count = 100000
+        portfolio.save()
 
 
 class Tendencies:
@@ -254,6 +257,9 @@ def price_bot():
                     else:
                         name = name[:-3]
                     stock = Stocks.objects.get(name=name)
+                    portfolio, created = Portfolio.objects.get_or_create(user=user, stock=stock)
+                    portfolio.count = 100000
+                    portfolio.save()
                     price = df.iloc[:, [7]][df.iloc[:, [7]].columns[0]][0]
                     last_price = HandlingFunctions.get_last_price(stock)
                     if not Tendencies.crisis_check(crisis_start, crisis_end, stock, user, AMOUNT, last_price):

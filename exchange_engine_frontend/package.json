@@ -11,6 +11,7 @@
     "axios": "^0.21.1",
     "core-js": "^3.6.5",
     "idle-vue": "^2.0.5",
+    "trading-vue-js": "^1.0.2",
     "vee-validate": "^3.4.5",
     "vue": "^2.6.11",
     "vue-axios": "^3.2.4",

@@ -1,7 +1,9 @@
 <template>
   <BaseSection id="features">
     <BaseSectionHeading title="Наши особенности">
-      Lorem ipsum dolor sit amet consectetur adipisicing elit. Libero, in! Asperiores, impedit libero. Veniam rerum saepe unde nihil possimus quibusdam esse accusamus mollitia magni fuga.
+      Проект создан для начинающих инвесторов в целях обучения и практики. В нашем сервисе вы может попробовать базовые 
+      инструменты торговли на бирже и собрать свой собственный виртуальный портфель. Все сделки производятся с виртуальной 
+      валютой, в случае ошибки вы ничем не рискуете.
     </BaseSectionHeading>
 
     <v-container
@@ -19,7 +21,7 @@
             align="left"
             horizontal
           >
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Veritatis illum veniam cum dolores ratione commodi beatae quas maxime, laboriosam excepturi solut!
+            {{ feature.description }}
           </BaseAvatarCard>
         </v-col>
       </v-row>
@@ -35,19 +37,23 @@
       features: [
         {
           title: 'Удобный интерфейс',
-          icon: 'mdi-fountain-pen-tip',
+          icon: 'mdi-monitor-screenshot',
+          description: 'Интуитивно понятный интерфейс для удобства работы',
         },
         {
           title: 'Оптимизация',
-          icon: 'mdi-cellphone',
+          icon: 'mdi-cellphone-link',
+          description: 'Сайт оптимизирован под мобильные устройства',
         },
         {
-          title: 'Простота',
-          icon: 'mdi-ice-pop',
+          title: 'Доступность',
+          icon: 'mdi-feather',
+          description: 'СОздать аккаунт может кто угодно, без ограничений',
         },
         {
           title: 'Поддержка 24/7',
-          icon: 'mdi-help-circle-outline',
+          icon: 'mdi-hours-24',
+          description: 'Наша отзывчивая поддержка ответит на любой вопрос',
         },
       ],
     }),

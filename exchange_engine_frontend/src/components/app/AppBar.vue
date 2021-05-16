@@ -129,7 +129,6 @@
             </v-list-item-content>
           </v-card>
         </v-menu>
-        
       </v-col>
     </v-row>
   </v-app-bar>

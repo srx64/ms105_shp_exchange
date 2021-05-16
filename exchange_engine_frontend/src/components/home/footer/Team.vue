@@ -1,32 +1,23 @@
 <template>
-  <v-list>
-    <v-list-item
+  <v-row dense>
+    <v-col
       v-for="person in team"
       :key="person.nick"
+      cols="6"
     >
-      <v-card
-        class="mx-auto"
-        max-width="344"
-      >
+      <v-card>
         <v-img
           :src="person.photo"
+          class="white--text align-end"
+          gradient="to bottom, rgba(0,0,0,.1), rgba(0,0,0,.5)"
           height="200px"
-        ></v-img>
-
-        <v-card-title>
-          {{ person.name }}
-        </v-card-title>
-
-        <v-card-subtitle>
-          {{ person.post }}
-        </v-card-subtitle>
-
-        <v-card-text>
-          {{ person.description }}
-        </v-card-text>
+        >
+          <v-card-title v-text="person.name"></v-card-title>
+        </v-img>
 
         <v-card-actions>
-          <v-spacer></v-spacer>
+
+          
 
           <v-btn
             icon
@@ -48,8 +39,8 @@
           </div>
         </v-expand-transition>
       </v-card>
-    </v-list-item>
-  </v-list>
+    </v-col>
+  </v-row>
 </template>
 
 <script>
@@ -62,6 +53,36 @@ export default {
         nick: 'Rechnoi',
         name: 'Иванченко Антон',
         post: 'Фронтенд-разработчик',
+        photo: 'https://i.pinimg.com/564x/0f/14/85/0f148590b392d21b4cc7d1d51193dc45.jpg',
+        description: 'Описание',
+        quote: 'Хехе, работает',
+        socials: [
+
+        ],
+        show: false
+      },
+      {
+        nick: 'vortexof',
+        name: 'Мишкина Дарья',
+        post: 'Тимлид Бэкенд-разработчик',
+        photo: 'https://i.pinimg.com/564x/0f/14/85/0f148590b392d21b4cc7d1d51193dc45.jpg',
+        description: 'Описание',
+        quote: 'Хехе, работает',
+        show: false
+      },
+      {
+        nick: 'Berezin',
+        name: 'Березин Николай',
+        post: 'Фронтенд-разработчик',
+        photo: 'https://i.pinimg.com/564x/0f/14/85/0f148590b392d21b4cc7d1d51193dc45.jpg',
+        description: 'Описание',
+        quote: 'Фисштех ❤',
+        show: false
+      },
+      {
+        nick: 'Frolov',
+        name: 'Фролов Максим',
+        post: 'Бэкенд-разработчик',
         photo: 'https://i.pinimg.com/564x/0f/14/85/0f148590b392d21b4cc7d1d51193dc45.jpg',
         description: 'Описание',
         quote: 'Хехе, работает',

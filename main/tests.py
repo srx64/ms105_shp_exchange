@@ -179,6 +179,8 @@ class OrderTest(APITestCase):
         resp = self.client.post(verification_url, {'username': 'Flopper', 'password': 'promprog'}, format='json')
         self.token = resp.data['access']
 
+    def test_error(self) -> None:
+        self.assertEqual(self.response.status_code, 401)
 
     def test_add_order(self) -> None:
         url = reverse('add_order')

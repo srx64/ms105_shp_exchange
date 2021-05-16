@@ -49,6 +49,7 @@ class Order(models.Model):
     type = models.BooleanField()  # покупка - 0; продажа - 1
     price = models.FloatField()
     amount = models.IntegerField(default=1)
+    count = models.IntegerField(default=1, null=True, blank=True)
     is_closed = models.BooleanField(default=False)
     date_closed = models.DateTimeField(default=None, null=True)
 

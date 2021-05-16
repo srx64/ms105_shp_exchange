@@ -19,6 +19,10 @@
   export default {
     name: 'AuthView',
 
+    metaInfo: {
+      title: 'Авторизация',
+    },
+
     props: {
       id: {
         type: String,

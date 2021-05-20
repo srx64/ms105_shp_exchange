@@ -24,8 +24,8 @@
         <v-card-title> Редактировать профиль </v-card-title>
         <v-form>
           <v-text-field v-model="username" hint="" label="Никнейм"></v-text-field>
-          <v-text-field v-model="first_name" hint="" label="Имя"></v-text-field>
-          <v-text-field v-model="last_name" hint="" label="Фамилия"></v-text-field>
+          <!-- <v-text-field v-model="first_name" hint="" label="Имя"></v-text-field>
+          <v-text-field v-model="last_name" hint="" label="Фамилия"></v-text-field> -->
           <v-text-field v-model="email" hint="" label="Email"></v-text-field>
           <v-text-field v-model="balance" hint="" label="Balance"></v-text-field>
           <v-btn color="" @click="saveData"> Сохранить </v-btn>

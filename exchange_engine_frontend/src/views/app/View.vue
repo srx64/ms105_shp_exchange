@@ -1,7 +1,5 @@
 <template>
-  <v-app
-    
-  >
+  <v-app>
     <AppBar/>
 
     <v-main>

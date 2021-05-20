@@ -4,7 +4,7 @@
       Заявки
     </h1>
     <v-list
-      v-if="orders.length"
+      v-if="orders.length != 0"
       two-line
       color="white"
     >
@@ -161,6 +161,12 @@
         У вас пока нет заявок на продажу
       </h5>
     </v-list>
+    <h3
+      v-else
+      class="ml-15"
+    >
+      У вас пока нет заявок
+    </h3>
   </v-container>
 </template>
 

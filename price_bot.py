@@ -259,6 +259,8 @@ class Tendencies:
                             HandlingFunctions.generate_orders(user, stock, price, AMOUNT)
                     elif setting.data['duration'] <= 0:
                         return False
+            elif setting.data['coefficient'] is not None and setting.data['type'] is None:
+                return False
 
             elif setting.data['duration'] is not None:
                 if setting.data['duration'] > 0:
@@ -271,6 +273,8 @@ class Tendencies:
                         HandlingFunctions.generate_orders(user, stock, price, AMOUNT)
                 elif setting.data['duration'] <= 0:
                     return False
+            elif setting.data['coefficient'] is not None and setting.data['type'] is None:
+                return False
 
             setting.save()
             return True
@@ -312,8 +316,15 @@ class MainCycle:
                                     info[1] = 0
                                 else:
                                     duration[index] -= 1
-                                    price = figures[index].generate(last_price)
-                                    HandlingFunctions.generate_orders(user, stock, price, AMOUNT)
+                                    if HandlingFunctions.get_settings(stock.pk) is not None and \
+                                        HandlingFunctions.get_settings(stock.pk).data['coefficient'] is not None:
+
+                                        coef = HandlingFunctions.get_settings(stock.pk).data['coefficient']
+                                        price = figures[index].generate(last_price) * coef
+                                        HandlingFunctions.generate_orders(user, stock, price, AMOUNT)
+                                    else:
+                                        price = figures[index].generate(last_price)
+                                        HandlingFunctions.generate_orders(user, stock, price, AMOUNT)
                                 pack.append(figures)
                                 pack.append(duration)
                                 info[2] = pack

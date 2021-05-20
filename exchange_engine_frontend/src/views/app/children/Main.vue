@@ -41,8 +41,8 @@
               <v-list-item-title v-text="stock.price.toFixed(4)"/>
             </v-list-item-action>
             <v-list-item-action>
-              
-              <v-icon 
+
+              <v-icon
                 v-if="stock.is_active"
                 color="green"
               >
@@ -80,7 +80,7 @@
         <v-container
           hidden
         >
-          <trading-vue 
+          <trading-vue
             hidden
             :data="this.$data"
             title-txt="NAME"
@@ -145,13 +145,6 @@ import TradingVue from "trading-vue-js";
       amount: 0,
       stocks: [],
       ratio: 0,
-      // ohlcv: [
-      //   [1551128400000, 33, 37.1, 14, 14, 196],
-      //   [1551132000000, 13.7, 30, 6.6, 30, 206],
-      //   [1551135600000, 29.9, 33, 21.3, 21.8, 74],
-      //   [1551139200000, 21.7, 25.9, 18, 24, 140],
-      //   [1551142800000, 24.1, 24.1, 24, 24.1, 29],
-      // ],
       candles: [],
       ohlcv: [ [ 1620822279181, 2820, 3188.5, 3188.5, 2820 ], [ 1620822333716, 3090, 3085, 3090, 3085 ], [ 1620822395534, 3037.5, 3033, 3037.5, 3033 ]],
       item: '',
@@ -224,7 +217,16 @@ import TradingVue from "trading-vue-js";
         })
       }
     },
-
+    computed: {
+      generateAlert: function(){
+        var str = 'Вы хотите создать '
+        str += this.limit_order ? 'отложенную заявку по цене ' + this.price : 'заявку по текущей цене '
+        str += this.leverage_trade ? 'с плечом  ' : ''
+        //str += получить количество акций, если 0 то к строке прибавить <в шорт> иначе <в лонг>
+        // сделать dialog component https://vuetifyjs.com/en/components/dialogs/#transitions
+        return str
+      }
+    },
     mounted () {
       this.getStocks()
       this.stocksInterval = setInterval(function() {

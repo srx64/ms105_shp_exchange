@@ -22,12 +22,19 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'v1i_fb$_jf2#1v_lcsbu&eon4u-os0^px=s^iycegdycqy&5)6'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# DEBUG = True
+DEBUG = bool(os.environ.get('EXCHANGE_DJANGO_DEBUG', True))
 
-ALLOWED_HOSTS = []
+if DEBUG:
+    SECRET_KEY = 'v1i_fb$_jf2#1v_lcsbu&eon4u-os0^px=s^iycegdycqy&5)6'
+    ALLOWED_HOSTS = []
+else:
+    SECRET_KEY = os.environ.get('EXCHANGE_SECRET_KEY', 'define me')
+    ALLOWED_HOSTS = [
+        '127.0.0.1',
+    ]
 
 
 # Application definition
@@ -87,30 +94,16 @@ WSGI_APPLICATION = 'exchange_engine.wsgi.application'
 
 TESTING = sys.argv[1:2] == ['test']
 
-if not TESTING:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME': 'exchange',
-            'USER': 'shp',
-            'PASSWORD': 'promprog',
-            'HOST': '127.0.0.1',
-            'PORT': '5432',
-            'TEST': {
-                'ENGINE': 'django.db.backends.sqlite3',
-                'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-            },
-        }
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.environ.get('EXCHANGE_DATABASE_NAME', 'exchange'),
+        'USER': os.environ.get('EXCHANGE_DATABASE_USER', 'shp'),
+        'PASSWORD': os.environ.get('EXCHANGE_DATABASE_PASSWORD', 'promprog'),
+        'HOST': os.environ.get('EXCHANGE_DATABASE_HOST', '127.0.0.1'),
+        'PORT': os.environ.get('EXCHANGE_DATABASE_PORT', '5432'),
     }
-else:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'TEST': {
-                'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-            }
-        }
-    }
+}
 
 
 # Password validation
@@ -185,3 +178,5 @@ EMAIL_HOST_PASSWORD = 'promprog'
 FIXTURE_DIRS = [
     'main/fixtures',
 ]
+
+STATIC_ROOT = 'staticfiles'

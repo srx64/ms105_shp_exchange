@@ -67,12 +67,12 @@
           <v-list-item-title
             class="font-weight-medium"
           >
-            {{ order.count }} X {{ order.price.toFixed(2) }}
+            {{ order.count }} X {{ order.price.toFixed(2) }}&#x20AE;
           </v-list-item-title>
           <v-list-item-subtitle
             
           >
-            {{ (order.count * order.price).toFixed(2) }}
+            {{ (order.count * order.price).toFixed(2) }}&#x20AE;
           </v-list-item-subtitle>
         </v-list-item-action>
       </v-list-item>
@@ -145,12 +145,12 @@
           <v-list-item-title
             class="font-weight-medium"
           >
-            {{ order.count }} X {{ order.price.toFixed(2) }}
+            {{ order.count }} X {{ order.price.toFixed(2) }}&#x20AE;
           </v-list-item-title>
           <v-list-item-subtitle
             
           >
-            {{ (order.count * order.price).toFixed(2) }}
+            {{ (order.count * order.price).toFixed(2) }}&#x20AE;
           </v-list-item-subtitle>
         </v-list-item-action>
       </v-list-item>

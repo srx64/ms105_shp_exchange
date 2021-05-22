@@ -38,7 +38,9 @@
             </v-list-item-content>
 
             <v-list-item-action>
-              <v-list-item-title v-text="stock.price.toFixed(4)"/>
+              <v-list-item-title>
+               {{ stock.price.toFixed(2) }}&#x20AE;
+              </v-list-item-title>
             </v-list-item-action>
             <v-list-item-action>
 
@@ -75,7 +77,10 @@
         elevation="0"
         tile
       >
-        <v-card-title> {{stocks[selectedItem].name}} ({{stocks[selectedItem].price.toFixed(2) }})</v-card-title>
+        <v-card-title v-text="stocks[selectedItem].name"/>
+        <v-card-subtitle>
+          Текущая цена: {{ stocks[selectedItem].price.toFixed(2) }}&#x20AE;
+        </v-card-subtitle>
         <v-card-text>{{stocks[selectedItem].description}}</v-card-text>
         <v-container
           hidden
@@ -88,14 +93,14 @@
           />
         </v-container>
         <v-form>
-          <v-text-field v-model="amount" hint="" label="Количество" type="number"></v-text-field>
+          <v-text-field v-model="amount" hint="" label="Количество" type="number" ></v-text-field>
           <v-checkbox
           v-model="limit_order"
           hide-details
           label="Отложенная заявка"
           class="shrink mr-2 mt-0"
         ></v-checkbox>
-          <v-text-field v-if="limit_order" :disabled="!limit_order" v-model="price" hint="" label="Цена" type="number"></v-text-field>
+          <v-text-field v-if="limit_order" append-icon="mdi-currency-mnt" :disabled="!limit_order" v-model="price" hint="" label="Цена" type="number"></v-text-field>
           <v-checkbox
           hide-details
           label="Торговля с плечом"
@@ -142,7 +147,7 @@ import TradingVue from "trading-vue-js";
       limit_order: false,
       leverage_trade: false,
       price: 0,
-      amount: 0,
+      amount: 1,
       stocks: [],
       ratio: 0,
       candles: [],

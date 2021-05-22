@@ -99,7 +99,7 @@ class AddOrderView(APIView):
         portfolio, created = Portfolio.objects.get_or_create(user=user, stock=stock)
         self.set_percentage(portfolio)
         if (setting is None or setting.data['is_active']) or not setting.data['is_active'] and (type == '0' or portfolio.count > 0):
-            order = Order(user=user, stock=stock, type=type, price=price, is_closed=False, amount=amount)
+            order = Order(user=user, stock=stock, type=type, price=price, is_closed=False, amount=amount, count=amount)
             order_ops = Order.objects.filter(stock=stock, type=not type, price=price, is_closed=False)
             for order_op in order_ops:
                 if order.amount != 0:
@@ -435,7 +435,7 @@ class LeverageTradingView(APIView):
                 broker.ratio = ratio
             except LeverageData.DoesNotExist:
                 broker = LeverageData(user=user, stock=stock, ratio=ratio)
-                order = Order(user=user, stock=stock, type=type, price=quote.price, is_closed=False, amount=amount)
+                order = Order(user=user, stock=stock, type=type, price=quote.price, is_closed=False, amount=amount, count=amount)
             order.save()
             broker.save()
             return HttpResponseRedirect("/api/v1/orders/")

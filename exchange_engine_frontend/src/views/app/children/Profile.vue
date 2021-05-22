@@ -3,6 +3,53 @@
     <h1>
       {{ profile.username }}
     </h1>
+    <!-- <v-card
+      class="mx-auto"
+      max-width="344"
+      outlined
+    >
+      <v-list-item two-line>
+        <v-hover v-slot="{ hover }">
+          <v-list-item-avatar
+            size="150"
+            color="grey"
+          >
+            <v-img v-if="url" :src="url">
+              <v-container 
+                class="container"
+                :class="{ 'on-hover': hover }"
+              >
+                <p
+                  style="color: rgba(255, 255, 255, 1) !important;"
+                  color="rgba(255, 255, 255, 0)"
+                >
+                  test
+                </p>
+              </v-container>
+            </v-img>
+          </v-list-item-avatar>
+        </v-hover>
+
+        <v-list-item-content>
+          <v-list-item-title class="headline mb-1">
+            {{ profile.username }}
+          </v-list-item-title>
+          <v-list-item-subtitle>
+            {{ profile.last_name }} {{ profile.first_name }}
+          </v-list-item-subtitle>
+        </v-list-item-content>
+      </v-list-item>
+
+      <v-card-actions>
+        <v-btn
+          outlined
+          rounded
+          text
+        >
+          Button
+        </v-btn>
+      </v-card-actions>
+    </v-card> -->
     
       <v-btn
         @click="chooseFile"
@@ -104,7 +151,7 @@ export default {
       fd.append('file', this.selectedFile, this.selectedFile.name)
       getAPI.patch('api/v1/profile/', fd, {
           headers: { 
-            Authorization: `Bearer ${this.$store.state.accessToken}` 
+            Authorization: `Bearer ${this.$store.getters.accessToken}` 
           } 
         })
         .then(res => {
@@ -136,8 +183,19 @@ export default {
 </script>
 
 <style scoped>
-.container{
-  text-align: center;
-  width: 500px;
-}
+  .container{
+    text-align: center;
+    width: 500px;
+  }
+  /* .container {
+    transition: opacity .4s ease-in-out;
+  }
+
+  .container:not(.on-hover) {
+    opacity: 0.6;
+  }
+
+  .show-edit {
+    color: rgba(255, 255, 255, 1) !important;
+  } */
 </style>

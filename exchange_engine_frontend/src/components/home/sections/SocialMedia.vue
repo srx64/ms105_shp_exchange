@@ -2,7 +2,7 @@
   <v-theme-provider dark>
     <base-section
       id="social"
-      class="blue text-center"
+      class="blue darken-2 text-center"
       space="56"
     >
       <base-icon class="mb-8">
@@ -11,7 +11,7 @@
 
       <base-section-heading
         color="transparent"
-        title="Наш телеграмм"
+        title="Наш Telegram"
       >
         Следите за новостями и обновлениями на нашем канале Telegram
       </base-section-heading>

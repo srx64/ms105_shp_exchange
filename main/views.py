@@ -409,7 +409,7 @@ class LeverageTradingView(APIView):
         ratio = int(data['ratio'])
         stock = Stocks.objects.get(name=data['stock'])
         quote = Quotes.objects.filter(stock=stock.id).last()
-        type = True if data['type'] else False
+        type = bool(data.get('type', False))
         cash = user.balance * ratio
         setting = 'None'
         if Settings.objects.filter(stock_id=-1, name='leverage'):

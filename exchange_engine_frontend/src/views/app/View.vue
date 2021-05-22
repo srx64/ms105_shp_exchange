@@ -46,6 +46,10 @@
       }
     },
 
+    beforeCreate () {
+      this.$store.dispatch('initialiseToken')
+    },
+
     mounted() {
       this.getUserInfo()
       this.userInfoInterval = setInterval(function() {

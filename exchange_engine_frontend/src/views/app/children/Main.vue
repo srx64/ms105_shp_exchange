@@ -161,7 +161,7 @@ import TradingVue from "trading-vue-js";
       getStocks(){
         getAPI.get('api/v1/stocks/', {
             headers: { 
-              Authorization: `Bearer ${this.$store.state.accessToken}` 
+              Authorization: `Bearer ${this.$store.getters.accessToken}` 
             } 
           })
           .then(response => {
@@ -198,7 +198,7 @@ import TradingVue from "trading-vue-js";
         },
         {
           headers: { 
-            Authorization: `Bearer ${this.$store.state.accessToken}` 
+            Authorization: `Bearer ${this.$store.getters.accessToken}` 
           } 
         })
         .then(response => {

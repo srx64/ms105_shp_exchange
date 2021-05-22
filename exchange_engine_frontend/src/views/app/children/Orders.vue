@@ -16,7 +16,7 @@
           Покупка
         </span>
       </v-subheader>
-
+      
       <v-list-item
         v-for="order in purchaseOrders"
         :key="order.id"
@@ -185,7 +185,7 @@ export default {
       getOrders () {
         getAPI.get('api/v1/orders/', {
             headers: { 
-              Authorization: `Bearer ${this.$store.state.accessToken}` 
+              Authorization: `Bearer ${this.$store.getters.accessToken}` 
             } 
           })
           .then(response => {

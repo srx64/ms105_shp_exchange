@@ -177,7 +177,7 @@ export default {
   name: 'Orders',
 
   data: () => ({
-    orders: {},
+    orders: [],
     ordersInterval: undefined
   }),
 

@@ -4,7 +4,7 @@
       Заявки
     </h1>
     <v-list
-      v-if="orders.length != 0"
+      v-if="orders.length"
       two-line
       color="white"
     >
@@ -16,7 +16,7 @@
           Покупка
         </span>
       </v-subheader>
-      
+
       <v-list-item
         v-for="order in purchaseOrders"
         :key="order.id"
@@ -67,12 +67,12 @@
           <v-list-item-title
             class="font-weight-medium"
           >
-            {{ order.count }} X {{ order.price.toFixed(2) }}&#x20AE;
+            {{ order.count }} X {{ order.price.toFixed(2) }}
           </v-list-item-title>
           <v-list-item-subtitle
             
           >
-            {{ (order.count * order.price).toFixed(2) }}&#x20AE;
+            {{ (order.count * order.price).toFixed(2) }}
           </v-list-item-subtitle>
         </v-list-item-action>
       </v-list-item>
@@ -145,12 +145,12 @@
           <v-list-item-title
             class="font-weight-medium"
           >
-            {{ order.count }} X {{ order.price.toFixed(2) }}&#x20AE;
+            {{ order.count }} X {{ order.price.toFixed(2) }}
           </v-list-item-title>
           <v-list-item-subtitle
             
           >
-            {{ (order.count * order.price).toFixed(2) }}&#x20AE;
+            {{ (order.count * order.price).toFixed(2) }}
           </v-list-item-subtitle>
         </v-list-item-action>
       </v-list-item>
@@ -161,12 +161,6 @@
         У вас пока нет заявок на продажу
       </h5>
     </v-list>
-    <h3
-      v-else
-      class="ml-15"
-    >
-      У вас пока нет заявок
-    </h3>
   </v-container>
 </template>
 
@@ -177,7 +171,7 @@ export default {
   name: 'Orders',
 
   data: () => ({
-    orders: [],
+    orders: {},
     ordersInterval: undefined
   }),
 
@@ -185,7 +179,7 @@ export default {
       getOrders () {
         getAPI.get('api/v1/orders/', {
             headers: { 
-              Authorization: `Bearer ${this.$store.getters.accessToken}` 
+              Authorization: `Bearer ${this.$store.state.accessToken}` 
             } 
           })
           .then(response => {

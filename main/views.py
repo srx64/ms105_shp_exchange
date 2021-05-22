@@ -87,7 +87,7 @@ class AddOrderView(APIView):
         price = float(data['price'])
         amount = int(data['amount'])
         if price == 0:
-            price = stock.price
+            price = Quotes.objects.filter(stock=stock.id).last().price
         setting = None
         if Settings.objects.filter(stock_id=-1, name='short_switch'):
             setting = Settings.objects.filter(stock_id=-1, name='short_switch').last()

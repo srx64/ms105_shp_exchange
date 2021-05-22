@@ -1,5 +1,7 @@
 <template>
-  <v-app>
+  <v-app
+    
+  >
     <AppBar/>
 
     <v-main>
@@ -44,10 +46,6 @@
         this.$store.dispatch('getProfile')
         this.$store.dispatch('getPortfolio')
       }
-    },
-
-    beforeCreate () {
-      this.$store.dispatch('initialiseToken')
     },
 
     mounted() {

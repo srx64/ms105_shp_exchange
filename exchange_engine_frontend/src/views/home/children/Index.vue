@@ -6,7 +6,7 @@
     name: 'Home',
 
     metaInfo: {
-      title: 'Главная',
+      title: 'Home',
     },
 
     extends: View,

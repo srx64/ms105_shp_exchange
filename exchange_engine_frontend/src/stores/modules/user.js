@@ -66,6 +66,8 @@ export default {
         })
           .then(response => {
             context.commit('updateStorage', { access: response.data.access, refresh: context.getters.getRefresh })
+            
+            console.log(response.data.access)
             resolve()
           })
           .catch(err => {

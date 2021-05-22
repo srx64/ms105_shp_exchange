@@ -86,8 +86,12 @@
                 color="grey lighten-3"
                 size="48"
               >
-                <v-img v-if="profile.avatar" class="d-flex align-center" :src="profile.avatar"/>
-                <span v-else-if="profile.first_name && profile.last_name" class="white--text headline">{{ getInitials }}</span>
+                <v-img class="d-flex align-center" :src="profile.avatar">
+                  <template v-slot:placeholder>
+                    <span class="white--text headline">{{ getInitials }}</span>
+                  </template>
+                </v-img>
+                <!-- <span v-else class="white--text headline">{{ getInitials }}</span> -->
               </v-avatar>
             </v-btn>
           </template>
@@ -98,10 +102,10 @@
                   color="grey lighten-3"
                 >
                   <v-img v-if="profile.avatar" :src="profile.avatar"/>
-                  <span v-else-if="profile.first_name && profile.last_name" class="white--text headline">{{ getInitials }}</span>
+                  <span v-else class="white--text headline">{{ getInitials }}</span>
                 </v-avatar>
-                <h3 v-if="profile.first_name && profile.last_name">{{ fullName }}</h3>
-                <p v-if="profile.email" class="caption mt-1">
+                <h3>{{ fullName }}</h3>
+                <p class="caption mt-1">
                   {{ profile.email }}
                 </p>
                 <v-divider class="my-3"></v-divider>
@@ -125,6 +129,7 @@
             </v-list-item-content>
           </v-card>
         </v-menu>
+        
       </v-col>
     </v-row>
   </v-app-bar>
@@ -147,3 +152,9 @@
     }
 	}
 </script>
+
+<style scoped>
+  .redbtn {
+    color: red;
+  }
+</style>

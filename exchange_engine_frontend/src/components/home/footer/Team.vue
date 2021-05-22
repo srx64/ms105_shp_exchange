@@ -1,89 +1,55 @@
 <template>
-  <v-row dense>
-    <v-col
-      v-for="(person, index) in team"
-      :key="index"
-      cols="6"
+  <v-list>
+    <v-list-item
+      v-for="person in team"
+      :key="person.nick"
     >
-      <v-card>
+      <v-card
+        class="mx-auto"
+        max-width="344"
+      >
         <v-img
           :src="person.photo"
-          class="white--text align-end"
-          gradient="to bottom, rgba(0,0,0,.1), rgba(0,0,0,.5)"
           height="200px"
-        >
-          <template v-slot:placeholder>
-            <svg style="width:100%;height:100%" viewBox="0 0 24 24">
-              <path fill="grey" d="M12,4A4,4 0 0,1 16,8A4,4 0 0,1 12,12A4,4 0 0,1 8,8A4,4 0 0,1 12,4M12,14C16.42,14 20,15.79 20,18V20H4V18C4,15.79 7.58,14 12,14Z" />
-            </svg>
-          </template>
-          <v-card-title
-            v-text="person.name"
-          />
-          <v-card-subtitle
-            v-text="person.post"
-            class="grey--text text--lighten-2"
-          />
-        </v-img>
+        ></v-img>
+
+        <v-card-title>
+          {{ person.name }}
+        </v-card-title>
+
+        <v-card-subtitle>
+          {{ person.post }}
+        </v-card-subtitle>
+
+        <v-card-text>
+          {{ person.description }}
+        </v-card-text>
 
         <v-card-actions>
+          <v-spacer></v-spacer>
+
           <v-btn
-            :disabled="!person.description && !person.quote"
             icon
             @click="person.show = !person.show"
           >
             <v-icon>{{ person.show ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>
           </v-btn>
-
-          <v-spacer/>
-
-          <v-btn
-            v-for="(social, name) in person.socials"
-            :href="social.link"
-            target="_blank"
-            :color="social.color"
-            height="36px"
-            fab
-            dark
-            icon
-            small
-            :key="name"
-          >
-            <v-icon
-            >
-              {{ social.icon }}
-            </v-icon>
-          </v-btn>
         </v-card-actions>
 
         <v-expand-transition>
-          <v-list-item-content 
-            v-show="person.show"
-            class="pb-0"
-          >
+          <div v-show="person.show">
             <v-divider></v-divider>
-            <v-card-text v-if="person.description">
-              {{ person.description }}
-            </v-card-text>
+
             <v-card-text
-              v-if="person.quote"
-              class="pt-0"
+              class="font-italic"
             >
-              <v-card-text
-                v-html="person.quote.split('\n').join('<br>')"
-                class="font-italic text-center py-0"
-              />
-              <v-card-subtitle
-                class="pt-1 pb-0 text-right font-italic"
-              >
-                &copy;{{ person.name }}
-              </v-card-subtitle>
+              "{{ person.quote }}"
             </v-card-text>
-          </v-list-item-content>
+          </div>
         </v-expand-transition>
       </v-card>
-    </v-col>
-  </v-row>
+    </v-list-item>
+  </v-list>
 </template>
 
 <script>
@@ -93,55 +59,12 @@ export default {
   data: () => ({
     team: [
       {
-        name: 'Мишкина Дарья',
-        post: 'Тимлид/Бэкенд-разработчик',
-        socials: {},
-        photo: '',
-        description: '',
-        quote: 
-          `"Понимаете, Андрей Александрович, мы писали рандом и случайно написали кризис"`,
-        show: false
-      },
-      {
+        nick: 'Rechnoi',
         name: 'Иванченко Антон',
         post: 'Фронтенд-разработчик',
-        socials: {
-          vk: {
-            link: 'https://vk.com/anton_ivanchenko',
-            icon: 'mdi-vk',
-            color: '#2787F5'
-          },
-          telegram: 
-          {
-            link: 'https://t.me/RechnoiD',
-            icon: 'mdi-telegram',
-            color: '#0088cc'
-          }
-        },
-        photo: '',
-        description: '',
-        quote:
-          `"Андрей Александрович, мы из будущего, не судите строго"`,
-        show: false
-      },
-      {
-        name: 'Березин Николай',
-        post: 'Фронтенд-разработчик',
-        socials: {},
-        photo: '',
-        description: '',
-        quote: 
-          `"Я тут ещё ни одного колеса не изобретал, всё хорошо" `,
-        show: false
-      },
-      {
-        name: 'Фролов Максим',
-        post: 'Бэкенд-разработчик',
-        socials: {},
-        photo: '',
-        description: '',
-        quote: 
-          `"runservant"`,
+        photo: 'https://i.pinimg.com/564x/0f/14/85/0f148590b392d21b4cc7d1d51193dc45.jpg',
+        description: 'Описание',
+        quote: 'Хехе, работает',
         show: false
       }
     ],

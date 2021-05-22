@@ -12,14 +12,6 @@ export default {
     }
   },
   mutations: {
-    initialiseStore(state) {
-      if (localStorage.getItem('accessToken')) {
-        state.accessToken = localStorage.getItem('accessToken')
-      }
-      if (localStorage.getItem('refreshToken')) {
-        state.refreshToken = localStorage.getItem('refreshToken')
-      }
-    },
     updateStorage (state, { access, refresh }) {
       state.accessToken = access
       state.refreshToken = refresh
@@ -29,13 +21,7 @@ export default {
     destroyToken (state) {
       state.accessToken = null
       state.refreshToken = null
-      localStorage.setItem('accessToken', null);
-      localStorage.setItem('refreshToken', null)
     },
   },
-  actions: {
-    initialiseToken(context) {
-      context.commit('initialiseStore')
-    }
-  }
+  
 }

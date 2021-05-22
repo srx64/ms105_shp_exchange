@@ -44,10 +44,7 @@
         </v-list-item-avatar>
 
         <v-list-item-content>
-          <v-list-item-title v-text="security.stock"/> 
-          <v-list-item-subtitle v-if="security.count < 0">
-            (Торговля на понижение)
-          </v-list-item-subtitle>
+          <v-list-item-title v-text="security.stock"/>
         </v-list-item-content>
 
         <v-list-item-action>
@@ -56,8 +53,10 @@
           >
             Количество:
           </v-list-item-subtitle>
-          <v-list-item-title>
-            {{ (security.count &lt; 0) ? -security.count: security.count }}
+          <v-list-item-title
+            
+          >
+            {{ security.count }}
           </v-list-item-title>
         </v-list-item-action>
       </v-list-item>

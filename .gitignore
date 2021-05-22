@@ -156,9 +156,6 @@ dmypy.json
 # profiling data
 .prof
 
-# frontend json
-exchange_engine_frontend/package-lock.json
-
 ### Linux ###
 *~
 

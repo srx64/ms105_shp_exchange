@@ -39,12 +39,12 @@
             v-else
             class="text-center mx-auto"
           >
-            {{ security.stock }}
+            {{ security.stock.name }}
           </span>
         </v-list-item-avatar>
 
         <v-list-item-content>
-          <v-list-item-title v-text="security.stock"/> 
+          <v-list-item-title v-text="security.stock.name"/> 
           <v-list-item-subtitle v-if="security.count < 0">
             (Торговля на понижение)
           </v-list-item-subtitle>
@@ -82,6 +82,7 @@ export default {
 
   computed: {
     portfolio() {
+      console.log(this.$store.getters.portfolio)
       return this.$store.getters.portfolio
     },
   },

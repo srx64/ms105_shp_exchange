@@ -111,13 +111,11 @@ class AddOrderView(APIView):
                     order.amount -= abs(min_count)
                     order_op.amount -= abs(min_count)
 
-                    if type == 0 and not portfolio.is_debt:
-                        portfolio.aver_price = (portfolio.aver_price * portfolio.count + min_count * price) / (portfolio.count + min_count)
-
                     portfolio.count += min_count
                     portfolio_op.count -= min_count
 
-                    portfolio.aver_price *= bool(portfolio.count)
+                    portfolio.aver_price = (portfolio.aver_price * (portfolio.count - abs(min_count))
+                                            + abs(min_count) * price) / max(portfolio.count, 1)
 
                     user_op.balance += min_count * price
                     user.balance -= min_count * price

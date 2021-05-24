@@ -50,33 +50,18 @@
           </v-list-item-subtitle>
         </v-list-item-content>
         <v-list-item-action>
-          <v-list-item-subtitle
+          <v-list-item-title
             class="font-weight-medium mb-n2"
           >
-            Текущая цена:
-          </v-list-item-subtitle>
-          <v-list-item-title>
-            {{ (security.count * security.stock.price).toFixed(2)}}&#x20AE;
+            {{ (security.count &lt; 1) ? -security.count : security.count }} x {{ (((security.count &lt; 1) ? -security.count : security.count) * security.stock.price).toFixed(2)}}&#x20AE;
           </v-list-item-title>
-        </v-list-item-action>
-        <v-list-item-action>
-          <v-list-item-subtitle
-            class="font-weight-medium mb-n2"
+          <v-list-item-title
+            v-if="security.aver_price != 0"
+            :class="(security.stock.price - security.aver_price < 0) ? 'red--text': (security.stock.price - security.aver_price > 0) ? 'green--text' : 'grey--text'"
           >
-            Динамика:
-          </v-list-item-subtitle>
-          <v-list-item-title>
-            {{ (security.count * (security.stock.price - security.aver_price) * !!security.aver_price).toFixed(2)}}&#x20AE;
-          </v-list-item-title>
-        </v-list-item-action>
-        <v-list-item-action>
-          <v-list-item-subtitle
-            class="font-weight-medium mb-n2"
-          >
-            Количество:
-          </v-list-item-subtitle>
-          <v-list-item-title>
-            {{ (security.count &lt; 0) ? -security.count: security.count }}
+            {{ (security.count * (security.stock.price - security.aver_price)).toFixed(2) }}&#x20AE;
+            <span class="grey--text"> | </span>
+            {{ ((security.stock.price - security.aver_price) / security.stock.price * 100).toFixed(2) }}%
           </v-list-item-title>
         </v-list-item-action>
       </v-list-item>

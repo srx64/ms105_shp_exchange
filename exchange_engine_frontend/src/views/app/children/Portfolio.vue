@@ -49,7 +49,26 @@
             (Торговля на понижение)
           </v-list-item-subtitle>
         </v-list-item-content>
-
+        <v-list-item-action>
+          <v-list-item-subtitle
+            class="font-weight-medium mb-n2"
+          >
+            Текущая цена:
+          </v-list-item-subtitle>
+          <v-list-item-title>
+            {{ (security.count * security.stock.price).toFixed(2)}}&#x20AE;
+          </v-list-item-title>
+        </v-list-item-action>
+        <v-list-item-action>
+          <v-list-item-subtitle
+            class="font-weight-medium mb-n2"
+          >
+            Динамика:
+          </v-list-item-subtitle>
+          <v-list-item-title>
+            {{ (security.count * (security.stock.price - security.aver_price) * !!security.aver_price).toFixed(2)}}&#x20AE;
+          </v-list-item-title>
+        </v-list-item-action>
         <v-list-item-action>
           <v-list-item-subtitle
             class="font-weight-medium mb-n2"

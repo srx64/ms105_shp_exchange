@@ -49,14 +49,31 @@
             (Торговля на понижение)
           </v-list-item-subtitle>
         </v-list-item-content>
-        <v-list-item-action>
+        <v-list-item-action
+          v-if="security.count < 0"
+        >
           <v-list-item-title
             class="font-weight-medium mb-n2"
           >
-            {{ (security.count &lt; 1) ? -security.count : security.count }} x {{ (((security.count &lt; 1) ? -security.count : security.count) * security.stock.price).toFixed(2)}}&#x20AE;
+            {{ security.count }} x {{ (-security.count * security.stock.price).toFixed(2) }}&#x20AE;
           </v-list-item-title>
           <v-list-item-title
-            v-if="security.aver_price != 0"
+            :class="(security.stock.price - security.aver_price < 0) ? 'green--text': (security.stock.price - security.aver_price > 0) ? 'red--text' : 'grey--text'"
+          >
+            {{ (security.count * (security.stock.price - security.aver_price)).toFixed(2) }}&#x20AE;
+            <span class="grey--text"> | </span>
+            {{ ((security.stock.price - security.aver_price) / security.stock.price * -100).toFixed(2) }}%
+          </v-list-item-title>
+        </v-list-item-action>
+        <v-list-item-action
+          v-else
+        >
+          <v-list-item-title
+            class="font-weight-medium mb-n2"
+          >
+            {{ security.count }} x {{ (security.count * security.stock.price).toFixed(2) }}&#x20AE;
+          </v-list-item-title>
+          <v-list-item-title
             :class="(security.stock.price - security.aver_price < 0) ? 'red--text': (security.stock.price - security.aver_price > 0) ? 'green--text' : 'grey--text'"
           >
             {{ (security.count * (security.stock.price - security.aver_price)).toFixed(2) }}&#x20AE;

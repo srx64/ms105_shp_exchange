@@ -114,6 +114,9 @@ class AddOrderView(APIView):
                     portfolio.count += min_count
                     portfolio_op.count -= min_count
 
+                    portfolio.aver_price = (portfolio.aver_price * (portfolio.count - min_count)
+                                            + abs(min_count) * price) / max(abs(portfolio.count), 1) * bool(portfolio.count)
+
                     user_op.balance += min_count * price
                     user.balance -= min_count * price
 

@@ -9,61 +9,60 @@
         subheader
       >
         <v-list-item-group
-          v-model="selectedItem"
           color="primary"
         >
-          <template
+          <div
             v-for="(stock, index) in stocks"
-          >
-          <v-list-item
             :key="stock.id"
+            @click="selectStock(stock.id)"
           >
-            <v-list-item-avatar
-              size="25px"
-              class="justify-center"
-              color="primary"
-            >
-              <span
-                class="white--text"
+            <v-list-item>
+              <v-list-item-avatar
+                size="25px"
+                class="justify-center"
+                color="primary"
               >
-                {{ stock.name[0] + stock.name[1] }}
-              </span>
-            </v-list-item-avatar>
-  
-            <v-list-item-content>
-              <v-list-item-title v-text="stock.name">
-              </v-list-item-title>
-              <v-list-item-subtitle v-text="stock.description">
-              </v-list-item-subtitle>
-            </v-list-item-content>
+                <span
+                  class="white--text"
+                >
+                  {{ stock.name[0] + stock.name[1] }}
+                </span>
+              </v-list-item-avatar>
+    
+              <v-list-item-content>
+                <v-list-item-title v-text="stock.name">
+                </v-list-item-title>
+                <v-list-item-subtitle v-text="stock.description">
+                </v-list-item-subtitle>
+              </v-list-item-content>
 
-            <v-list-item-action>
-              <v-list-item-title>
-               {{ stock.price.toFixed(2) }}&#x20AE;
-              </v-list-item-title>
-            </v-list-item-action>
-            <v-list-item-action>
+              <v-list-item-action>
+                <v-list-item-title>
+                {{ stock.price.toFixed(2) }}&#x20AE;
+                </v-list-item-title>
+              </v-list-item-action>
+              <v-list-item-action>
 
-              <v-icon
-                v-if="stock.is_active"
-                color="green"
-              >
-                mdi-circle
-              </v-icon>
-              <v-icon
-                v-else
-                color="red"
-              >
-                mdi-circle
-              </v-icon>
-            </v-list-item-action>
-          </v-list-item>
+                <v-icon
+                  v-if="stock.is_active"
+                  color="green"
+                >
+                  mdi-circle
+                </v-icon>
+                <v-icon
+                  v-else
+                  color="red"
+                >
+                  mdi-circle
+                </v-icon>
+              </v-list-item-action>
+            </v-list-item>
 
-          <v-divider
-            v-if="index < stocks.length - 1"
-            :key="'divider-' + index"
-          ></v-divider>
-          </template>
+            <v-divider
+              v-if="index < stocks.length - 1"
+              :key="'divider-' + index"
+            ></v-divider>
+          </div>
         </v-list-item-group>
       </v-list>
     </v-col>
@@ -72,16 +71,16 @@
 
     <v-col>
       <v-card
-        v-if="selectedItem != undefined" 
+        v-if="selectedStonkID != undefined" 
         class="pa-6"
         elevation="0"
         tile
       >
-        <v-card-title v-text="stocks[selectedItem].name"/>
+        <v-card-title v-text="selectedStock.name"/>
         <v-card-subtitle>
-          Текущая цена: {{ stocks[selectedItem].price.toFixed(2) }}&#x20AE;
+          Текущая цена: {{ selectedStock.price.toFixed(2) }}&#x20AE;
         </v-card-subtitle>
-        <v-card-text>{{stocks[selectedItem].description}}</v-card-text>
+        <v-card-text>{{ selectedStock.description }}</v-card-text>
         <v-container
           hidden
         >
@@ -143,7 +142,7 @@ import TradingVue from "trading-vue-js";
     name: 'App',
     components: { TradingVue },
     data: () => ({
-      selectedItem: undefined,
+      selectedStonkID: undefined,
       limit_order: false,
       leverage_trade: false,
       price: 0,
@@ -155,13 +154,13 @@ import TradingVue from "trading-vue-js";
       item: '',
       stocksInterval: undefined
     }),
-    watch: {
-      'selectedItem': function(val){
-        if(val != undefined){
-          this.getCandles()
-        }
-      }
-    },
+    // watch: {
+    //   'selectedStonkID': function(val){
+    //     if(val != undefined){
+    //       this.getCandles()
+    //     }
+    //   }
+    // },
     methods: {
       getStocks(){
         getAPI.get('api/v1/stocks/', {
@@ -178,8 +177,8 @@ import TradingVue from "trading-vue-js";
           })
       },
       getCandles(){
-        if (this.selectedItem){
-          getAPI.get('api/v1/candles/' + this.stocks[this.selectedItem].id + '/', )
+        if (this.selectedStonkID){
+          getAPI.get('api/v1/candles/' + this.selectedStock.id + '/', )
           .then(response => {
             this.candles = response.data
             this.ohclv = []
@@ -195,7 +194,7 @@ import TradingVue from "trading-vue-js";
       trade(type){
         var url_trade = this.leverage_trade && !this.leverage_trade ? 'trading/leverage/' : 'orders/add'
         getAPI.post(url_trade, {
-          stock: this.stocks[this.selectedItem].name.toString(),
+          stock: this.selectedStock.name.toString(),
           type: type,
           price: this.limit_order ? this.price : 0,
           amount: this.amount,
@@ -220,23 +219,31 @@ import TradingVue from "trading-vue-js";
               text: 'Введите корректные данные для торговли'
             })
         })
+      },
+      selectStock (id) {
+        this.selectedStonkID = id
       }
     },
     computed: {
-      generateAlert: function(){
+      generateAlert () {
         var str = 'Вы хотите создать '
         str += this.limit_order ? 'отложенную заявку по цене ' + this.price : 'заявку по текущей цене '
         str += this.leverage_trade ? 'с плечом  ' : ''
         //str += получить количество акций, если 0 то к строке прибавить <в шорт> иначе <в лонг>
         // сделать dialog component https://vuetifyjs.com/en/components/dialogs/#transitions
         return str
+      },
+      selectedStock () {
+        return this.stocks.find(obj => {
+          return obj.id === this.selectedStonkID
+        })
       }
     },
     mounted () {
       this.getStocks()
       this.stocksInterval = setInterval(function() {
         this.getStocks()
-      }.bind(this), 30000)
+      }.bind(this), 10000)
     },
 
     destroyed () {

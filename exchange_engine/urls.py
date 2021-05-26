@@ -21,6 +21,7 @@ from django.urls import path, include
 from django_registration.backends.one_step.views import RegistrationView
 from main.forms import CustomRegistrationForm, EmailValidationOnForgotPassword
 from django.contrib.auth import views as auth_views
+from django.views.generic import TemplateView
 
 from main.views import StocksListView, StockDetailView, StatisticsView, OrdersView, PortfolioUserView, ProfileDetailView, PricesView, registration_view, CandlesView, SettingsView, CryptocurrenciesView
 
@@ -31,6 +32,7 @@ from rest_framework_simplejwt.views import (TokenObtainPairView, TokenRefreshVie
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('', TemplateView.as_view(template_name='index.html')),
     path('api-token/', TokenObtainPairView.as_view(), name='api_token'),
     path('api-token-refresh/', TokenRefreshView.as_view()),
     path('api/v1/stocks/', StocksListView.as_view(), name='stocks'),

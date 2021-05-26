@@ -1,7 +1,7 @@
 <template>
   <v-app>
 		<v-main
-      class="pa-10  "
+      class="pa-10"
     >
       <v-fade-transition mode="out-in">
         <router-view/>
@@ -19,15 +19,15 @@
   export default {
     name: 'AuthView',
 
+    metaInfo: {
+      title: 'Авторизация',
+    },
+
     props: {
       id: {
         type: String,
         default: 'view',
       },
     },
-
-    data: () => ({
-      sections: [],
-    }),
   }
 </script>

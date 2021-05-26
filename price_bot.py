@@ -1,6 +1,5 @@
 import os
 import time
-from datetime import datetime
 from math import sin, pi
 
 from random import randint, choice, random, uniform

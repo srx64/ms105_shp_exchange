@@ -4,7 +4,7 @@ import VueMeta from 'vue-meta'
 import axios from 'axios'
 import VueAxios from 'vue-axios'
 import router from './router'
-import store from './store'
+import store from './stores/store'
 import IdleVue from 'idle-vue'
 import vuetify from './plugins/vuetify'
 import './plugins/base'
@@ -37,8 +37,5 @@ new Vue({
   vuetify,
   router,
   store,
-  beforeCreate() {
-    this.$store.commit('initialiseStore')
-  },
   render: h => h(App)
 }).$mount('#app')

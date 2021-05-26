@@ -20,6 +20,9 @@ django_test:
     - python manage.py test
   tags:
     - django
+  only:
+    - master
+    - develop
 
 sphinx:
   stage: docs
@@ -47,3 +50,6 @@ coverage:
     - coverage report -m --omit=manage.py
   tags:
     - django
+  only:
+    - master
+    - develop

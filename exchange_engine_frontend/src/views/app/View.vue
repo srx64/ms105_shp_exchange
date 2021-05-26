@@ -1,7 +1,5 @@
 <template>
-  <v-app
-    
-  >
+  <v-app>
     <AppBar/>
 
     <v-main>
@@ -32,7 +30,7 @@
     },
 
     data: () => ({
-      sections: [],
+      userInfoInterval: undefined
     }),
 
     methods: {
@@ -41,12 +39,26 @@
           type: 'showSnackbar',
           text: 'Hello'
         })
+      },
+      getUserInfo () {
+        this.$store.dispatch('getProfile')
+        this.$store.dispatch('getPortfolio')
       }
     },
 
-    onIdle () {
-      console.log('refresh')
-      this.$store.dispatch('userRefresh')
+    beforeCreate () {
+      this.$store.dispatch('initialiseToken')
+    },
+
+    mounted() {
+      this.getUserInfo()
+      this.userInfoInterval = setInterval(function() {
+        this.getUserInfo()
+      }.bind(this), 1000)
+    },
+
+    destroyed() {
+      clearInterval(this.userInfoInterval)
     }
   }
 </script>

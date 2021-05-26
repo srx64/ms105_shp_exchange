@@ -49,6 +49,7 @@ class Order(models.Model):
     type = models.BooleanField()  # покупка - 0; продажа - 1
     price = models.FloatField()
     amount = models.IntegerField(default=1)
+    count = models.IntegerField(default=1, null=True, blank=True)
     is_closed = models.BooleanField(default=False)
     date_closed = models.DateTimeField(default=None, null=True)
 
@@ -60,6 +61,7 @@ class Portfolio(models.Model):
     :param user: Ссылка на пользователя
     :param stock: Ссылка на акцию
     :param count: Количество акций в портфеле
+    :param aver_price: Средняя цена покупки
     :param percentage: Процент стоимости акции от стоимости всех акций
     :param short_balance: Баланс для торговли в шорт
     :param is_debt: Поле, означающее переход от торговли в шорт в торговлю в лонг
@@ -68,6 +70,7 @@ class Portfolio(models.Model):
     user = models.ForeignKey(to=User, on_delete=models.CASCADE)
     stock = models.ForeignKey(to=Stocks, on_delete=models.CASCADE)
     count = models.IntegerField(default=0)
+    aver_price = models.FloatField(default=0)
     percentage = models.FloatField(default=0)
     short_balance = models.FloatField(default=-100000)
     is_debt = models.BooleanField(default=False)
@@ -140,3 +143,8 @@ class Settings(models.Model):
     description = models.TextField(default='')
     stock_id = models.IntegerField(default=0)
     data = models.JSONField()
+
+
+class Cryptocurrencies(models.Model):
+    name = models.CharField(max_length=255, default='')
+    price = models.CharField(max_length=255, default='')

@@ -54,7 +54,7 @@
       this.$store.subscribe((mutation, state) => {
         if (mutation.type === 'showSnackbar') {
           this.enable = true
-          this.text = state.snackbarText
+          this.text = state.snackbar.snackbarText
         }
       })
     },

@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from main.models import Stocks, Order, Portfolio, User, Quotes, Statistics, Settings
+from main.models import Stocks, Order, Portfolio, User, Quotes, Statistics, Candles, Settings, Cryptocurrencies
 
 
 class RegistrationSerializer(serializers.ModelSerializer):
@@ -22,6 +22,11 @@ class RegistrationSerializer(serializers.ModelSerializer):
         account.save()
         return account
 
+class CandlesSerializer(serializers.ModelSerializer):
+    """ Свечи графика """
+    class Meta:
+        model = Candles
+        fields = ('date', 'open', 'close', 'high', 'low')
 
 class StocksSerializer(serializers.ModelSerializer):
     """ Список всех акций"""
@@ -46,7 +51,7 @@ class ProfileDetailSerializer(serializers.ModelSerializer):
 
 class OrdersSerializer(serializers.ModelSerializer):
     """Заявки на покупку/продажу"""
-    stock = serializers.SlugRelatedField(slug_field="name", read_only=True)
+    stock = StocksSerializer()
 
     class Meta:
         model = Order
@@ -61,9 +66,17 @@ class StatisticsSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class CryptocurrenciesSerializer(serializers.ModelSerializer):
+    cryptocurrencies = serializers.SlugRelatedField(slug_field="name", read_only=True)
+
+    class Meta:
+        model = Cryptocurrencies
+        fields = '__all__'
+
+
 class PortfolioUserSerializer(serializers.ModelSerializer):
     """Портфолио"""
-    stock = serializers.SlugRelatedField(slug_field="name", read_only=True)
+    stock = StocksSerializer()
 
     class Meta:
         model = Portfolio

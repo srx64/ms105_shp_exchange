@@ -21,7 +21,9 @@ from django.urls import path, include
 from django_registration.backends.one_step.views import RegistrationView
 from main.forms import CustomRegistrationForm, EmailValidationOnForgotPassword
 from django.contrib.auth import views as auth_views
-from main.views import StocksListView, StockDetailView, StatisticsView, OrdersView, PortfolioUserView, ProfileDetailView, PricesView, registration_view, SettingsView
+
+from main.views import StocksListView, StockDetailView, StatisticsView, OrdersView, PortfolioUserView, ProfileDetailView, PricesView, registration_view, CandlesView, SettingsView, CryptocurrenciesView
+
 from django.conf import settings
 from django.conf.urls.static import static
 
@@ -33,12 +35,14 @@ urlpatterns = [
     path('api-token-refresh/', TokenRefreshView.as_view()),
     path('api/v1/stocks/', StocksListView.as_view(), name='stocks'),
     path('api/v1/stocks/<int:pk>/', StockDetailView.as_view(), name='stock'),
+    path('api/v1/candles/<int:pk>/', CandlesView.as_view(), name='candles'),
     path('api/v1/statistics/', StatisticsView.as_view(), name='statistics'),
     path('api/v1/register/', registration_view, name='reg'),
     path('api/v1/orders/', OrdersView.as_view(), name='orders'),
     path('trading/leverage/', views.LeverageTradingView.as_view(), name='leverage_trading'),
     path('api/v1/portfolio/', PortfolioUserView.as_view(), name='portfolio'),
     path('api/v1/settings/', SettingsView.as_view(), name='settings'),
+    path('api/v1/cryptocurrencies/', CryptocurrenciesView.as_view(), name='cryptocurrencies'),
     path('api/v1/profile/', ProfileDetailView.as_view(), name='profile'),
     path('orders/add', views.AddOrderView.as_view(), name='add_order'),
     path('api/v1/prices/', PricesView.as_view(), name='prices'),

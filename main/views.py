@@ -8,8 +8,10 @@ from rest_framework import filters, status
 from main.forms import LeverageTradingForm, UserBalance
 from rest_framework.response import Response
 from rest_framework.views import APIView
+import requests
+from bs4 import BeautifulSoup
 
-from main.models import Stocks, Order, Portfolio, User, Quotes, LeverageData, Statistics, Settings
+from main.models import Stocks, Order, Portfolio, User, Quotes, LeverageData, Statistics, Candles, Settings, Cryptocurrencies
 from main import serializers
 
 from rest_framework.permissions import IsAuthenticated
@@ -84,6 +86,8 @@ class AddOrderView(APIView):
         type = data['type']
         price = float(data['price'])
         amount = int(data['amount'])
+        if price == 0:
+            price = stock.price
         setting = None
         if Settings.objects.filter(stock_id=-1, name='short_switch'):
             setting = Settings.objects.filter(stock_id=-1, name='short_switch').last()
@@ -94,7 +98,6 @@ class AddOrderView(APIView):
         self.margin_call(user)
         portfolio, created = Portfolio.objects.get_or_create(user=user, stock=stock)
         self.set_percentage(portfolio)
-
         order = Order(user=user, stock=stock, type=type, price=price, is_closed=False, amount=amount)
         order_ops = Order.objects.filter(stock=stock, type=not type, price=price, is_closed=False)
         for order_op in order_ops:
@@ -107,8 +110,12 @@ class AddOrderView(APIView):
                 order.amount -= abs(min_count)
                 order_op.amount -= abs(min_count)
 
+
                 portfolio.count += min_count
                 portfolio_op.count -= min_count
+
+                portfolio.aver_price = (portfolio.aver_price * (portfolio.count - min_count)
+                                            + abs(min_count) * price) / max(abs(portfolio.count), 1) * bool(portfolio.count)
 
                 user_op.balance += min_count * price
                 user.balance -= min_count * price
@@ -186,6 +193,39 @@ class SettingsView(APIView):
     def get(self, request):
         settings = Settings.objects.all()
         serializer = serializers.SettingsSerializer(settings, many=True)
+        return Response(serializer.data)
+
+
+class CryptocurrenciesView(APIView):
+
+    def get(self, request):
+        cryptocurrencies = Cryptocurrencies.objects.all()
+
+        URL = 'https://coinmarketcap.com/ru/all/views/all/'
+        HEADERS = {
+            'User-Agent': 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.132 Mobile Safari/537.36'
+        }
+        response = requests.get(URL, headers=HEADERS)
+        soup = BeautifulSoup(response.content, 'html.parser')
+        items = soup.find_all('tr', class_='cmc-table-row')
+        comps = []
+        for item in items:
+            comps.append({
+                'title': item.find('a', class_='cmc-link').get_text(strip=True),
+                'pric': item.find('div', class_='price___3rj7O')
+            })
+
+        for comp in comps:
+            if comp['pric']:
+                try:
+                    cryptocurrencies = Cryptocurrencies.objects.get(name=comp['title'])
+                    cryptocurrencies.name = comp['title']
+                    cryptocurrencies.price = comp['pric'].string
+                    cryptocurrencies.save()
+                except ObjectDoesNotExist:
+                    Cryptocurrencies.objects.create(name=comp['title'], price=comp['pric'].string)
+        cryptocurrencies = Cryptocurrencies.objects.all()
+        serializer = serializers.CryptocurrenciesSerializer(cryptocurrencies, many=True)
         return Response(serializer.data)
 
 
@@ -299,6 +339,19 @@ class ProfileDetailView(APIView):
         return Response(serializer.data)
 
 
+class CandlesView(APIView):
+    """
+    Свечи
+    """
+    def get(self, request, pk):
+        """
+        Отображение всех ордеров пользователя при GET запросе
+        """
+        candles = Candles.objects.filter(stock_id=pk)
+        serializer = serializers.CandlesSerializer(candles, many=True)
+        return Response(serializer.data)
+
+
 class OrdersView(APIView):
     """
     Все заявки пользователя
@@ -356,12 +409,12 @@ class LeverageTradingView(APIView):
         Торговля с плечом и обработка данных при POST запросе
         """
         form = LeverageTradingForm(request.POST)
-
+        data = request.data
         user = User.objects.get(id=request.user.pk)
-        ratio = int(request.POST.get('ratio'))
-        stock = Stocks.objects.get(name=request.POST.get('stock'))
+        ratio = int(data['ratio'])
+        stock = Stocks.objects.get(name=data['stock'])
         quote = Quotes.objects.filter(stock=stock.id).last()
-        type = True if request.POST.get('type') else False
+        type = bool(data.get('type', False))
         cash = user.balance * ratio
         setting = 'None'
         if Settings.objects.filter(stock_id=-1, name='leverage'):
@@ -387,7 +440,7 @@ class LeverageTradingView(APIView):
                 broker.ratio = ratio
             except LeverageData.DoesNotExist:
                 broker = LeverageData(user=user, stock=stock, ratio=ratio)
-                order = Order(user=user, stock=stock, type=type, price=quote.price, is_closed=False, amount=amount)
+                order = Order(user=user, stock=stock, type=type, price=quote.price, is_closed=False, amount=amount, count=amount)
             order.save()
             broker.save()
             return HttpResponseRedirect("/api/v1/orders/")

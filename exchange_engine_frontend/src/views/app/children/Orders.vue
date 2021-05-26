@@ -33,7 +33,7 @@
             v-else
             class="text-center mx-auto"
           >
-            {{ order.stock }}
+            {{ order.stock.name }}
           </span>
         </v-list-item-avatar>
 
@@ -41,12 +41,12 @@
           <v-list-item-title 
             v-if="order.type"
           >
-            Статус заявки на продажу {{ order.stock }}
+            Статус заявки на продажу {{ order.stock.name }}
           </v-list-item-title>
           <v-list-item-title 
             v-else
           >
-            Статус заявки на покупку {{ order.stock }}
+            Статус заявки на покупку {{ order.stock.name }}
           </v-list-item-title>
 
           <v-list-item-subtitle
@@ -111,7 +111,7 @@
             v-else
             class="text-center mx-auto"
           >
-            {{ order.stock }}
+            {{ order.stock.name }}
           </span>
         </v-list-item-avatar>
 
@@ -119,12 +119,12 @@
           <v-list-item-title 
             v-if="order.type"
           >
-            Статус заявки на продажу {{ order.stock }}
+            Статус заявки на продажу {{ order.stock.name }}
           </v-list-item-title>
           <v-list-item-title 
             v-else
           >
-            Статус заявки на покупку {{ order.stock }}
+            Статус заявки на покупку {{ order.stock.name }}
           </v-list-item-title>
 
           <v-list-item-subtitle
@@ -190,6 +190,7 @@ export default {
           })
           .then(response => {
             this.orders = response.data
+            console.log(this.orders)
           })
           .catch(err => {
             console.log(err)

@@ -83,7 +83,7 @@ class AddOrderView(APIView):
         user = User.objects.get(id=request.user.pk)
         name = data['stock']
         stock = Stocks.objects.get(name=name)
-        type = int(data['type'])
+        type = data['type']
         price = float(data['price'])
         amount = int(data['amount'])
         if price == 0:
@@ -158,12 +158,6 @@ class AddOrderView(APIView):
                 if order.amount == 0:
                     order.is_closed = True
                     order.date_closed = timezone.now()
-            print(setting is None or setting.data['is_active'])
-            print(not setting.data['is_active'] and type == 0)
-            print(not setting.data['is_active'] and type == 1 and portfolio.count > 0)
-            # if (setting is None or setting.data['is_active']) or (not setting.data['is_active'] and type == 0) or \
-            #     (not setting.data['is_active'] and type == 1 and portfolio.count > 0):
-
             order.save()
             user.save()
             portfolio.save()

@@ -80,7 +80,7 @@ class AddOrderView(APIView):
         Добавление акции и обработка данных при POST запросе
         """
         data = request.data
-        user = User.objects.get(id=1) # !!!!!! Ахтунг, нельзя оставлять 1 !
+        user = User.objects.get(id=request.user.pk)
         name = data['stock']
         stock = Stocks.objects.get(name=name)
         type = data['type']
@@ -104,21 +104,20 @@ class AddOrderView(APIView):
             if order.amount != 0:
                 user_op = order_op.user
                 portfolio_op = Portfolio.objects.get(user=user_op, stock=stock)
-
                 min_count = min(order.amount, order_op.amount) if type == 0 else -min(order.amount, order_op.amount)
+                if portfolio_op.count - min_count >= 0 and user.balance - min_count * price >= 0:
 
-                order.amount -= abs(min_count)
-                order_op.amount -= abs(min_count)
+                    order.amount -= abs(min_count)
+                    order_op.amount -= abs(min_count)
 
+                    portfolio.count += min_count
+                    portfolio_op.count -= min_count
 
-                portfolio.count += min_count
-                portfolio_op.count -= min_count
+                    portfolio.aver_price = (portfolio.aver_price * (portfolio.count - min_count)
+                                                + abs(min_count) * price) / max(abs(portfolio.count), 1) * bool(portfolio.count)
 
-                portfolio.aver_price = (portfolio.aver_price * (portfolio.count - min_count)
-                                            + abs(min_count) * price) / max(abs(portfolio.count), 1) * bool(portfolio.count)
-
-                user_op.balance += min_count * price
-                user.balance -= min_count * price
+                    user_op.balance += min_count * price
+                    user.balance -= min_count * price
                 if (setting is None or setting.data['is_active']) or not setting.data['is_active'] and (
                     type == '0' or portfolio.count > 0):
                     if portfolio.count < 0:
@@ -157,7 +156,8 @@ class AddOrderView(APIView):
                 order.is_closed = True
                 order.date_closed = timezone.now()
         if (setting is None or setting.data['is_active']) or not setting.data['is_active'] and (
-            type == '0' or portfolio.count > 0):
+            type == '0' or portfolio.count > 0) or not setting.data['is_active'] and (
+            type == '1' or portfolio.count > 0):
             order.save()
         user.save()
         portfolio.save()

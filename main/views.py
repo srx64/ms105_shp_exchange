@@ -158,9 +158,10 @@ class AddOrderView(APIView):
                 if order.amount == 0:
                     order.is_closed = True
                     order.date_closed = timezone.now()
-            order.save()
-            user.save()
-            portfolio.save()
+            if type == 0 and user.balance >= amount * price:
+                order.save()
+                user.save()
+                portfolio.save()
         return Response("/api/v1/orders/")
 
 

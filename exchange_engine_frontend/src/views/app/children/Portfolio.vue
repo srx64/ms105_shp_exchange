@@ -39,25 +39,46 @@
             v-else
             class="text-center mx-auto"
           >
-            {{ security.stock }}
+            {{ security.stock.name }}
           </span>
         </v-list-item-avatar>
 
         <v-list-item-content>
-          <v-list-item-title v-text="security.stock"/> 
+          <v-list-item-title v-text="security.stock.name"/> 
           <v-list-item-subtitle v-if="security.count < 0">
             (Торговля на понижение)
           </v-list-item-subtitle>
         </v-list-item-content>
-
-        <v-list-item-action>
-          <v-list-item-subtitle
+        <v-list-item-action
+          v-if="security.count < 0"
+        >
+          <v-list-item-title
             class="font-weight-medium mb-n2"
           >
-            Количество:
-          </v-list-item-subtitle>
-          <v-list-item-title>
-            {{ (security.count &lt; 0) ? -security.count: security.count }}
+            {{ security.count }} x {{ (-security.count * security.stock.price).toFixed(2) }}&#x20AE;
+          </v-list-item-title>
+          <v-list-item-title
+            :class="(security.stock.price - security.aver_price < 0) ? 'green--text': (security.stock.price - security.aver_price > 0) ? 'red--text' : 'grey--text'"
+          >
+            {{ (security.count * (security.stock.price - security.aver_price)).toFixed(2) }}&#x20AE;
+            <span class="grey--text"> | </span>
+            {{ ((security.stock.price - security.aver_price) / security.stock.price * -100).toFixed(2) }}%
+          </v-list-item-title>
+        </v-list-item-action>
+        <v-list-item-action
+          v-else
+        >
+          <v-list-item-title
+            class="font-weight-medium mb-n2"
+          >
+            {{ security.count }} x {{ (security.count * security.stock.price).toFixed(2) }}&#x20AE;
+          </v-list-item-title>
+          <v-list-item-title
+            :class="(security.stock.price - security.aver_price < 0) ? 'red--text': (security.stock.price - security.aver_price > 0) ? 'green--text' : 'grey--text'"
+          >
+            {{ (security.count * (security.stock.price - security.aver_price)).toFixed(2) }}&#x20AE;
+            <span class="grey--text"> | </span>
+            {{ ((security.stock.price - security.aver_price) / security.stock.price * 100).toFixed(2) }}%
           </v-list-item-title>
         </v-list-item-action>
       </v-list-item>
@@ -82,6 +103,7 @@ export default {
 
   computed: {
     portfolio() {
+      console.log(this.$store.getters.portfolio)
       return this.$store.getters.portfolio
     },
   },

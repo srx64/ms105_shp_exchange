@@ -51,7 +51,7 @@ class ProfileDetailSerializer(serializers.ModelSerializer):
 
 class OrdersSerializer(serializers.ModelSerializer):
     """Заявки на покупку/продажу"""
-    stock = serializers.SlugRelatedField(slug_field="name", read_only=True)
+    stock = StocksSerializer()
 
     class Meta:
         model = Order
@@ -76,7 +76,7 @@ class CryptocurrenciesSerializer(serializers.ModelSerializer):
 
 class PortfolioUserSerializer(serializers.ModelSerializer):
     """Портфолио"""
-    stock = serializers.SlugRelatedField(slug_field="name", read_only=True)
+    stock = StocksSerializer()
 
     class Meta:
         model = Portfolio

@@ -232,7 +232,6 @@ class HandlingFunctions:
         time.sleep(timer)
 
 
-
 class Tendencies:
     @staticmethod
     def choose_tendency():

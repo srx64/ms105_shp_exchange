@@ -34,6 +34,7 @@ else:
     SECRET_KEY = os.environ.get('EXCHANGE_SECRET_KEY', 'define me')
     ALLOWED_HOSTS = [
         '127.0.0.1',
+        'shp-exchange.tk'
     ]
 
 

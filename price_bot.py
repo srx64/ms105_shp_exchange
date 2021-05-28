@@ -1,5 +1,6 @@
 import os
 import time
+from datetime import datetime
 from math import sin, pi
 
 from random import randint, choice, random, uniform
@@ -217,7 +218,7 @@ class HandlingFunctions:
         return last_price
 
     @staticmethod
-    def generate_orders(user, stock, price, AMOUNT):
+    def generate_orders(user, stock, price, AMOUNT, timer):
         Order.objects.create(user=user, stock=stock, type=True, price=price, amount=AMOUNT, is_closed=True)
         Order.objects.create(user=user, stock=stock, type=False, price=price, amount=AMOUNT, is_closed=True)
         Order.objects.create(user=user, stock=stock, type=True, price=price, amount=AMOUNT * 10, is_closed=False)
@@ -228,6 +229,7 @@ class HandlingFunctions:
         portfolio, created = Portfolio.objects.get_or_create(user=user, stock=stock)
         portfolio.count = 100000
         portfolio.save()
+        time.sleep(timer)
 
 
 class Tendencies:
@@ -255,7 +257,7 @@ class Tendencies:
                             f_type = setting.data['type']
                             figure = Figures.get_figure(f_type)
                             price = figure.generate(last_price) * coefficient
-                            HandlingFunctions.generate_orders(user, stock, price, AMOUNT)
+                            HandlingFunctions.generate_orders(user, stock, price, AMOUNT, t)
                     elif setting.data['duration'] <= 0:
                         return False
             elif setting.data['coefficient'] is not None and setting.data['type'] is None:
@@ -269,7 +271,7 @@ class Tendencies:
                         f_type = setting.data['type']
                         figure = Figures.get_figure(f_type)
                         price = figure.generate(last_price) * coefficient
-                        HandlingFunctions.generate_orders(user, stock, price, AMOUNT)
+                        HandlingFunctions.generate_orders(user, stock, price, AMOUNT, t)
                 elif setting.data['duration'] <= 0:
                     return False
             elif setting.data['coefficient'] is not None and setting.data['type'] is None:
@@ -320,14 +322,13 @@ class MainCycle:
 
                                         coef = HandlingFunctions.get_settings(stock.pk).data['coefficient']
                                         price = figures[index].generate(last_price) * coef
-                                        HandlingFunctions.generate_orders(user, stock, price, AMOUNT)
+                                        HandlingFunctions.generate_orders(user, stock, price, AMOUNT, t)
                                     else:
                                         price = figures[index].generate(last_price)
-                                        HandlingFunctions.generate_orders(user, stock, price, AMOUNT)
+                                        HandlingFunctions.generate_orders(user, stock, price, AMOUNT, t)
                                 pack.append(figures)
                                 pack.append(duration)
                                 info[2] = pack
-                    time.sleep(t)
 
 
 def price_bot():
@@ -361,10 +362,9 @@ def price_bot():
                         timer = HandlingFunctions.get_timer(stock.pk)
                         is_frozen = HandlingFunctions.get_pause(stock.pk)
                         if not Tendencies.settings_check(stock, user, AMOUNT, last_price, timer):
-                            HandlingFunctions.generate_orders(user, stock, price, AMOUNT)
+                            HandlingFunctions.generate_orders(user, stock, price, AMOUNT, timer)
                         else:
                             settings_interruption = 1
-                    time.sleep(timer)
                 else:
                     break
             MainCycle.begin(AMOUNT, user)

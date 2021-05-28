@@ -19,9 +19,13 @@
       <v-form
         ref="form"
         lazy-validation
+        
+            
       >
-        <v-text-field
+        <v-text-field 
           v-model="username"
+          @keyup.enter="$refs.password.focus"
+          ref="login"
           label="Имя пользователя"
           placeholder="Введите имя пользователя"
           required
@@ -31,6 +35,8 @@
 
         <v-text-field
           v-model="password"
+          @keyup.enter="login"
+          ref="password"
           label="Пароль"
           :append-icon="show ? 'mdi-eye' : 'mdi-eye-off'"
           :type="show ? 'text' : 'password'"
@@ -91,6 +97,9 @@
           password: this.password,
           incorrectAuth: this.incorrectAuth
         })
+      },
+      submit () {
+        console.log('hey')
       }
     }
   }

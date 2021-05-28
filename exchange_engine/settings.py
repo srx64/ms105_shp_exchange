@@ -25,7 +25,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: don't run with debug turned on in production!
 # DEBUG = True
-DEBUG = bool(os.environ.get('EXCHANGE_DJANGO_DEBUG', True))
+DEBUG = bool(os.environ.get('EXCHANGE_DEBUG', True))
 
 if DEBUG:
     SECRET_KEY = 'v1i_fb$_jf2#1v_lcsbu&eon4u-os0^px=s^iycegdycqy&5)6'

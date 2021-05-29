@@ -229,7 +229,6 @@ class HandlingFunctions:
         portfolio, created = Portfolio.objects.get_or_create(user=user, stock=stock)
         portfolio.count = 100000
         portfolio.save()
-        time.sleep(timer)
 
 
 class Tendencies:
@@ -329,6 +328,7 @@ class MainCycle:
                                 pack.append(figures)
                                 pack.append(duration)
                                 info[2] = pack
+            time.sleep(t)
 
 
 def price_bot():
@@ -354,9 +354,6 @@ def price_bot():
                         else:
                             name = name[:-3]
                         stock = Stocks.objects.get(name=name)
-                        portfolio, created = Portfolio.objects.get_or_create(user=user, stock=stock)
-                        portfolio.count = 100000
-                        portfolio.save()
                         price = df.iloc[:, [7]][df.iloc[:, [7]].columns[0]][0]
                         last_price = HandlingFunctions.get_last_price(stock)
                         timer = HandlingFunctions.get_timer(stock.pk)
@@ -365,6 +362,7 @@ def price_bot():
                             HandlingFunctions.generate_orders(user, stock, price, AMOUNT, timer)
                         else:
                             settings_interruption = 1
+                    time.sleep(timer)
                 else:
                     break
             MainCycle.begin(AMOUNT, user)

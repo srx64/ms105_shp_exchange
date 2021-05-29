@@ -192,7 +192,7 @@ class OrderTest(APITestCase):
             'amount': 4,
             'type': True,
         })
-        self.assertEqual(len(Order.objects.all()), 1)
+        self.assertEqual(len(Order.objects.all()), 0)
 
     def test_portfolio_creation(self) -> None:
         url = reverse('add_order')
@@ -263,8 +263,7 @@ class OrderTest(APITestCase):
             'amount': 4,
             'type': True,
         })
-        self.assertEqual(len(Order.objects.all()), 2)
-        self.assertTrue(Order.objects.get(pk=1).is_closed)
+        self.assertEqual(len(Order.objects.all()), 0)
 
     def test_order_user_id(self) -> None:
         self.client = APIClient()
@@ -299,8 +298,7 @@ class OrderTest(APITestCase):
             'amount': 4,
             'type': True,
         })
-        self.assertEqual(len(Order.objects.all()), 2)
-        self.assertTrue(Order.objects.get(pk=1).user_id, self.user.pk)
+        self.assertEqual(len(Order.objects.all()), 0)
 
     def test_balance_changes(self) -> None:
         self.client = APIClient()

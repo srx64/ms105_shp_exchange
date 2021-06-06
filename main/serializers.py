@@ -3,13 +3,12 @@ from main.models import Stocks, Order, Portfolio, User, Quotes, Statistics, Cand
 
 
 class RegistrationSerializer(serializers.ModelSerializer):
-
     password2 = serializers.CharField(style={'input_type': 'password'}, write_only=True)
 
     class Meta:
         model = User
         fields = ['email', 'username', 'password', 'password2']
-        extra_kwargs = {'password': {'write_only':True}}
+        extra_kwargs = {'password': {'write_only': True}}
 
     def save(self):
         account = User(email=self.validated_data['email'], username=self.validated_data['username'])
@@ -22,14 +21,18 @@ class RegistrationSerializer(serializers.ModelSerializer):
         account.save()
         return account
 
+
 class CandlesSerializer(serializers.ModelSerializer):
-    """ Свечи графика """
+    """Свечи для графика"""
+
     class Meta:
         model = Candles
-        fields = ('date', 'open', 'close', 'high', 'low')
+        fields = ('date', 'open', 'close', 'high', 'low', 'type')
+
 
 class StocksSerializer(serializers.ModelSerializer):
-    """ Список всех акций"""
+    """Список всех акций"""
+
     class Meta:
         model = Stocks
         fields = '__all__'
@@ -37,6 +40,7 @@ class StocksSerializer(serializers.ModelSerializer):
 
 class SettingsSerializer(serializers.ModelSerializer):
     """Настройки биржи"""
+
     class Meta:
         model = Settings
         fields = '__all__'
@@ -44,6 +48,7 @@ class SettingsSerializer(serializers.ModelSerializer):
 
 class ProfileDetailSerializer(serializers.ModelSerializer):
     """ Детальная информация о пользователе"""
+
     class Meta:
         model = User
         fields = '__all__'

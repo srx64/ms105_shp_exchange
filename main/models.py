@@ -30,6 +30,9 @@ class Stocks(models.Model):
     is_active = models.BooleanField()
     price = models.FloatField(default=0)
 
+    def __str__(self):
+        return self.name
+
 
 class Order(models.Model):
     """
@@ -52,6 +55,9 @@ class Order(models.Model):
     count = models.IntegerField(default=1, null=True, blank=True)
     is_closed = models.BooleanField(default=False)
     date_closed = models.DateTimeField(default=None, null=True)
+
+    def __str__(self):
+        return f"{self.user} -> {self.stock} ({'BUY' if self.type else 'SELL'}). Price: {self.price:.2f}, execution: {self.count} / {self.amount}"
 
 
 class Portfolio(models.Model):
@@ -143,6 +149,9 @@ class Settings(models.Model):
     description = models.TextField(default='')
     stock_id = models.IntegerField(default=0)
     data = models.JSONField()
+
+    def __str__(self):
+        return f'{self.description}: {self.data}'
 
 
 class Cryptocurrencies(models.Model):

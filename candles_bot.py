@@ -44,7 +44,8 @@ def generate(prices: List[Quotes], prices_amount: int, stock: Stocks, timeframe_
     :param prices_amount: количество доступных котировок
     :param stock: текущий финансовый инструмент, для которого генерируется свеча
     :param timeframe_duration: количество секунд данных, агрегируемых в текущую свечу
-    :param timeframe_index: номер типа таймфрейма. :see:
+    :param timeframe_index: номер типа таймфрейма.
+    :param last_candle_data: данные последней свечи.
 
     .. warning::
        Я не понимаю, как работает эта функция. Есть подозрение, что она не рассматриваем случай, когда текущий

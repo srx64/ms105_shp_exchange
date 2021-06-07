@@ -119,7 +119,8 @@ class CandleBot:
         """
         Подготовка массива свечей всех типов для всех инструментов
         """
-        self.data: List[List[int]] = [[0] * len(CandleBot.CANDLE_TYPES)] * Stocks.objects.all().count()
+        global STOCKS_LIST
+        self.data: List[List[int]] = [[0] * len(CandleBot.CANDLE_TYPES)] * STOCKS_LIST.count()
 
     def process_stock(self, stock) -> None:
         """
@@ -144,8 +145,9 @@ class CandleBot:
 
         Запускает генерацию свечей для всех инструментов.
         """
+        global STOCKS_LIST
         while not CandleBot.NEED_STOP:
-            for stock in Stocks.objects.all():
+            for stock in STOCKS_LIST:
                 logging.debug(f'Обрабатываем инструмент с названием {stock}...')
                 self.process_stock(stock)
             time.sleep(1)

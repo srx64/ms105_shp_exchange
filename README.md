@@ -29,12 +29,14 @@ sudo apt-get install -y nodejs
 1. В главной папке проекта необходимо создать папку `data` и поместить туда .csv файлы из [необходимых файлов](https://gitlab.informatics.ru/2020-2021/mytischi/s105/exchange_engine/-/wikis/%D0%9D%D0%B5%D0%BE%D0%B1%D1%85%D0%BE%D0%B4%D0%B8%D0%BC%D1%8B%D0%B5-%D1%84%D0%B0%D0%B9%D0%BB%D1%8B) в Wiki проекта. 
    Они нужны будут для запуска ботов
 2. Создать venv, установить библиотеки
-  ```bash
-  python3.8 -m venv venv
-  source venv/bin/activate
-  pip install --upgrade pip
-  pip install -r requirements.txt
-  ```
+
+   ```bash
+   python3.8 -m venv venv
+   source venv/bin/activate
+   pip install --upgrade pip
+   pip install -r requirements.txt
+   ```
+
 3. Подготовить БД
    * Установить postgresql
      ```bash

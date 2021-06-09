@@ -9,6 +9,7 @@ djangorestframework
 django-cors-headers
 django-filter
 djangorestframework-simplejwt
+drf-yasg==1.20.0
 
 # accounting
 django-registration

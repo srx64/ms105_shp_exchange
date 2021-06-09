@@ -35,16 +35,16 @@ from django.conf.urls.static import static
 from rest_framework_simplejwt.views import (TokenObtainPairView, TokenRefreshView)
 
 schema_view = get_schema_view(
-   openapi.Info(
-      title="Snippets API",
-      default_version='v1',
-      description="Test description",
-      terms_of_service="https://www.google.com/policies/terms/",
-      contact=openapi.Contact(email="contact@snippets.local"),
-      license=openapi.License(name="BSD License"),
-   ),
-   public=True,
-   permission_classes=[permissions.AllowAny],
+    openapi.Info(
+        title='SHP.EXchange API',
+        default_version='v1',
+        description='Биржа. Просто биржа. Для проведения летней смены курса "Финансовые технологии"',
+        terms_of_service="https://www.google.com/policies/terms/",
+        contact=openapi.Contact(email="dasha.mishkina117@gmail.com"),
+        license=openapi.License(name="BSD License"),
+    ),
+    public=True,
+    permission_classes=(permissions.AllowAny,)
 )
 
 urlpatterns = [

@@ -229,7 +229,6 @@ class HandlingFunctions:
         portfolio, created = Portfolio.objects.get_or_create(user=user, stock=stock)
         portfolio.count = 100000
         portfolio.save()
-        print('Something was made')
 
 
 class Tendencies:
@@ -293,7 +292,6 @@ class MainCycle:
         stocks = Stocks.objects.all()
         data = [['none', 0, []] for _ in range(len(Stocks.objects.all()))]
         while True:
-            print(data)
             for stock in stocks:
                 info = data[stock.pk - 1]
                 tendency = info[0]
@@ -363,13 +361,11 @@ def price_bot():
                         is_frozen = HandlingFunctions.get_pause(stock.pk)
                         if Quotes.objects.filter(price=price, stock=stock, line=i):
                             is_exist = True
-                        print(is_exist)
                         if not Tendencies.settings_check(stock, user, AMOUNT, last_price, timer) and not is_exist:
                             HandlingFunctions.generate_orders(user, stock, price, AMOUNT, i)
                         else:
                             settings_interruption = 1
                     if not is_exist:
-                        print(is_exist)
                         time.sleep(timer)
                 else:
                     break

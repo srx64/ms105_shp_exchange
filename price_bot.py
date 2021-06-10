@@ -218,12 +218,12 @@ class HandlingFunctions:
         return last_price
 
     @staticmethod
-    def generate_orders(user, stock, price, AMOUNT, timer):
+    def generate_orders(user, stock, price, AMOUNT, line=-1):
         Order.objects.create(user=user, stock=stock, type=True, price=price, amount=AMOUNT, is_closed=True)
         Order.objects.create(user=user, stock=stock, type=False, price=price, amount=AMOUNT, is_closed=True)
         Order.objects.create(user=user, stock=stock, type=True, price=price, amount=AMOUNT * 10, is_closed=False)
         Order.objects.create(user=user, stock=stock, type=False, price=price, amount=AMOUNT * 10, is_closed=False)
-        Quotes.objects.create(stock=stock, price=price)
+        Quotes.objects.create(stock=stock, price=price, line=line)
         stock.price = price
         stock.save()
         portfolio, created = Portfolio.objects.get_or_create(user=user, stock=stock)
@@ -328,7 +328,8 @@ class MainCycle:
                                 pack.append(figures)
                                 pack.append(duration)
                                 info[2] = pack
-            time.sleep(t)
+            if data[0][2] != []:
+                time.sleep(t)
 
 
 def price_bot():
@@ -342,7 +343,7 @@ def price_bot():
         is_frozen = False
         settings_interruption = 0
         timer = 30
-
+        is_exist = False
         for i in range(min_file_length - 1):
             if not is_frozen:
                 if settings_interruption == 0:
@@ -358,14 +359,17 @@ def price_bot():
                         last_price = HandlingFunctions.get_last_price(stock)
                         timer = HandlingFunctions.get_timer(stock.pk)
                         is_frozen = HandlingFunctions.get_pause(stock.pk)
-                        if not Tendencies.settings_check(stock, user, AMOUNT, last_price, timer):
-                            HandlingFunctions.generate_orders(user, stock, price, AMOUNT, timer)
+                        if Quotes.objects.filter(price=price, stock=stock, line=i):
+                            is_exist = True
+                        if not Tendencies.settings_check(stock, user, AMOUNT, last_price, timer) and not is_exist:
+                            HandlingFunctions.generate_orders(user, stock, price, AMOUNT, i)
                         else:
                             settings_interruption = 1
-                    time.sleep(timer)
+                    if not is_exist:
+                        time.sleep(timer)
                 else:
                     break
-            MainCycle.begin(AMOUNT, user)
+        MainCycle.begin(AMOUNT, user)
 
     except KeyboardInterrupt:
         logging.info('Бот остановлен пользователем')

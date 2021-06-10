@@ -94,6 +94,7 @@ class Quotes(models.Model):
     stock = models.ForeignKey(to=Stocks, on_delete=models.CASCADE)
     price = models.FloatField()
     date = models.DateTimeField(default=timezone.now)
+    line = models.IntegerField(default=-1)
 
 
 class LeverageData(models.Model):

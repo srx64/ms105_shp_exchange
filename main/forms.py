@@ -10,51 +10,6 @@ class CustomRegistrationForm(RegistrationForm):
         model = User
 
 
-# class ProfileEditingForm(forms.Form):
-#     username = forms.CharField(
-#         label='Редактировать имя пользователя:',
-#         max_length=150,
-#         required=True,
-#     )
-#     first_name = forms.CharField(label='Редактировать имя:', max_length=150, required=False)
-#     last_name = forms.CharField(label='Редактировать фамилию:', max_length=150, required=False)
-#     email = forms.EmailField(label='Редактировать email:', required=True)
-#     avatar = forms.ImageField(
-#         label='Редактировать аватар:',
-#         required=False,
-#         widget=forms.FileInput(
-#             attrs={
-#                 'image': forms.FileInput,
-#                 'upload_to': 'avatars',
-#             }
-#         )
-#     )
-
-
-# class PasswordEditingForm(forms.Form):
-#     old_password = forms.CharField(
-#         widget=forms.PasswordInput(
-#             attrs={'placeholder': 'Старый пароль'}
-#         ),
-#         label='Введите старый пароль:',
-#         required=True,
-#     )
-#     new_password = forms.CharField(
-#         widget=forms.PasswordInput(
-#             attrs={'placeholder': 'Новый пароль'}
-#         ),
-#         label='Введите новый пароль:',
-#         required=True,
-#     )
-#     repeat_new_password = forms.CharField(
-#         widget=forms.PasswordInput(
-#             attrs={'placeholder': 'Повторите новый пароль'}
-#         ),
-#         label='Повторите новый пароль:',
-#         required=True,
-#     )
-
-
 class EmailValidationOnForgotPassword(PasswordResetForm):
     def clean_email(self):
         email = self.cleaned_data['email']

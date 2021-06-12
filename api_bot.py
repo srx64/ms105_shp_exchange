@@ -7,14 +7,24 @@ django.setup()
 
 
 def main():
+    """
+    Пример клиентского API бота
+    """
     host = 'http://127.0.0.1:8000'
+
+    # данные пользователя
     data = {
         'username': input('Enter your username: '),
         'password': input('Enter your password: ')
     }
+
+    # получаем токены данного пользователя
     api_token_url = f'{host}/api-token/'
-    tokens = requests.post(api_token_url, data=data).json()
-    access_token = tokens['access']
+    tokens = requests.post(api_token_url, data=data)
+    print('Login successful.')
+    access_token = tokens.json()['access']  # получаем токен, необходимый для авторизации
+
+    # создаём ордер
     orders_url = f'{host}/orders/add'
     data = {
         'stock': input('Enter name of stock: '),
@@ -24,7 +34,9 @@ def main():
     }
     headers = {'Authorization': f'Bearer {access_token}'}
     response = requests.post(orders_url, headers=headers, json=data)
-    print(response)
+    print(response.status_code)
+
+    # смотрим список всех ордеров
     url = f'{host}/api/v1/orders/'
     response = requests.get(url, headers=headers)
     print(response.json())

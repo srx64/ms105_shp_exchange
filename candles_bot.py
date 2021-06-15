@@ -187,6 +187,7 @@ def generate(prices: List[Quotes], prices_amount: int, stock: Stocks, timeframe_
             #                 last_candle_data[timeframe_index - 1] = i
             #                 stock_prices = []
             #                 candle.save()
+
             if i == prices_amount - 2:
                 return last_candle_data
             i += 1

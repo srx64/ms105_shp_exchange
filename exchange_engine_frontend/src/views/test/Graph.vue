@@ -1,12 +1,6 @@
 <template>
   <div>
     <apexchart width=900 type="candlestick" :options="options" :series="series"></apexchart>
-    <v-btn @click="addCandles">
-      Click me!
-    </v-btn>
-    <div>
-      {{ series }}
-    </div>
   </div>
 </template>
 
@@ -316,38 +310,32 @@
 
     methods: {
       getCandles () {
-        getAPI.get('https://api.npoint.io/40e1f18ab716e503de80')
+        getAPI.get('http://127.0.0.1:8000/api/v1/candles/1')
           .then(response => {
-            console.log(response.data)
-            console.log(response.data.chart.data)
+            let data = response.data.map(function(candle) {
+              return [Date.parse(candle.date), [candle.open, candle.high, candle.low, candle.close].map((price) => (price.toFixed(2)))]
+            })
+            console.log(data)
+
             this.series = [{
-              data: response.data.chart.data
+              data: data
             }]
           })
           .catch(err => {
             console.log(err)
           })
-      },
-      addCandles () {
-        let date = this.series[0].data[this.series[0].data.length - 1].x
-        console.log(date)
-        let min = 6570.0
-        let max = 6660.0
-        let open = Math.random() * (max - min) + min
-        let high = Math.random() * (max - min) + min
-        let low = Math.random() * (max - min) + min
-        let close = Math.random() * (max - min) + min
-        let candles = {
-          x: new Date(new Date(new Date(date).setMinutes(new Date(date).getMinutes() + 15))),
-          y: [open.toFixed(2), high.toFixed(2), low.toFixed(2), close.toFixed(2)]
-        }
-        console.log(new Date(new Date(date).setMinutes(new Date(date).getMinutes() + 15)))
-        this.series[0].data.push(candles)
       }
     },
 
     mounted () {
-      //this.getCandles()
+      this.getCandles()
+      this.candlesInterval = setInterval(function() {
+        this.getCandles()
+      }.bind(this), 5000)
+    },
+
+    destroyed () {
+      clearInterval(this.candlesInterval)
     }
   }
 </script>

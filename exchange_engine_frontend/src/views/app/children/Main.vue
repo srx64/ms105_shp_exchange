@@ -243,7 +243,7 @@ import TradingVue from "trading-vue-js";
       this.getStocks()
       this.stocksInterval = setInterval(function() {
         this.getStocks()
-      }.bind(this), 10000)
+      }.bind(this), 5000)
     },
 
     destroyed () {

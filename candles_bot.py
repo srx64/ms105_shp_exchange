@@ -10,9 +10,11 @@ import os
 import signal
 import sys
 import time
+from datetime import datetime
 from typing import List, Optional
 
 import django
+import pytz
 from django.utils import timezone
 
 try:
@@ -74,20 +76,23 @@ def generate(prices: List[Quotes], prices_amount: int, stock: Stocks, timeframe_
     .. todo::
        После рефакторинга - добавить сюда логирование.
     """
+    is_exist = False
     stock_prices = []
-    shift = prices[0].date - prices[0].date  # Но это же получается ноль. Зачем?
+    shift = prices[0].date - prices[0].date
     i = last_candle_data[timeframe_index - 1]
-    while i < prices_amount:
-        prices = list(Quotes.objects.filter(stock=stock))  # Зачем их повторно получать? Они же переданы в параметре???
+    while i < prices_amount and not CandleBot.NEED_STOP:
+        is_exist = False
         prices_amount = len(prices)
+        for _ in Candles.objects.filter(stock=stock, type=timeframe_index):
+            if _.seconds_left - shift.seconds >= 0:
+                is_exist = True
+            print(_.seconds_left, shift.seconds, is_exist, timeframe_duration)
         if prices_amount >= 2:
             shift += prices[i + 1].date - prices[i].date
             if shift.seconds <= timeframe_duration:
                 stock_prices.append(prices[i].price)
                 logging.debug(f'Добавлена новая котировка: {prices[i].price}')
-            else:
-                if len(stock_prices) > 0:
-                    shift = prices[1].date - prices[1].date
+                if not (Candles.objects.filter(stock=stock, type=timeframe_index) or is_exist) and len(Candles.objects.filter(stock=stock, type=timeframe_index)) < 5:
                     candle = Candles(
                         high=max(stock_prices),
                         low=min(stock_prices),
@@ -95,14 +100,95 @@ def generate(prices: List[Quotes], prices_amount: int, stock: Stocks, timeframe_
                         type=timeframe_index,
                         open=stock_prices[0],
                         close=stock_prices[-1],
-                        stock=stock
+                        stock=stock,
+                        seconds_left=timeframe_duration
                     )
                     logging.debug(f'Добавлена новая свеча: {candle}')
                     last_candle_data[timeframe_index - 1] = i
-                    candle.save()
                     stock_prices = []
+                    candle.save()
+
+                elif Candles.objects.filter(stock=stock, type=timeframe_index).last().seconds_left - shift.seconds >= 0:
+                    candle = Candles.objects.filter(stock=stock, type=timeframe_index).last()
+                    if max(stock_prices) > candle.high:
+                        candle.high = max(stock_prices)
+                    if min(stock_prices) < candle.low:
+                        candle.low = min(stock_prices)
+                    candle.close = stock_prices[-1]
+                    candle.seconds_left -= shift.seconds
+                    candle.save()
+                elif len(Candles.objects.filter(stock=stock)) >= 5 or len(Candles.objects.filter(stock=stock)) >= 5 and not is_exist:
+                    print('---', (datetime.now(pytz.timezone('Europe/Moscow')) - Candles.objects.filter(stock=stock, type=timeframe_index).last().date).seconds)
+                    if (datetime.now(pytz.timezone('Europe/Moscow')) - Candles.objects.filter(stock=stock, type=timeframe_index).last().date).seconds >= timeframe_duration:
+                        candle = Candles(
+                            high=max(stock_prices),
+                            low=min(stock_prices),
+                            date=timezone.now(),
+                            type=timeframe_index,
+                            open=stock_prices[0],
+                            close=stock_prices[-1],
+                            stock=stock,
+                            seconds_left=timeframe_duration
+                        )
+                        logging.debug(f'Добавлена новая свеча: {candle}')
+                        last_candle_data[timeframe_index - 1] = i
+                        stock_prices = []
+                        candle.save()
+
+
+                # if len(stock_prices) > 0:
+                #     if Candles.objects.filter(stock=stock, type=timeframe_index) and \
+                #         Candles.objects.filter(stock=stock, type=timeframe_index).last().seconds_left - shift.seconds >= 0:
+                #         candle = Candles.objects.filter(stock=stock, type=timeframe_index).last()
+                #         print('Before', candle.close, stock, candle.pk, timeframe_duration, shift)
+                #         # print(stock, stock_prices)
+                #         if max(stock_prices) > candle.high:
+                #             candle.high = max(stock_prices)
+                #         if min(stock_prices) < candle.low:
+                #             candle.low = min(stock_prices)
+                #         candle.close = stock_prices[-1]
+                #         candle.seconds_left -= shift.seconds
+                #         print('After', candle.close, stock, candle.pk, timeframe_duration, shift)
+                #         candle.save()
+                #         stock_prices = []
+                #     elif not Candles.objects.filter(stock=stock, type=timeframe_index) or \
+                #             Candles.objects.filter(stock=stock, type=timeframe_index).last().seconds_left - shift.seconds < 0:
+                #             candle = Candles(
+                #                 high=max(stock_prices),
+                #                 low=min(stock_prices),
+                #                 date=timezone.now(),
+                #                 type=timeframe_index,
+                #                 open=stock_prices[0],
+                #                 close=stock_prices[-1],
+                #                 stock=stock,
+                #                 seconds_left=timeframe_duration
+                #             )
+                #             logging.debug(f'Добавлена новая свеча: {candle}')
+                #             last_candle_data[timeframe_index - 1] = i
+                #             stock_prices = []
+                #             shift = prices[0].date - prices[0].date
+                #             candle.save()
+            # else:
+            #     if len(stock_prices) > 0:
+            #             if not Candles.objects.filter(stock=stock, type=timeframe_index) or \
+            #                 Candles.objects.filter(stock=stock, type=timeframe_index).last().seconds_left - shift.seconds < 0:
+            #                 shift = prices[0].date - prices[0].date
+            #                 candle = Candles(
+            #                     high=max(stock_prices),
+            #                     low=min(stock_prices),
+            #                     date=timezone.now(),
+            #                     type=timeframe_index,
+            #                     open=stock_prices[0],
+            #                     close=stock_prices[-1],
+            #                     stock=stock,
+            #                     seconds_left=timeframe_duration
+            #                 )
+            #                 logging.debug(f'Добавлена новая свеча: {candle}')
+            #                 last_candle_data[timeframe_index - 1] = i
+            #                 stock_prices = []
+            #                 candle.save()
             if i == prices_amount - 2:
-                return last_candle_data  # Почему значение здесь возвращается, а в остальной части нет?
+                return last_candle_data
             i += 1
 
 
@@ -121,7 +207,7 @@ class CandleBot:
         Подготовка массива свечей всех типов для всех инструментов
         """
         global STOCKS_LIST
-        self.data: List[List[int]] = [[0] * len(CandleBot.CANDLE_TYPES)] * STOCKS_LIST.count()
+        self.data: List[List[int]] = [[0, 0, 0, 0, 0] for _ in range(len(Stocks.objects.all()))]
 
     def process_stock(self, stock) -> None:
         """
@@ -147,6 +233,7 @@ class CandleBot:
         Запускает генерацию свечей для всех инструментов.
         """
         global STOCKS_LIST
+        STOCKS_LIST = Stocks.objects.all()
         while not CandleBot.NEED_STOP:
             for stock in STOCKS_LIST:
                 logging.debug(f'Обрабатываем инструмент с названием {stock}...')
@@ -194,7 +281,6 @@ class Application:
             signal.signal(signal.SIGHUP, Application.update_stocks)
         else:
             logging.info('Приложение запущено на ОС Windows, обработчик SIGHUP не устанавливается')
-
 
     @staticmethod
     def keyboard_interrupt(*args) -> None:
@@ -249,7 +335,7 @@ class Application:
             bot = CandleBot()
             bot.run()
         except django.db.utils.OperationalError:
-            logging.critical('Не удалось подключиться к БД. Дальнейшая работа приложения невозможна')
+           logging.critical('Не удалось подключиться к БД. Дальнейшая работа приложения невозможна')
 
 
 if __name__ == "__main__":

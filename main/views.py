@@ -112,7 +112,7 @@ class AddOrderView(APIView):
             (not setting.data['is_active'] and type == 1 and flag):
             portfolio, created = Portfolio.objects.get_or_create(user=user, stock=stock)
             self.set_percentage(portfolio)
-            order = Order(user=user, stock=stock, type=type, price=price, is_closed=False, amount=amount)
+            order = Order(user=user, stock=stock, type=type, price=price, is_closed=False, amount=amount, count=amount)
             order_ops = Order.objects.filter(stock=stock, type=not type, price=price, is_closed=False)
             for order_op in order_ops:
                 if order.amount != 0:

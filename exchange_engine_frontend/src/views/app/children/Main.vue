@@ -177,8 +177,8 @@
                 delay: 50
             },
             dynamicAnimation: {
-                enabled: true,
-                speed: 350
+                enabled: false,
+                speed: 50
             }
           }
         },

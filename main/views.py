@@ -381,13 +381,16 @@ class CandlesView(APIView):
     """
     Свечи
     """
-    def get(self, request, pk):
+    def get(self, request, pk, c_type):
         """
         Отображение списка свечей данной акции при GET запросе
 
         Свечи генерируются с помощью специального бота.
         """
-        candles = Candles.objects.filter(stock_id=pk)
+        if c_type > 0:
+            candles = Candles.objects.filter(stock_id=pk, type=c_type)
+        elif c_type == 0:
+            candles = Candles.objects.filter(stock_id=pk)
         serializer = serializers.CandlesSerializer(candles, many=True)
         return Response(serializer.data)
 

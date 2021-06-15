@@ -54,7 +54,7 @@ urlpatterns = [
     path('api-token-refresh/', TokenRefreshView.as_view()),
     path('api/v1/stocks/', StocksListView.as_view(), name='stocks'),
     path('api/v1/stocks/<int:pk>/', StockDetailView.as_view(), name='stock'),
-    path('api/v1/candles/<int:pk>/', CandlesView.as_view(), name='candles'),
+    path('api/v1/candles/<int:pk>/<int:c_type>', CandlesView.as_view(), name='candles'),
     path('api/v1/statistics/', StatisticsView.as_view(), name='statistics'),
     path('api/v1/register/', registration_view, name='reg'),
     path('api/v1/orders/', OrdersView.as_view(), name='orders'),

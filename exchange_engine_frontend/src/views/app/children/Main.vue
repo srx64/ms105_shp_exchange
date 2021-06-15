@@ -195,12 +195,27 @@
             speed: 300,
             animateGradually: {
                 enabled: true,
-                delay: 50
+                delay: 100
             },
             dynamicAnimation: {
-                enabled: false,
-                speed: 50
+                enabled: true,
+                speed: 100
             }
+          },
+          toolbar: {
+            show: true,
+            offsetX: 0,
+            offsetY: 0,
+            tools: {
+              download: true,
+              selection: true,
+              zoom: true,
+              zoomin: true,
+              zoomout: true,
+              pan: true,
+              reset: true | '<img src="/static/icons/reset.png" width="20">',
+              customIcons: []
+            },
           }
         },
         xaxis: {
@@ -244,6 +259,10 @@
             let data = response.data.map(function(candle) {
               return [Date.parse(candle.date), [candle.open, candle.high, candle.low, candle.close].map((price) => (price.toFixed(2)))]
             })
+
+            this.candlesInterval = setInterval(function() {
+              this.getCandles()
+            }.bind(this), 60000)
 
             this.series = [{
               data: data

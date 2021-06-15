@@ -82,6 +82,26 @@
         </v-card-subtitle>
         <v-card-text>{{ selectedStock.description }}</v-card-text>
         <v-container>
+          <v-btn-toggle
+            v-model="selectedCandlesType"
+            mandatory
+          >
+            <v-btn>
+              1MIN
+            </v-btn>
+            <v-btn>
+              5MIN
+            </v-btn>
+            <v-btn>
+              15MIN
+            </v-btn>
+            <v-btn>
+              30MIN
+            </v-btn>
+            <v-btn>
+              60MIN
+            </v-btn>
+          </v-btn-toggle>
           <apexchart type="candlestick" :options="options" :series="series"></apexchart>
         </v-container>
         <v-form>
@@ -135,6 +155,7 @@
     name: 'App',
 
     data: () => ({
+      selectedCandlesType: 0,
       selectedStonkID: undefined,
       limit_order: false,
       leverage_trade: false,
@@ -196,6 +217,12 @@
       }]
     }),
 
+    watch: {
+      selectedCandlesType: function () {
+        this.getCandles()
+      }
+    },
+
     methods: {
       getStocks(){
         getAPI.get('api/v1/stocks/', {
@@ -211,13 +238,12 @@
             clearInterval(this.stocksInterval)
           })
       },
-      getCandles (id) {
-        getAPI.get('http://127.0.0.1:8000/api/v1/candles/' + id)
+      getCandles () {
+        getAPI.get('http://127.0.0.1:8000/api/v1/candles/' + this.selectedStonkID + '/' + (this.selectedCandlesType + 1))
           .then(response => {
             let data = response.data.map(function(candle) {
               return [Date.parse(candle.date), [candle.open, candle.high, candle.low, candle.close].map((price) => (price.toFixed(2)))]
             })
-            console.log(data)
 
             this.series = [{
               data: data
@@ -258,7 +284,7 @@
       },
       selectStock (id) {
         this.selectedStonkID = id
-        this.getCandles(this.selectedStonkID)
+        this.getCandles()
       }
     },
     computed: {

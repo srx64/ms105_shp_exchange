@@ -71,7 +71,7 @@
           <v-list-item-title
             class="font-weight-medium mb-n2"
           >
-            {{ security.count }} x {{ (security.count * security.stock.price).toFixed(2) }}&#x20AE;
+            {{ security.count }} x {{ security.stock.price.toFixed(2) }}&#x20AE;
           </v-list-item-title>
           <v-list-item-title
             :class="(security.stock.price - security.aver_price < 0) ? 'red--text': (security.stock.price - security.aver_price > 0) ? 'green--text' : 'grey--text'"

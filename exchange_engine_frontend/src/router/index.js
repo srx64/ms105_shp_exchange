@@ -42,7 +42,7 @@ const routes = [
     ]
   },
   {
-    path: '/app',d
+    path: '/app',
     component: () => import('../views/app/View.vue'),
     meta: {
       requiresLogin: false

@@ -284,7 +284,6 @@ class Statistics(models.Model):
     :param max_balance: баланс самого богатого пользователя биржи
     :param the_richest: имя самого богатого пользователя биржи
     """
-    name = models.CharField(max_length=255, default='')
     open_orders = models.IntegerField(default=0)
     closed_orders = models.IntegerField(default=0)
     user_active = models.IntegerField(default=0)
@@ -301,7 +300,7 @@ class Statistics(models.Model):
 
         Пересчитываются все параметры без исключения.
         """
-        stat = Statistics.objects.get_or_create(name='orders_count')[0]
+        stat = Statistics.objects.get_or_create()[0]
         stat.open_orders = Order.get_opened_orders_count()
         stat.closed_orders = Order.get_closed_orders_count()
         stat.user_active = get_user_model().get_active_users_count()

@@ -195,7 +195,7 @@ class Portfolio(models.Model):
     @staticmethod
     def is_long_only(portfolio: QuerySet) -> bool:
         """Определяем, есть ли в этом портфеле инструменты, торгуемые в шорт"""
-        return portfolio.filter(short_balance__neq=DEFAULT_SHORT_BALANCE_VALUE).count() == 0
+        return portfolio.filter(short_balance__lte=DEFAULT_SHORT_BALANCE_VALUE).count() == 0
 
     @staticmethod
     def get_bull_bear_count() -> Tuple[int, int]:
@@ -301,7 +301,7 @@ class Statistics(models.Model):
 
         Пересчитываются все параметры без исключения.
         """
-        stat = Statistics.objects.get_or_create(name='orders_count')
+        stat = Statistics.objects.get_or_create(name='orders_count')[0]
         stat.open_orders = Order.get_opened_orders_count()
         stat.closed_orders = Order.get_closed_orders_count()
         stat.user_active = get_user_model().get_active_users_count()

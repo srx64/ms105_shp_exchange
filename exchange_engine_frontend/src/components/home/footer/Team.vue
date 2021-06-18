@@ -10,7 +10,7 @@
           :src="person.photo"
           class="white--text align-end"
           gradient="to bottom, rgba(0,0,0,.1), rgba(0,0,0,.5)"
-          height="200px"
+          height="300px"
         >
           <template v-slot:placeholder>
             <svg style="width:100%;height:100%" viewBox="0 0 24 24">
@@ -95,8 +95,14 @@ export default {
       {
         name: 'Мишкина Дарья',
         post: 'Тимлид/Бэкенд-разработчик',
-        socials: {},
-        photo: '',
+        socials: {
+          telegram: {
+            link: 'https://t.me/vortexof',
+            icon: 'mdi-telegram',
+            color: '#0088cc'
+          }
+        },
+        photo: require('@/assets/team/mishkina.jpg'),
         description: '',
         quote: 
           `"Понимаете, Андрей Александрович, мы писали рандом и случайно написали кризис"`,
@@ -111,14 +117,13 @@ export default {
             icon: 'mdi-vk',
             color: '#2787F5'
           },
-          telegram: 
-          {
+          telegram: {
             link: 'https://t.me/RechnoiD',
             icon: 'mdi-telegram',
             color: '#0088cc'
           }
         },
-        photo: '',
+        photo: require('@/assets/team/ivanchenko.jpg'),
         description: '',
         quote:
           `"Андрей Александрович, мы из будущего, не судите строго"`,
@@ -126,22 +131,199 @@ export default {
       },
       {
         name: 'Березин Николай',
-        post: 'Фронтенд-разработчик',
-        socials: {},
-        photo: '',
+        post: 'Бэкенд-разработчик',
+        socials: {
+          vk: {
+            link: 'https://vk.com/id307666016',
+            icon: 'mdi-vk',
+            color: '#2787F5'
+          }
+        },
+        photo: require('@/assets/team/berezin.jpg'),
         description: '',
         quote: 
           `"Я тут ещё ни одного колеса не изобретал, всё хорошо" `,
         show: false
       },
       {
+        name: 'Снадкин Даниил',
+        post: 'Бэкенд-разработчик/Фронтенд-разработчик',
+        socials: {
+          vk: {
+            link: 'https://vk.com/sndkdanya',
+            icon: 'mdi-vk',
+            color: '#2787F5'
+          }
+        },
+        photo: require('@/assets/team/snadkin.jpg'),
+        description: '',
+        quote: 
+          `"Тайна тридцать второго теста"`,
+        show: false
+      },
+      {
         name: 'Фролов Максим',
         post: 'Бэкенд-разработчик',
-        socials: {},
-        photo: '',
+        socials: {
+          vk: {
+            link: 'https://vk.com/mi_x_im',
+            icon: 'mdi-vk',
+            color: '#2787F5'
+          },
+          telegram: {
+            link: 'https://t.me/mi_x_im',
+            icon: 'mdi-telegram',
+            color: '#0088cc'
+          }
+        },
+        photo: require('@/assets/team/frolov.jpg'),
         description: '',
         quote: 
           `"runservant"`,
+        show: false
+      },
+      {
+        name: 'Баранов Юрий',
+        post: 'Бэкенд-разработчик',
+        socials: {
+          vk: {
+            link: 'https://vk.com/uranbee',
+            icon: 'mdi-vk',
+            color: '#2787F5'
+          },
+        },
+        photo: '',
+        description: '',
+        quote: 
+          `"У меня вырос монокль"`,
+        show: false
+      },
+      {
+        name: 'Голубев Артем',
+        post: 'Бэкенд-разработчик',
+        socials: {
+          vk: {
+            link: 'https://vk.com/ddodgers',
+            icon: 'mdi-vk',
+            color: '#2787F5'
+          },
+        },
+        photo: require('@/assets/team/golubev.jpg'),
+        description: '',
+        quote: 
+          `"Здесь могла быть ваша реклама"`,
+        show: false
+      },
+      {
+        name: 'Кузьмичев Артем',
+        post: 'Бэкенд-разработчик',
+        socials: {
+          vk: {
+            link: 'https://vk.com/id431884327',
+            icon: 'mdi-vk',
+            color: '#2787F5'
+          },
+        },
+        photo: '',
+        description: '',
+        quote: 
+          ``,
+        show: false
+      },
+      {
+        name: 'Бурнашева Мария',
+        post: 'Бэкенд-разработчик',
+        socials: {
+          vk: {
+            link: 'https://vk.com/maaaassh',
+            icon: 'mdi-vk',
+            color: '#2787F5'
+          },
+        },
+        photo: require('@/assets/team/burnasheva.png'),
+        description: '',
+        quote: 
+          `"Проект без жертв"`,
+        show: false
+      },
+      {
+        name: 'Кочерова Влада',
+        post: 'Бэкенд-разработчик/Госпожа помянем',
+        socials: {
+          vk: {
+            link: 'https://vk.com/maybeyoursmaybenot',
+            icon: 'mdi-vk',
+            color: '#2787F5'
+          },
+        },
+        photo: require('@/assets/team/kocherova.jpeg'),
+        description: '',
+        quote: 
+          `"Утиная магия"`,
+        show: false
+      },
+      {
+        name: 'Бетуганов Арсен',
+        post: 'Бэкенд-разработчик',
+        socials: {
+          vk: {
+            link: 'https://vk.com/alonew1thyourself',
+            icon: 'mdi-vk',
+            color: '#2787F5'
+          },
+        },
+        photo: require('@/assets/team/betuganov.jpg'),
+        description: '',
+        quote: 
+          ``,
+        show: false
+      },
+      {
+        name: 'Выходцев Александр',
+        post: 'Бэкенд-разработчик',
+        socials: {
+          vk: {
+            link: 'https://vk.com/id448788329',
+            icon: 'mdi-vk',
+            color: '#2787F5'
+          },
+        },
+        photo: '',
+        description: '',
+        quote: 
+          ``,
+        show: false
+      },
+      {
+        name: 'Комаров Кирилл',
+        post: 'Бэкенд-разработчик',
+        socials: {
+          vk: {
+            link: 'https://vk.com/kirillkoms',
+            icon: 'mdi-vk',
+            color: '#2787F5'
+          },
+        },
+        photo: require('@/assets/team/komarov.jpg'),
+        description: '',
+        quote: 
+          `"Не волнуйтесь, если что-то не работает. Если бы всё работало, вас бы уволили"`,
+        show: false
+      },
+      {
+        name: 'Ганин Влад',
+        post: 'Бэкенд-разработчик',
+        socials: {
+          vk: {
+            link: 'https://vk.com/traumt_liebe',
+            icon: 'mdi-vk',
+            color: '#2787F5'
+          },
+        },
+        photo: require('@/assets/team/ganin.jpg'),
+        description: '',
+        quote: 
+          `"На самом деле не знаю, но можно error 404"`,
         show: false
       }
     ],

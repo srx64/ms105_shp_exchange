@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'main',
     'django_filters',
+    'drf_yasg',
 ]
 
 MIDDLEWARE = [
@@ -181,4 +182,4 @@ FIXTURE_DIRS = [
     'main/fixtures',
 ]
 
-STATIC_ROOT = 'staticfiles'
+DEFAULT_SHORT_BALANCE_VALUE = -100000

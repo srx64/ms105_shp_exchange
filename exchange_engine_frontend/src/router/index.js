@@ -33,11 +33,6 @@ const routes = [
         path: 'logout',
         name: 'Logout',
         component: () => import('../views/auth/children/Logout.vue')
-      },
-      {
-        path: 'test',
-        name: 'Test',
-        component: () => import('../views/auth/children/TestForm.vue')
       }
     ]
   },
@@ -45,7 +40,7 @@ const routes = [
     path: '/app',
     component: () => import('../views/app/View.vue'),
     meta: {
-      requiresLogin: true
+      requiresLogin: false
     },
     children: [
       {
@@ -67,6 +62,22 @@ const routes = [
         path: 'orders',
         name: 'Orders',
         component: () => import('../views/app/children/Orders.vue')
+      }
+    ]
+  },
+  {
+    path: '/test',
+    component: () => import('../views/test/Graph.vue'),
+    children: [
+      {
+        path: 'hexagon-ava',
+        name: 'Hexagon',
+        component: () => import('../views/test/Hexagon.vue')
+      },
+      {
+        path: 'graph',
+        name: 'Graph',
+        component: () => import('../views/test/Graph.vue')
       }
     ]
   }

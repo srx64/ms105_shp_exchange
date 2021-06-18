@@ -37,7 +37,7 @@ export default {
           })
       })
     },
-    userReg (usercredentials) {
+    userReg (context, usercredentials) {
       return new Promise((resolve, reject) => {
         getAPI.post('api/v1/register/', {
           email: usercredentials.email,

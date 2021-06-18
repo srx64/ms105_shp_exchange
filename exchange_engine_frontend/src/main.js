@@ -7,6 +7,7 @@ import router from './router'
 import store from './stores/store'
 import IdleVue from 'idle-vue'
 import vuetify from './plugins/vuetify'
+import VueApexCharts from 'vue-apexcharts'
 import './plugins/base'
 
 const eventsHub = new Vue()
@@ -18,6 +19,9 @@ Vue.use(IdleVue, {
 })
 Vue.use(VueMeta)
 Vue.use(VueAxios, axios)
+Vue.use(VueApexCharts)
+
+Vue.component('apexchart', VueApexCharts)
 
 Vue.config.productionTip = false
 

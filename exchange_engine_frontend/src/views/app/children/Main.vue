@@ -81,15 +81,28 @@
           Текущая цена: {{ selectedStock.price.toFixed(2) }}&#x20AE;
         </v-card-subtitle>
         <v-card-text>{{ selectedStock.description }}</v-card-text>
-        <v-container
-          hidden
-        >
-          <trading-vue
-            hidden
-            :data="this.$data"
-            title-txt="NAME"
-            :toolbar="true"
-          />
+        <v-container>
+          <v-btn-toggle
+            v-model="selectedCandlesType"
+            mandatory
+          >
+            <v-btn>
+              1MIN
+            </v-btn>
+            <v-btn>
+              5MIN
+            </v-btn>
+            <v-btn>
+              15MIN
+            </v-btn>
+            <v-btn>
+              30MIN
+            </v-btn>
+            <v-btn>
+              60MIN
+            </v-btn>
+          </v-btn-toggle>
+          <apexchart type="candlestick" :options="options" :series="series"></apexchart>
         </v-container>
         <v-form>
           <v-text-field v-model="amount" hint="" label="Количество" type="number" ></v-text-field>
@@ -128,7 +141,7 @@
         <BaseBody
           class="text-center"
         >
-          Пожалуйста, выберите любую акцию из списка справа для просмотра ее информации
+          Пожалуйста, выберите любую акцию из списка слева для просмотра ее информации
         </BaseBody>
       </v-container>
     </v-col>
@@ -136,12 +149,13 @@
 </template>
 
 <script>
-import { getAPI } from '@/axios-api'
-import TradingVue from "trading-vue-js";
+  import { getAPI } from '@/axios-api'
+
   export default {
     name: 'App',
-    components: { TradingVue },
+
     data: () => ({
+      selectedCandlesType: 0,
       selectedStonkID: undefined,
       limit_order: false,
       leverage_trade: false,
@@ -149,18 +163,81 @@ import TradingVue from "trading-vue-js";
       amount: 1,
       stocks: [],
       ratio: 0,
-      candles: [],
-      ohlcv: [ [ 1620822279181, 2820, 3188.5, 3188.5, 2820 ], [ 1620822333716, 3090, 3085, 3090, 3085 ], [ 1620822395534, 3037.5, 3033, 3037.5, 3033 ]],
       item: '',
-      stocksInterval: undefined
+      stocksInterval: undefined,
+      options: {
+        chart: {
+          id: 'main-chart',
+          locales: [{
+            "name": "ru",
+            "options": {
+              "months": ["Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"],
+              "shortMonths": ["Янв", "Фев", "Мар", "Апр", "Май", "Июн", "Июл", "Авг", "Сен", "Окт", "Ноя", "Дек"],
+              "days": ["Воскресенье", "Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота"],
+              "shortDays": ["Вс", "Пн", "Вт", "Ср", "Чт", "Пт", "Сб"],
+              "toolbar": {
+                  "exportToSVG": "Скачать SVG",
+                  "exportToPNG": "Скачать PNG",
+                  "menu": "Меню",
+                  "selection": "Зона",
+                  "selectionZoom": "Зона увелечения",
+                  "zoomIn": "Увеличить",
+                  "zoomOut": "Уменьшить",
+                  "pan": "Переместить",
+                  "reset": "Домой"
+              }
+            }
+          }],
+          defaultLocale: "ru",
+          animations: {
+            enabled: true,
+            easing: 'easeinout',
+            speed: 300,
+            animateGradually: {
+                enabled: true,
+                delay: 100
+            },
+            dynamicAnimation: {
+                enabled: true,
+                speed: 100
+            }
+          },
+          toolbar: {
+            show: true,
+            offsetX: 0,
+            offsetY: 0,
+            tools: {
+              download: true,
+              selection: true,
+              zoom: true,
+              zoomin: true,
+              zoomout: true,
+              pan: true,
+              reset: true | '<img src="/static/icons/reset.png" width="20">',
+              customIcons: []
+            },
+          }
+        },
+        xaxis: {
+          type: 'datetime'
+        },
+        yaxis: {
+          tooltip: {
+            enabled: true
+          }
+        }
+      },
+      series: [{
+        data: []
+      }]
     }),
-    // watch: {
-    //   'selectedStonkID': function(val){
-    //     if(val != undefined){
-    //       this.getCandles()
-    //     }
-    //   }
-    // },
+
+    watch: {
+      selectedCandlesType: function () {
+        this.getCandles()
+      }
+    },
+
     methods: {
       getStocks(){
         getAPI.get('api/v1/stocks/', {
@@ -176,20 +253,24 @@ import TradingVue from "trading-vue-js";
             clearInterval(this.stocksInterval)
           })
       },
-      getCandles(){
-        if (this.selectedStonkID){
-          getAPI.get('api/v1/candles/' + this.selectedStock.id + '/', )
+      getCandles () {
+        getAPI.get('http://127.0.0.1:8000/api/v1/candles/' + this.selectedStonkID + '/' + (this.selectedCandlesType + 1))
           .then(response => {
-            this.candles = response.data
-            this.ohclv = []
-            for(var i of this.candles)
-              this.ohclv.push([new Date(i.date).valueOf(), i.open, i.close, i.high, i.low]);
-            this.item = '<trading-vue :data="this.$data"></trading-vue>'
+            let data = response.data.map(function(candle) {
+              return [Date.parse(candle.date), [candle.open, candle.high, candle.low, candle.close].map((price) => (price.toFixed(2)))]
+            })
+
+            this.candlesInterval = setInterval(function() {
+              this.getCandles()
+            }.bind(this), 60000)
+
+            this.series = [{
+              data: data
+            }]
           })
           .catch(err => {
             console.log(err)
           })
-        }
       },
       trade(type){
         var url_trade = this.leverage_trade && !this.leverage_trade ? 'trading/leverage/' : 'orders/add'
@@ -222,6 +303,7 @@ import TradingVue from "trading-vue-js";
       },
       selectStock (id) {
         this.selectedStonkID = id
+        this.getCandles()
       }
     },
     computed: {
@@ -243,7 +325,7 @@ import TradingVue from "trading-vue-js";
       this.getStocks()
       this.stocksInterval = setInterval(function() {
         this.getStocks()
-      }.bind(this), 10000)
+      }.bind(this), 5000)
     },
 
     destroyed () {

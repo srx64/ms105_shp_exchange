@@ -4,6 +4,7 @@
     color="grey lighten-4"
 		app
 		elevation="1"
+    style="z-index: 13"
 		elevate-on-scroll
 		height="80"
 	>

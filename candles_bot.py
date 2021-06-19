@@ -99,8 +99,7 @@ def generate(prices: List[Quotes], prices_amount: int, stock: Stocks, timeframe_
                         type=timeframe_index,
                         open=stock_prices[0],
                         close=stock_prices[-1],
-                        stock=stock,
-                        seconds_left=timeframe_duration
+                        stock=stock
                     )
                     logging.debug(f'Добавлена новая свеча: {candle}')
                     last_candle_data[timeframe_index - 1] = i

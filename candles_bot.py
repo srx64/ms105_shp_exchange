@@ -84,9 +84,8 @@ def generate(prices: List[Quotes], prices_amount: int, stock: Stocks, timeframe_
         is_exist = False
         prices_amount = len(prices)
         for _ in Candles.objects.filter(stock=stock, type=timeframe_index):
-            if _.seconds_left - shift.seconds >= 0:
+            if (datetime.now(pytz.timezone('Europe/Moscow')) - _.date).total_seconds() <= (timeframe_duration):
                 is_exist = True
-            # print(_.seconds_left, shift.seconds, is_exist, timeframe_duration)
         if prices_amount >= 2:
             shift += prices[i + 1].date - prices[i].date
             if shift.seconds <= timeframe_duration:
@@ -108,19 +107,19 @@ def generate(prices: List[Quotes], prices_amount: int, stock: Stocks, timeframe_
                     stock_prices = []
                     candle.save()
 
-                elif Candles.objects.filter(stock=stock, type=timeframe_index).last().seconds_left - shift.seconds >= 0:
+                elif (datetime.now(pytz.timezone('Europe/Moscow')) -
+                      Candles.objects.filter(stock=stock, type=timeframe_index).last().date).total_seconds() \
+                    <= (timeframe_duration):
                     candle = Candles.objects.filter(stock=stock, type=timeframe_index).last()
                     if max(stock_prices) > candle.high:
                         candle.high = max(stock_prices)
                     if min(stock_prices) < candle.low:
                         candle.low = min(stock_prices)
                     candle.close = stock_prices[-1]
-                    candle.seconds_left -= shift.seconds
                     stock_prices = []
                     candle.save()
                 elif len(Candles.objects.filter(stock=stock)) >= 5 or len(Candles.objects.filter(stock=stock)) >= 5 and not is_exist:
-                    # print('---', (datetime.now(pytz.timezone('Europe/Moscow')) - Candles.objects.filter(stock=stock, type=timeframe_index).last().date).seconds)
-                    if (datetime.now(pytz.timezone('Europe/Moscow')) - Candles.objects.filter(stock=stock, type=timeframe_index).last().date).seconds >= timeframe_duration:
+                    if (datetime.now(pytz.timezone('Europe/Moscow')) - Candles.objects.filter(stock=stock, type=timeframe_index).last().date).total_seconds() >= timeframe_duration:
                         candle = Candles(
                             high=max(stock_prices),
                             low=min(stock_prices),
@@ -129,65 +128,11 @@ def generate(prices: List[Quotes], prices_amount: int, stock: Stocks, timeframe_
                             open=stock_prices[0],
                             close=stock_prices[-1],
                             stock=stock,
-                            seconds_left=timeframe_duration
                         )
                         logging.debug(f'Добавлена новая свеча: {candle}')
                         last_candle_data[timeframe_index - 1] = i
                         stock_prices = []
                         candle.save()
-
-
-                # if len(stock_prices) > 0:
-                #     if Candles.objects.filter(stock=stock, type=timeframe_index) and \
-                #         Candles.objects.filter(stock=stock, type=timeframe_index).last().seconds_left - shift.seconds >= 0:
-                #         candle = Candles.objects.filter(stock=stock, type=timeframe_index).last()
-                #         print('Before', candle.close, stock, candle.pk, timeframe_duration, shift)
-                #         # print(stock, stock_prices)
-                #         if max(stock_prices) > candle.high:
-                #             candle.high = max(stock_prices)
-                #         if min(stock_prices) < candle.low:
-                #             candle.low = min(stock_prices)
-                #         candle.close = stock_prices[-1]
-                #         candle.seconds_left -= shift.seconds
-                #         print('After', candle.close, stock, candle.pk, timeframe_duration, shift)
-                #         candle.save()
-                #         stock_prices = []
-                #     elif not Candles.objects.filter(stock=stock, type=timeframe_index) or \
-                #             Candles.objects.filter(stock=stock, type=timeframe_index).last().seconds_left - shift.seconds < 0:
-                #             candle = Candles(
-                #                 high=max(stock_prices),
-                #                 low=min(stock_prices),
-                #                 date=timezone.now(),
-                #                 type=timeframe_index,
-                #                 open=stock_prices[0],
-                #                 close=stock_prices[-1],
-                #                 stock=stock,
-                #                 seconds_left=timeframe_duration
-                #             )
-                #             logging.debug(f'Добавлена новая свеча: {candle}')
-                #             last_candle_data[timeframe_index - 1] = i
-                #             stock_prices = []
-                #             shift = prices[0].date - prices[0].date
-                #             candle.save()
-            # else:
-            #     if len(stock_prices) > 0:
-            #             if not Candles.objects.filter(stock=stock, type=timeframe_index) or \
-            #                 Candles.objects.filter(stock=stock, type=timeframe_index).last().seconds_left - shift.seconds < 0:
-            #                 shift = prices[0].date - prices[0].date
-            #                 candle = Candles(
-            #                     high=max(stock_prices),
-            #                     low=min(stock_prices),
-            #                     date=timezone.now(),
-            #                     type=timeframe_index,
-            #                     open=stock_prices[0],
-            #                     close=stock_prices[-1],
-            #                     stock=stock,
-            #                     seconds_left=timeframe_duration
-            #                 )
-            #                 logging.debug(f'Добавлена новая свеча: {candle}')
-            #                 last_candle_data[timeframe_index - 1] = i
-            #                 stock_prices = []
-            #                 candle.save()
 
             if i == prices_amount - 2:
                 return last_candle_data

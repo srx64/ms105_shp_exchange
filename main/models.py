@@ -131,7 +131,6 @@ class Candles(models.Model):
     date = models.DateTimeField(default=timezone.now)
     stock = models.ForeignKey(to=Stocks, on_delete=models.CASCADE)
     type = models.IntegerField(default=1)
-    seconds_left = models.IntegerField(default=0)
 
 
 class Statistics(models.Model):

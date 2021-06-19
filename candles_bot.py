@@ -86,7 +86,7 @@ def generate(prices: List[Quotes], prices_amount: int, stock: Stocks, timeframe_
         for _ in Candles.objects.filter(stock=stock, type=timeframe_index):
             if _.seconds_left - shift.seconds >= 0:
                 is_exist = True
-            print(_.seconds_left, shift.seconds, is_exist, timeframe_duration)
+            # print(_.seconds_left, shift.seconds, is_exist, timeframe_duration)
         if prices_amount >= 2:
             shift += prices[i + 1].date - prices[i].date
             if shift.seconds <= timeframe_duration:
@@ -116,9 +116,10 @@ def generate(prices: List[Quotes], prices_amount: int, stock: Stocks, timeframe_
                         candle.low = min(stock_prices)
                     candle.close = stock_prices[-1]
                     candle.seconds_left -= shift.seconds
+                    stock_prices = []
                     candle.save()
                 elif len(Candles.objects.filter(stock=stock)) >= 5 or len(Candles.objects.filter(stock=stock)) >= 5 and not is_exist:
-                    print('---', (datetime.now(pytz.timezone('Europe/Moscow')) - Candles.objects.filter(stock=stock, type=timeframe_index).last().date).seconds)
+                    # print('---', (datetime.now(pytz.timezone('Europe/Moscow')) - Candles.objects.filter(stock=stock, type=timeframe_index).last().date).seconds)
                     if (datetime.now(pytz.timezone('Europe/Moscow')) - Candles.objects.filter(stock=stock, type=timeframe_index).last().date).seconds >= timeframe_duration:
                         candle = Candles(
                             high=max(stock_prices),

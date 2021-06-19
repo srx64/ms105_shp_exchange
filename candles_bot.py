@@ -82,16 +82,18 @@ def generate(prices: List[Quotes], prices_amount: int, stock: Stocks, timeframe_
     i = last_candle_data[timeframe_index - 1]
     while i < prices_amount and not CandleBot.NEED_STOP:
         is_exist = False
+        prices = list(Quotes.objects.filter(stock=stock))
         prices_amount = len(prices)
-        for _ in Candles.objects.filter(stock=stock, type=timeframe_index):
-            if (datetime.now(pytz.timezone('Europe/Moscow')) - _.date).total_seconds() <= (timeframe_duration):
+        for candle in Candles.objects.filter(stock=stock, type=timeframe_index):
+            if (datetime.now(pytz.timezone('Europe/Moscow')) - candle.date).total_seconds() <= timeframe_duration:
                 is_exist = True
         if prices_amount >= 2:
             shift += prices[i + 1].date - prices[i].date
             if shift.seconds <= timeframe_duration:
                 stock_prices.append(prices[i].price)
                 logging.debug(f'Добавлена новая котировка: {prices[i].price}')
-                if not (Candles.objects.filter(stock=stock, type=timeframe_index) or is_exist) and len(Candles.objects.filter(stock=stock, type=timeframe_index)) < 5:
+                if not (Candles.objects.filter(stock=stock, type=timeframe_index) or is_exist) and len(
+                    Candles.objects.filter(stock=stock, type=timeframe_index)) < 5:
                     candle = Candles(
                         high=max(stock_prices),
                         low=min(stock_prices),
@@ -117,8 +119,10 @@ def generate(prices: List[Quotes], prices_amount: int, stock: Stocks, timeframe_
                     candle.close = stock_prices[-1]
                     stock_prices = []
                     candle.save()
-                elif len(Candles.objects.filter(stock=stock)) >= 5 or len(Candles.objects.filter(stock=stock)) >= 5 and not is_exist:
-                    if (datetime.now(pytz.timezone('Europe/Moscow')) - Candles.objects.filter(stock=stock, type=timeframe_index).last().date).total_seconds() >= timeframe_duration:
+                elif len(Candles.objects.filter(stock=stock)) >= 5 or len(
+                    Candles.objects.filter(stock=stock)) >= 5 and not is_exist:
+                    if (datetime.now(pytz.timezone('Europe/Moscow')) - Candles.objects.filter(stock=stock,
+                                                                                              type=timeframe_index).last().date).total_seconds() >= timeframe_duration:
                         candle = Candles(
                             high=max(stock_prices),
                             low=min(stock_prices),
@@ -170,7 +174,10 @@ class CandleBot:
         prices_amount = len(prices)
         for i in range(len(CandleBot.CANDLE_TYPES)):
             logging.debug(f'Генерируем свечу с таймфреймом  {CandleBot.CANDLE_TYPES[i]} для инструмента {stock} ...')
-            info = generate(prices, prices_amount, stock, CandleBot.CANDLE_TYPES[i], i + 1, info)
+            if info is not None:
+                info = generate(prices, prices_amount, stock, CandleBot.CANDLE_TYPES[i], i + 1, info)
+            else:
+                logging.debug('Параметр "info" имеет тип None.')
 
     def main_loop(self) -> None:
         """
@@ -281,7 +288,7 @@ class Application:
             bot = CandleBot()
             bot.run()
         except django.db.utils.OperationalError:
-           logging.critical('Не удалось подключиться к БД. Дальнейшая работа приложения невозможна')
+            logging.critical('Не удалось подключиться к БД. Дальнейшая работа приложения невозможна')
 
 
 if __name__ == "__main__":

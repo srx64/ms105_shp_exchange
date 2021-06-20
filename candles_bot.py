@@ -106,7 +106,6 @@ def generate(prices: List[Quotes], prices_amount: int, stock: Stocks, timeframe_
                     logging.debug(f'Добавлена новая свеча: {candle}')
                     stock_prices = []
                     candle.save()
-
                 elif (datetime.now(pytz.timezone('Europe/Moscow')) -
                     Candles.objects.filter(stock=stock, type=timeframe_index).last().date).total_seconds() \
                     <= (timeframe_duration):

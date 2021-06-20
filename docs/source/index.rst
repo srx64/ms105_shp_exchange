@@ -17,6 +17,8 @@
    authors.rst
    code.rst
 
+   candles_bot.rst
+
 Ссылки
 ======
 

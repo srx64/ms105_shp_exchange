@@ -104,12 +104,11 @@ def generate(prices: List[Quotes], prices_amount: int, stock: Stocks, timeframe_
                         stock=stock
                     )
                     logging.debug(f'Добавлена новая свеча: {candle}')
-                    last_candle_data[timeframe_index - 1] = i
                     stock_prices = []
                     candle.save()
 
                 elif (datetime.now(pytz.timezone('Europe/Moscow')) -
-                      Candles.objects.filter(stock=stock, type=timeframe_index).last().date).total_seconds() \
+                    Candles.objects.filter(stock=stock, type=timeframe_index).last().date).total_seconds() \
                     <= (timeframe_duration):
                     candle = Candles.objects.filter(stock=stock, type=timeframe_index).last()
                     if max(stock_prices) > candle.high:
@@ -117,6 +116,7 @@ def generate(prices: List[Quotes], prices_amount: int, stock: Stocks, timeframe_
                     if min(stock_prices) < candle.low:
                         candle.low = min(stock_prices)
                     candle.close = stock_prices[-1]
+                    logging.debug(f'Обновлена свеча: {candle}')
                     stock_prices = []
                     candle.save()
                 elif len(Candles.objects.filter(stock=stock)) >= 5 or len(
@@ -133,11 +133,11 @@ def generate(prices: List[Quotes], prices_amount: int, stock: Stocks, timeframe_
                             stock=stock,
                         )
                         logging.debug(f'Добавлена новая свеча: {candle}')
-                        last_candle_data[timeframe_index - 1] = i
                         stock_prices = []
                         candle.save()
 
             if i == prices_amount - 2:
+                last_candle_data[timeframe_index - 1] = i
                 return last_candle_data
             i += 1
 

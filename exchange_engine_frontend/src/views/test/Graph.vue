@@ -310,7 +310,7 @@
 
     methods: {
       getCandles () {
-        getAPI.get('http://127.0.0.1:8000/api/v1/candles/1')
+        getAPI.get('http://shp-exchange.tk/api/v1/candles/1')
           .then(response => {
             let data = response.data.map(function(candle) {
               return [Date.parse(candle.date), [candle.open, candle.high, candle.low, candle.close].map((price) => (price.toFixed(2)))]

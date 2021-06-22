@@ -19,7 +19,7 @@
       <v-btn
         class="font-weight-bold"
         color="white"
-        href="https://web.telegram.org//"
+        href="https://t.me/SHP_EXchange"
         light
         min-width="168"
         target="_blank"

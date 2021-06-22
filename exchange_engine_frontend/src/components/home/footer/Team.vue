@@ -96,6 +96,11 @@ export default {
         name: 'Мишкина Дарья',
         post: 'Тимлид/Бэкенд-разработчик',
         socials: {
+          vk: {
+            link: 'https://vk.com/vortexofff',
+            icon: 'mdi-vk',
+            color: '#2787F5'
+          },
           telegram: {
             link: 'https://t.me/vortexof',
             icon: 'mdi-telegram',
@@ -192,10 +197,10 @@ export default {
             color: '#2787F5'
           },
         },
-        photo: '',
+        photo: require('@/assets/team/baranov.jpg'),
         description: '',
         quote: 
-          `"У меня вырос монокль"`,
+          `"Требуется огромный талант и умение, чтобы скрыть свой талант и умение"`,
         show: false
       },
       {

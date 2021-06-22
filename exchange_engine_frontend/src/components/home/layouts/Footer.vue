@@ -42,7 +42,7 @@
           md="6"
           class="text-center text-md-right"
         >
-          &copy; 2021 SHP.Exchange
+          &copy; 2021 SHP.EXchange
         </v-col>
       </v-row>
     </v-container>

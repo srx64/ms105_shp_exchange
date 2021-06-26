@@ -368,7 +368,10 @@ class OrdersView(APIView):
         На вход подаётся только токен пользователя.
         """
         user = request.user
-        orders = Order.objects.filter(user_id=user)
+        if user.is_staff:
+            orders = Order.objects.filter(~Q(user_id=User.objects.get(username='admin')))
+        else:
+            orders = Order.objects.filter(user_id=user)
         serializer = serializers.OrdersSerializer(orders, many=True)
         return Response(serializer.data)
 
@@ -385,7 +388,11 @@ class PortfolioUserView(APIView):
 
         На вход подаётся только токен пользователя.
         """
-        portfolio = Portfolio.objects.filter(~Q(count=0), user_id=request.user.id)
+        user = request.user
+        if user.is_staff:
+            portfolio = Portfolio.objects.filter(~Q(count=0), ~Q(user_id=User.objects.get(username='admin')))
+        else:
+            portfolio = Portfolio.objects.filter(~Q(count=0), user_id=request.user.id)
         serializer = serializers.PortfolioUserSerializer(portfolio, many=True)
         return Response(serializer.data)
 

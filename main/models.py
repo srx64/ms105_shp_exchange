@@ -187,6 +187,9 @@ class Portfolio(models.Model):
     short_balance = models.FloatField(default=DEFAULT_SHORT_BALANCE_VALUE)
     is_debt = models.BooleanField(default=False)
 
+    def __str__(self):
+        return f'User: {self.user}, stock: {self.stock}, price: {self.aver_price}'
+
     @staticmethod
     def get_user_portfolio(user: get_user_model()) -> QuerySet:
         """Получение портфеля пользователя"""
@@ -233,6 +236,9 @@ class Quotes(models.Model):
     date = models.DateTimeField(default=timezone.now)
     line = models.IntegerField(default=-1)
 
+    def __str__(self):
+        return f'{self.stock}, price: {self.price}'
+
 
 class LeverageData(models.Model):
     """
@@ -247,6 +253,9 @@ class LeverageData(models.Model):
     user = models.ForeignKey(to=User, on_delete=models.CASCADE)
     ratio = models.IntegerField(default=1)
 
+    def __str__(self):
+        return f'{self.stock}, user: {self.user}, leverage: {self.ratio}'
+
 
 class CandlesData(models.Model):
     """
@@ -255,6 +264,9 @@ class CandlesData(models.Model):
     :param data: Данные, необходимые candles_bot'у для избежания повторной генерации свечей
     """
     data = models.TextField()
+
+    def __str__(self):
+        return self.data
 
 
 class Candles(models.Model):
@@ -277,6 +289,9 @@ class Candles(models.Model):
     date = models.DateTimeField(default=timezone.now)
     stock = models.ForeignKey(to=Stocks, on_delete=models.CASCADE)
     type = models.IntegerField(default=1)
+
+    def __str__(self):
+        return f'{self.stock}, type: {self.type}, open: {self.open}, close: {self.close}, high: {self.high}, low: {self.low}'
 
 
 class Statistics(models.Model):

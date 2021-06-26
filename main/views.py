@@ -80,32 +80,6 @@ class AddOrderView(APIView):
         user_portfolio.percentage = per_stocks
         user_portfolio.save()
 
-    @swagger_auto_schema(
-        method='post',
-        request_body=openapi.Schema(
-            type=openapi.TYPE_OBJECT,
-            properties={
-                'stock': openapi.Schema(
-                    type=openapi.TYPE_STRING,
-                    description='акция, которую пользователь хочет купить/продать'
-                ),
-                'type': openapi.Schema(
-                    type=openapi.TYPE_BOOLEAN,
-                    description='тип ордера (false - покупка, true - продажа)'
-                ),
-                'price': openapi.Schema(
-                    type=openapi.TYPE_NUMBER,
-                    description='цена акции, по которой пользователь хочет купить или продать акцию, '
-                                'при торговле по лимитной цене'
-                ),
-                'amount': openapi.Schema(
-                    type=openapi.TYPE_BOOLEAN,
-                    description='количество акций, которое пользователь хочет купить или продать акцию'
-                ),
-            }
-        )
-    )
-    @api_view(['POST'])
     def post(self, request):
         """
         Создание ордера и обработка данных при POST запросе

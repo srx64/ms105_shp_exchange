@@ -96,6 +96,7 @@ class AddOrderView(APIView):
         type = data['type']
         price = float(data['price'])
         amount = int(data['amount'])
+        balance = user.balance
         if price == 0:
             price = stock.price
         setting = None
@@ -104,7 +105,7 @@ class AddOrderView(APIView):
         elif Settings.objects.filter(stock_id=stock.id, name='short_switch'):
             setting = Settings.objects.filter(stock_id=stock.id, name='short_switch').last()
         if price <= 0 or amount <= 0:
-            return Response({"detail": "uncorrect data"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"detail": "incorrect data"}, status=s-tatus.HTTP_400_BAD_REQUEST)
         self.margin_call(user)
         flag = False
         if Portfolio.objects.filter(user=user, stock=stock).exists() and \
@@ -122,7 +123,6 @@ class AddOrderView(APIView):
                     portfolio_op = Portfolio.objects.get(user=user_op, stock=stock)
                     min_count = min(order.amount, order_op.amount) if type == 0 else -min(order.amount, order_op.amount)
                     if portfolio_op.count - min_count >= 0 and user.balance - min_count * price >= 0:
-
                         order.amount -= abs(min_count)
                         order_op.amount -= abs(min_count)
 
@@ -169,10 +169,12 @@ class AddOrderView(APIView):
                 if order.amount == 0:
                     order.is_closed = True
                     order.date_closed = timezone.now()
-            if type == 0 and user.balance >= amount * price or type == 1:
+            if type == 0 and balance >= amount * price or type == 1:
                 order.save()
                 user.save()
                 portfolio.save()
+            else:
+                return Response({"detail": "incorrect data"}, status=status.HTTP_400_BAD_REQUEST)
         return Response("/api/v1/orders/")
 
 

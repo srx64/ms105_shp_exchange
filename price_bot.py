@@ -198,12 +198,12 @@ class HandlingFunctions:
                 if i + 1 < len(edited):
                     if edited[i].price > max_price:
                         shift += (edited[i].date - edited[i+1].date).total_seconds()
-                        if shift >= 30:
+                        if shift >= 15:
                             NEED_RESTART = True
                             shift = 0
                     elif edited[i].price < min_price:
                         shift += (edited[i].date - edited[i+1].date).total_seconds()
-                        if shift >= 30:
+                        if shift >= 15:
                             NEED_RESTART = True
                             shift = 0
 

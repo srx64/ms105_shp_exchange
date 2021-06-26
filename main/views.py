@@ -17,7 +17,7 @@ from bs4 import BeautifulSoup
 from main.models import Stocks, Order, Portfolio, User, Quotes, LeverageData, Statistics, Candles, Settings, Cryptocurrencies
 from main import serializers
 
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from django.db.models import Q
 
 
@@ -39,20 +39,6 @@ def registration_view(request):
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         return Response(data)
-
-
-class UsersView(APIView):
-    def get(self, request):
-        users = User.objects.all()
-        serializer = serializers.UsersSerializer(users, many=True)
-        return Response(serializer.data)
-
-
-class UserDetailView(APIView):
-    def get(self, request, pk):
-        user = User.objects.get(id=pk)
-        serializer = serializers.UsersSerializer(user)
-        return Response(serializer.data)
 
 
 class AddOrderView(APIView):
@@ -319,6 +305,15 @@ class StatisticsView(APIView):
         """
         Statistics.update_statistics()
         serializer = serializers.StatisticsSerializer(Statistics.get_all_stats(), many=True)
+        return Response(serializer.data)
+
+
+class ProfileAnotherView(APIView):
+    permission_classes = (IsAdminUser,)
+
+    def get(self, request, pk):
+        user = User.objects.get(id=pk)
+        serializer = serializers.ProfileDetailSerializer(user)
         return Response(serializer.data)
 
 

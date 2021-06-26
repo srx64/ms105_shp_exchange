@@ -28,8 +28,8 @@ from django.contrib.auth import views as auth_views
 from django.views.generic import TemplateView
 
 from main.views import StocksListView, StockDetailView, StatisticsView, OrdersView, PortfolioUserView, \
-    ProfileDetailView, PricesView, registration_view, CandlesView, SettingsView, CryptocurrenciesView, UsersView, \
-    UserDetailView
+    ProfileDetailView, PricesView, registration_view, CandlesView, SettingsView, CryptocurrenciesView, \
+    ProfileAnotherView
 
 from django.conf import settings
 from django.conf.urls.static import static
@@ -54,8 +54,6 @@ urlpatterns = [
     path('', TemplateView.as_view(template_name='index.html')),
     path('api-token/', TokenObtainPairView.as_view(), name='api_token'),
     path('api-token-refresh/', TokenRefreshView.as_view()),
-    path('api/v1/users/', UsersView.as_view()),
-    path('api/v1/users/<int:pk>/', UserDetailView.as_view()),
     path('api/v1/stocks/', StocksListView.as_view(), name='stocks'),
     path('api/v1/stocks/<int:pk>/', StockDetailView.as_view(), name='stock'),
     path('api/v1/candles/<int:pk>/<int:c_type>', CandlesView.as_view(), name='candles'),
@@ -67,6 +65,7 @@ urlpatterns = [
     path('api/v1/settings/', SettingsView.as_view(), name='settings'),
     path('api/v1/cryptocurrencies/', CryptocurrenciesView.as_view(), name='cryptocurrencies'),
     path('api/v1/profile/', ProfileDetailView.as_view(), name='profile'),
+    path('api/v1/profile/<int:pk>/', ProfileAnotherView.as_view(), name='another_profile'),
     path('orders/add', views.AddOrderView.as_view(), name='add_order'),
     path('api/v1/prices/', PricesView.as_view(), name='prices'),
     path('login/', auth_views.LoginView.as_view(), name='login'),

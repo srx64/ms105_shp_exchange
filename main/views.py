@@ -105,7 +105,7 @@ class AddOrderView(APIView):
         elif Settings.objects.filter(stock_id=stock.id, name='short_switch'):
             setting = Settings.objects.filter(stock_id=stock.id, name='short_switch').last()
         if price <= 0 or amount <= 0:
-            return Response({"detail": "incorrect data"}, status=s-tatus.HTTP_400_BAD_REQUEST)
+            return Response({"detail": "incorrect data"}, status=status.HTTP_400_BAD_REQUEST)
         self.margin_call(user)
         flag = False
         if Portfolio.objects.filter(user=user, stock=stock).exists() and \

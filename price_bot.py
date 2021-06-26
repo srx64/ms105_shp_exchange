@@ -274,14 +274,14 @@ class HandlingFunctions:
             max_price = setting.data['max_price']
             min_price = setting.data['min_price']
             if _price > max_price:
-                _price = max_price
+                _price = max_price - max_price * uniform(0.03, 0.1)
             elif _price < min_price:
-                _price = min_price
+                _price = min_price + min_price * uniform(0.03, 0.1)
         else:
             if _price > max_price:
-                _price = max_price
+                _price = max_price - max_price * uniform(0.03, 0.1)
             elif _price < min_price:
-                _price = min_price
+                _price = min_price + min_price * uniform(0.03, 0.1)
         HandlingFunctions.limits_check(stock_id, min_price, max_price)
         return _price
 

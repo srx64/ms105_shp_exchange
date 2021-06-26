@@ -3,6 +3,8 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponseRedirect, HttpRequest
 from django.shortcuts import render
 from django.utils import timezone
+from drf_yasg import openapi
+from drf_yasg.utils import swagger_auto_schema
 from rest_framework.generics import ListAPIView
 from rest_framework.decorators import api_view
 from rest_framework import filters, status
@@ -37,6 +39,20 @@ def registration_view(request):
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         return Response(data)
+
+
+class UsersView(APIView):
+    def get(self, request):
+        users = User.objects.all()
+        serializer = serializers.UsersSerializer(users, many=True)
+        return Response(serializer.data)
+
+
+class UserDetailView(APIView):
+    def get(self, request, pk):
+        user = User.objects.get(id=pk)
+        serializer = serializers.UsersSerializer(user)
+        return Response(serializer.data)
 
 
 class AddOrderView(APIView):
@@ -78,16 +94,38 @@ class AddOrderView(APIView):
         user_portfolio.percentage = per_stocks
         user_portfolio.save()
 
+    @swagger_auto_schema(
+        method='post',
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            properties={
+                'stock': openapi.Schema(
+                    type=openapi.TYPE_STRING,
+                    description='акция, которую пользователь хочет купить/продать'
+                ),
+                'type': openapi.Schema(
+                    type=openapi.TYPE_BOOLEAN,
+                    description='тип ордера (false - покупка, true - продажа)'
+                ),
+                'price': openapi.Schema(
+                    type=openapi.TYPE_NUMBER,
+                    description='цена акции, по которой пользователь хочет купить или продать акцию, '
+                                'при торговле по лимитной цене'
+                ),
+                'amount': openapi.Schema(
+                    type=openapi.TYPE_BOOLEAN,
+                    description='количество акций, которое пользователь хочет купить или продать акцию'
+                ),
+            }
+        )
+    )
+    @api_view(['POST'])
     def post(self, request):
         """
         Создание ордера и обработка данных при POST запросе
 
         На вход подаются следующие параметры:
         - токен пользователя.
-        - `stock` - акция, которую пользователь хочет купить/продать.
-        - `type` - тип ордера (false - покупка, true - продажа).
-        - `price` - цена акции, по которой пользователь хочет купить или продать акцию, при торговле по лимитной цене.
-        - `amount` - количество акций, которое пользователь хочет купить или продать акцию.
         """
         data = request.data
         user = User.objects.get(id=request.user.pk)
@@ -213,7 +251,7 @@ class SettingsView(APIView):
         Отображение текущих настроек при GET запросе.
 
         Просто отображение настроек. Изменять настройки могут только администраторы.
-        На вход принимается только токен пользователя.
+        На вход ничего не принимается.
         """
         serializer = serializers.SettingsSerializer(Settings.objects.all(), many=True)
         return Response(serializer.data)
@@ -336,7 +374,7 @@ class CandlesView(APIView):
     """
     def get(self, request, pk, c_type):
         """
-        Отображение списка свечей данной акции при GET запросе
+        Отображение списка свечей данной акции и данного типа при GET запросе
 
         Свечи генерируются с помощью специального бота.
         """
@@ -370,6 +408,7 @@ class PortfolioUserView(APIView):
     """
     Портфолио пользователя
     """
+    permission_classes = (IsAuthenticated,)
 
     def get(self, request):
         """
@@ -377,7 +416,7 @@ class PortfolioUserView(APIView):
 
         На вход подаётся только токен пользователя.
         """
-        portfolio = Portfolio.objects.filter(~Q(count=0), user_id=request.user.id,)
+        portfolio = Portfolio.objects.filter(~Q(count=0), user_id=request.user.id)
         serializer = serializers.PortfolioUserSerializer(portfolio, many=True)
         return Response(serializer.data)
 

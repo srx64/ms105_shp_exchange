@@ -248,6 +248,15 @@ class LeverageData(models.Model):
     ratio = models.IntegerField(default=1)
 
 
+class CandlesData(models.Model):
+    """
+    Модель данных для свечей
+
+    :param data: Данные, необходимые candles_bot'у для избежания повторной генерации свечей
+    """
+    data = models.TextField()
+
+
 class Candles(models.Model):
     """
     Модель свечей

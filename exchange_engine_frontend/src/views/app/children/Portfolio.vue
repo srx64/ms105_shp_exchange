@@ -43,8 +43,22 @@
           </span>
         </v-list-item-avatar>
 
+        <div
+          v-if="profile.is_superuser"
+          class="mr-5"
+        >
+          <v-list-item-subtitle>
+            Владелец
+          </v-list-item-subtitle>
+          <v-list-item-title
+            class="d-inline"
+          >
+            {{ security.user }}
+          </v-list-item-title>
+        </div>
+
         <v-list-item-content>
-          <v-list-item-title v-text="security.stock.name"/> 
+          <v-list-item-title v-text="security.stock.name"/>
           <v-list-item-subtitle v-if="security.count < 0">
             (Торговля на понижение)
           </v-list-item-subtitle>
@@ -92,8 +106,6 @@
 </template>
 
 <script>
-import { getAPI } from '@/axios-api'
-
 export default {
   name: 'Portfolio',
 
@@ -106,19 +118,12 @@ export default {
       console.log(this.$store.getters.portfolio)
       return this.$store.getters.portfolio
     },
+    profile() {
+      return this.$store.getters.profile
+    }
   },
 
   methods: {
-    getSecurityPrice(id) {
-      getAPI.get('api/v1/stocks/' + id)
-          .then(response => {
-            console.log(response.data)
-            return response.data.price
-          })
-          .catch(err => {
-            console.log(err)
-          })
-    },
     sumSecurities(securities) {
       let sum = 0
 

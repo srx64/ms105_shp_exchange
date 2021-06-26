@@ -37,13 +37,27 @@
           </span>
         </v-list-item-avatar>
 
+        <div
+          v-if="profile.is_superuser"
+          class="mr-5"
+        >
+          <v-list-item-subtitle>
+            Владелец
+          </v-list-item-subtitle>
+          <v-list-item-title
+            class="d-inline"
+          >
+            {{ order.user }}
+          </v-list-item-title>
+        </div>
+
         <v-list-item-content>
-          <v-list-item-title 
+          <v-list-item-title
             v-if="order.type"
           >
             Статус заявки на продажу {{ order.stock.name }}
           </v-list-item-title>
-          <v-list-item-title 
+          <v-list-item-title
             v-else
           >
             Статус заявки на покупку {{ order.stock.name }}
@@ -70,7 +84,7 @@
             {{ order.count }} X {{ order.price.toFixed(2) }}&#x20AE;
           </v-list-item-title>
           <v-list-item-subtitle
-            
+
           >
             {{ (order.count * order.price).toFixed(2) }}&#x20AE;
           </v-list-item-subtitle>
@@ -85,7 +99,7 @@
 
       <v-divider/>
 
-      <v-subheader 
+      <v-subheader
 
         class="mr-8"
         inset
@@ -107,7 +121,7 @@
             :src="order.icon"
           />
 
-          <span 
+          <span
             v-else
             class="text-center mx-auto"
           >
@@ -115,13 +129,27 @@
           </span>
         </v-list-item-avatar>
 
+        <div
+          v-if="profile.is_superuser"
+          class="mr-5"
+        >
+          <v-list-item-subtitle>
+            Владелец
+          </v-list-item-subtitle>
+          <v-list-item-title
+            class="d-inline"
+          >
+            {{ order.user }}
+          </v-list-item-title>
+        </div>
+
         <v-list-item-content>
-          <v-list-item-title 
+          <v-list-item-title
             v-if="order.type"
           >
             Статус заявки на продажу {{ order.stock.name }}
           </v-list-item-title>
-          <v-list-item-title 
+          <v-list-item-title
             v-else
           >
             Статус заявки на покупку {{ order.stock.name }}
@@ -148,7 +176,7 @@
             {{ order.count }} X {{ order.price.toFixed(2) }}&#x20AE;
           </v-list-item-title>
           <v-list-item-subtitle
-            
+
           >
             {{ (order.count * order.price).toFixed(2) }}&#x20AE;
           </v-list-item-subtitle>
@@ -184,12 +212,22 @@ export default {
   methods: {
       getOrders () {
         getAPI.get('api/v1/orders/', {
-            headers: { 
-              Authorization: `Bearer ${this.$store.getters.accessToken}` 
-            } 
+            headers: {
+              Authorization: `Bearer ${this.$store.getters.accessToken}`
+            }
           })
           .then(response => {
             this.orders = response.data
+            if (this.profile.is_superuser) {
+              for (let order of this.orders) {
+                if (!this.usernames.has(order.user)) {
+                  console.log('load')
+                  this.$store.dispatch('loadUsername', { id: order.user })
+                }
+                console.log(this.usernames.get(order.user))
+                order.user = this.usernames.get(order.user)
+              }
+            }
             console.log(this.orders)
           })
           .catch(err => {
@@ -215,6 +253,13 @@ export default {
           return el.type == true
         })
       },
+      usernames() {
+        console.log(this.$store.getters.usernames)
+        return this.$store.getters.usernames
+      },
+      profile() {
+        return this.$store.getters.profile
+      }
     },
 
     mounted () {

@@ -106,7 +106,7 @@ class Stocks(models.Model):
     price = models.FloatField(default=0)
 
     def __str__(self) -> str:
-        return self.name
+        return f'{self.pk}. {self.name}'
 
     @staticmethod
     def get_active_stocks_count() -> int:
@@ -246,6 +246,15 @@ class LeverageData(models.Model):
     stock = models.ForeignKey(to=Stocks, on_delete=models.CASCADE)
     user = models.ForeignKey(to=User, on_delete=models.CASCADE)
     ratio = models.IntegerField(default=1)
+
+
+class CandlesData(models.Model):
+    """
+    Модель данных для свечей
+
+    :param data: Данные, необходимые candles_bot'у для избежания повторной генерации свечей
+    """
+    data = models.TextField()
 
 
 class Candles(models.Model):

@@ -92,7 +92,7 @@ class PortfolioTest(APITestCase):
         self.response = self.client.get(reverse('portfolio'))
 
     def test_error(self) -> None:
-        self.assertEqual(self.response.status_code, 200)
+        self.assertEqual(self.response.status_code, 401)
 
 
 class StocksListTest(APITestCase):

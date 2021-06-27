@@ -105,6 +105,7 @@ class AddOrderView(APIView):
         if price <= 0 or amount <= 0:
             return Response({"detail": "incorrect data"}, status=status.HTTP_400_BAD_REQUEST)
         self.margin_call(user)
+
         flag = False
         if Portfolio.objects.filter(user=user, stock=stock).exists() and \
             Portfolio.objects.get(user=user, stock=stock).count > 0:
@@ -114,65 +115,88 @@ class AddOrderView(APIView):
             portfolio, created = Portfolio.objects.get_or_create(user=user, stock=stock)
             self.set_percentage(portfolio)
             order = Order(user=user, stock=stock, type=type, price=price, is_closed=False, amount=amount, count=amount)
-            order_ops = Order.objects.filter(stock=stock, type=not type, price=price, is_closed=False)
-            for order_op in order_ops:
-                if order.amount != 0:
-                    user_op = order_op.user
-                    portfolio_op = Portfolio.objects.get(user=user_op, stock=stock)
-                    min_count = min(order.amount, order_op.amount) if type == 0 else -min(order.amount, order_op.amount)
-                    if portfolio_op.count - min_count >= 0 and user.balance - min_count * price >= 0:
-                        order.amount -= abs(min_count)
-                        order_op.amount -= abs(min_count)
 
-                        portfolio.count += min_count
-                        portfolio_op.count -= min_count
+            if order.amount != 0:
+                if type == 0 and not portfolio.is_debt:
+                    if user.balance >= order.amount * order.price:
+                        portfolio.count += order.amount
+                        user.balance -= order.amount * order.price
+                        user.save()
+                        portfolio.save()
+                    else:
+                        print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!111")
+                        #оброботать ошибку не хватки денег
+                        return Response({"detail": "incorrect data"}, status=status.HTTP_400_BAD_REQUEST)
 
-                        portfolio.aver_price = (portfolio.aver_price * (portfolio.count - min_count)
-                                                    + abs(min_count) * price) / max(abs(portfolio.count), 1) * bool(portfolio.count)
+                elif type == 1 and portfolio.count >= order.amount and not portfolio.is_debt:
+                    portfolio.count -= order.amount
+                    user.balance += order.amount * stock.price # цена на данный момент
+                    user.save()
+                    portfolio.save()
 
-                        user_op.balance += min_count * price
-                        user.balance -= min_count * price
-                    if (setting is None or setting.data['is_active']) or not setting.data['is_active'] and (
-                        type == '0' or portfolio.count > 0):
-                        if portfolio.count < 0:
-                            portfolio.short_balance -= min_count * price
-                            user.balance += min_count * price
+                elif type == 1 and portfolio.count == 0:
+                    if (setting is None or setting.data['is_active']) or not setting.data['is_active']:
+                        if order.amount * order.price <= 100000:
+                            portfolio.short_balance += order.amount * order.price
                             portfolio.is_debt = True
+                            portfolio.count = -order.amount
+                            portfolio.save()
+                        else:
+                            print("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
+                            #обработать ошибку нельзя торговать шорт при захождении загараницу
+                            return Response({"detail": "incorrect data"}, status=status.HTTP_400_BAD_REQUEST)
+                    else:
+                        # торговать в шорт не возможно
 
-                        if portfolio_op.count < 0:
-                            portfolio_op.short_balance += min_count * price
-                            user_op.balance -= min_count * price
-                            portfolio_op.is_debt = True
+                        return Response({"detail": "incorrect data"}, status=status.HTTP_400_BAD_REQUEST)
+                elif type == 1 and portfolio.count < order.amount and portfolio.count != 0:
+                    if (setting is None or setting.data['is_active']) or not setting.data['is_active']:
+                        if (order.amount - portfolio.count) * order.price <= 100000:
+                            user.balance += portfolio.count * stock.price # цена на данный момент
+                            portfolio.is_debt = True
+                            portfolio.count = portfolio.count - order.amount
+                            portfolio.short_balance -= portfolio.count * stock.price
+                            user.save()
+                            portfolio.save()
+                        else:
+                            # обработать ошибку нельзя торговать шорт при захождении загараницу
+                            return Response({"detail": "incorrect data"}, status=status.HTTP_400_BAD_REQUEST)
+                    else:
+                        # торговать в шорт не возможно
+                        return Response({"detail": "incorrect data"}, status=status.HTTP_400_BAD_REQUEST)
+                if type == 0 and is_debt and portfolio.count <= -order.amount:
+                    user.balance += (100000 - portfolio.short_balance) - order.amount * stock.price  # цена на данный момент
+                    portfolio.count += order.amount
+                    user.save()
+                    portfolio.save()
 
-                        if portfolio.count == 0 and portfolio.is_debt:
-                            user.balance += 100000 + portfolio.short_balance
-                            portfolio.short_balance = -100000
-                            portfolio.is_debt = False
+                if type == 0 and is_debt and portfolio.count == -order.amount:
+                    user.balance += (100000 - portfolio.short_balance) - order.amount * stock.price  # цена на данный момент
+                    portfolio.count = 0
+                    portfolio.is_debt = False
+                    user.save()
+                    portfolio.save()
 
-                        if portfolio_op.count == 0 and portfolio_op.is_debt:
-                            user.balance += 100000 + portfolio.short_balance
-                            portfolio_op.short_balance = -100000
-                            portfolio_op.is_debt = False
+                if type == 0 and is_debt and portfolio.count >= -order.amount:
+                    if order.amount + portfolio.count * order.price < user.balance:
+                        user.balance += (100000 - portfolio.short_balance) - portfolio.count * stock.price  # цена на данный момент
+                        portfolio.count = order.amount + portfolio.count
+                        portfolio.is_debt = False
+                        user.balance -= portfolio.count * order.price
+                        user.save()
+                        portfolio.save()
+                    else:
+                        #оброботать ошибку не хватки денег
+                        return Response({"detail": "incorrect data"}, status=status.HTTP_400_BAD_REQUEST)
 
-                    if order_op.amount == 0:
-                        order_op.is_closed = True
-                        order_op.date_closed = timezone.now()
-                    self.margin_call(user)
-                    self.margin_call(user_op)
-                    self.set_percentage(portfolio)
-                    self.set_percentage(portfolio_op)
-                    user_op.save()
-                    order_op.save()
-                    portfolio_op.save()
-                if order.amount == 0:
-                    order.is_closed = True
-                    order.date_closed = timezone.now()
-            if type == 0 and balance >= amount * price or type == 1:
-                order.save()
-                user.save()
-                portfolio.save()
-            else:
-                return Response({"detail": "incorrect data"}, status=status.HTTP_400_BAD_REQUEST)
+                self.margin_call(user)
+                self.margin_call(user_op)
+                self.set_percentage(portfolio)
+                self.set_percentage(portfolio_op)
+
+            if order.amount == 0:
+                order.is_closed = True
+                order.date_closed = timezone.now()
         return Response("/api/v1/orders/")
 
 

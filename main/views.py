@@ -129,7 +129,6 @@ class AddOrderView(APIView):
                         return Response({"detail": "incorrect data"}, status=status.HTTP_400_BAD_REQUEST)
 
                 elif type == 1 and portfolio.count >= order.amount and not portfolio.is_debt:
-                    print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!2333333333333333")
                     portfolio.count -= order.amount
                     user.balance += order.amount * stock.price
                     user.save()
@@ -137,7 +136,6 @@ class AddOrderView(APIView):
 
                 elif type == 1 and portfolio.count == 0 and not portfolio.is_debt:
                     if (setting is None or setting.data['is_active']) or not setting.data['is_active']:
-                        print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!11")
                         if order.amount * order.price <= 100000:
                             portfolio.short_balance += order.amount * order.price
                             portfolio.is_debt = True
@@ -151,7 +149,6 @@ class AddOrderView(APIView):
                         return Response({"detail": "incorrect data"}, status=status.HTTP_400_BAD_REQUEST)
                 elif type == 1 and portfolio.count < order.amount and portfolio.count != 0 and not portfolio.is_debt:
                     if setting.data['is_active']:
-                        print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!2222222222222222222")
                         if (order.amount - portfolio.count) * order.price <= 100000:
                             user.balance += portfolio.count * stock.price # цена на данный момент
                             portfolio.is_debt = True
@@ -197,18 +194,15 @@ class AddOrderView(APIView):
                     else:
                         # обработать ошибку не хватки денег
                         return Response({"detail": "incorrect data"}, status=status.HTTP_400_BAD_REQUEST)
+
                 self.margin_call(user)
                 self.set_percentage(portfolio)
-                qwert = portfolio.count
+                sred = portfolio.count
+                portfolio.aver_price = ((sred * (sred - order.amount)
+                                        + abs(order.amount) * order.price) / max(abs(sred), 1) * bool(sred))
 
-
-
-                portfolio.aver_price = ((qwert * (qwert - order.amount)
-                                        + abs(order.amount) * order.price) / max(abs(qwert), 1) * bool(qwert))
-            if order.amount == 0:
-                order.is_closed = True
-                order.date_closed = timezone.now()
             order.is_closed = True
+            order.date_closed = timezone.now()
             order.save()
             portfolio.save()
         return Response("/api/v1/orders/")

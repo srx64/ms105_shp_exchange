@@ -129,6 +129,7 @@ class AddOrderView(APIView):
                         return Response({"detail": "incorrect data"}, status=status.HTTP_400_BAD_REQUEST)
 
                 elif type == 1 and portfolio.count >= order.amount and not portfolio.is_debt:
+                    print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!2333333333333333")
                     portfolio.count -= order.amount
                     user.balance += order.amount * stock.price
                     user.save()
@@ -136,19 +137,21 @@ class AddOrderView(APIView):
 
                 elif type == 1 and portfolio.count == 0 and not portfolio.is_debt:
                     if (setting is None or setting.data['is_active']) or not setting.data['is_active']:
+                        print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!11")
                         if order.amount * order.price <= 100000:
                             portfolio.short_balance += order.amount * order.price
                             portfolio.is_debt = True
                             portfolio.count = -order.amount
                             portfolio.save()
                         else:
-                            # обработать ошибку нельзя торговать шорт при захождении заграницу
+                              # обработать ошибку нельзя торговать шорт при захождении заграницу
                             return Response({"detail": "incorrect data"}, status=status.HTTP_400_BAD_REQUEST)
                     else:
                         # торговать в шорт не возможно
                         return Response({"detail": "incorrect data"}, status=status.HTTP_400_BAD_REQUEST)
-                elif type == 1 and portfolio.count < order.amount and portfolio.count != 0 and portfolio.count != 0 and not portfolio.is_debt:
-                    if (setting is None or setting.data['is_active']) or not setting.data['is_active']:
+                elif type == 1 and portfolio.count < order.amount and portfolio.count != 0 and not portfolio.is_debt:
+                    if setting.data['is_active']:
+                        print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!2222222222222222222")
                         if (order.amount - portfolio.count) * order.price <= 100000:
                             user.balance += portfolio.count * stock.price # цена на данный момент
                             portfolio.is_debt = True

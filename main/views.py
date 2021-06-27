@@ -117,6 +117,7 @@ class AddOrderView(APIView):
             order = Order(user=user, stock=stock, type=type, price=price, is_closed=False, amount=amount, count=amount)
 
             if order.amount != 0:
+
                 if type == 0 and not portfolio.is_debt:
                     print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!111")
                     if user.balance >= order.amount * order.price:
@@ -205,11 +206,18 @@ class AddOrderView(APIView):
                         return Response({"detail": "incorrect data"}, status=status.HTTP_400_BAD_REQUEST)
                 self.margin_call(user)
                 self.set_percentage(portfolio)
+                qwert = portfolio.count
+
+
+
+                portfolio.aver_price = ((qwert * (qwert - order.amount)
+                                        + abs(order.amount) * order.price) / max(abs(qwert), 1) * bool(qwert))
             if order.amount == 0:
                 order.is_closed = True
                 order.date_closed = timezone.now()
             order.is_closed = True
             order.save()
+            portfolio.save()
         return Response("/api/v1/orders/")
 
 

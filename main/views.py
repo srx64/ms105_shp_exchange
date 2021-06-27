@@ -128,7 +128,7 @@ class AddOrderView(APIView):
                         #оброботать ошибку не хватки денег
                         return Response({"detail": "incorrect data"}, status=status.HTTP_400_BAD_REQUEST)
 
-                elif type == 1 and portfolio.count > order.amount and not portfolio.is_debt:
+                elif type == 1 and portfolio.count >= order.amount and not portfolio.is_debt:
                     print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!333333")
                     portfolio.count -= order.amount
                     user.balance += order.amount * stock.price # цена на данный момент

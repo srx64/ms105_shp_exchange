@@ -4,9 +4,10 @@ from django.http import HttpResponseRedirect, HttpRequest
 from django.shortcuts import render
 from django.utils import timezone
 from drf_yasg import openapi
+from drf_yasg.openapi import Parameter
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework.generics import ListAPIView
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, action
 from rest_framework import filters, status
 from main.forms import LeverageTradingForm, UserBalance
 from rest_framework.response import Response
@@ -80,12 +81,37 @@ class AddOrderView(APIView):
         user_portfolio.percentage = per_stocks
         user_portfolio.save()
 
+    @swagger_auto_schema(
+        method='post',
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            properties={
+                'stock': openapi.Schema(
+                    type=openapi.TYPE_STRING,
+                    description='акция, которую пользователь хочет купить/продать'
+                ),
+                'type': openapi.Schema(
+                    type=openapi.TYPE_BOOLEAN,
+                    description='тип ордера (false - покупка, true - продажа)'
+                ),
+                'price': openapi.Schema(
+                    type=openapi.TYPE_NUMBER,
+                    description='цена акции, по которой пользователь хочет купить или продать акцию, '
+                                'при торговле по лимитной цене.'
+                ),
+                'amount': openapi.Schema(
+                    type=openapi.TYPE_BOOLEAN,
+                    description='количество акций, которое пользователь хочет купить или продать акцию'
+                ),
+            }
+        )
+    )
+    @action(detail=True, methods=['post'])
     def post(self, request):
         """
         Создание ордера и обработка данных при POST запросе
 
-        На вход подаются следующие параметры:
-        - токен пользователя.
+        Помимо остального на вход подаётся токен пользователя.
         """
         data = request.data
         user = User.objects.get(id=request.user.pk)
@@ -343,6 +369,25 @@ class CandlesView(APIView):
     """
     Свечи
     """
+
+    @swagger_auto_schema(
+        method='get',
+        manual_parameters=[
+            Parameter(
+                name='id',
+                in_='path',
+                type=openapi.TYPE_INTEGER,
+                description='id акции'
+            ),
+            Parameter(
+                name='c_type',
+                in_='path',
+                type=openapi.TYPE_INTEGER,
+                description='Таймфрейм, в котором работает свеча (1 - минута, 2 - 5 минут, 3 - 15 минут, 4 - 30 минут, 5 - час)'
+            )
+        ]
+    )
+    @action(detail=True, methods=['get'])
     def get(self, request, pk, c_type):
         """
         Отображение списка свечей данной акции и данного типа при GET запросе
@@ -423,14 +468,28 @@ class LeverageTradingView(APIView):
         }
         return render(request, 'trading/leverage.html', context)
 
+    @swagger_auto_schema(
+        method='post',
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            properties={
+                'stock': openapi.Schema(
+                    type=openapi.TYPE_STRING,
+                    description='акция, которую пользователь хочет купить/продать'
+                ),
+                'ratio': openapi.Schema(
+                    type=openapi.TYPE_NUMBER,
+                    description='размер плеча'
+                )
+            }
+        )
+    )
+    @action(detail=True, methods=['post'])
     def post(self, request):
         """
         Торговля с плечом и обработка данных при POST запросе
 
-        На вход принимается 3 параметра:
-        - токен пользователя.
-        - `stock` - акция, которой торгует пользователь.
-        - `ratio` - размер плеча.
+        Помимо остальных параметров, на вход принимается токен пользователя.
         """
         form = LeverageTradingForm(request.POST)
         data = request.data

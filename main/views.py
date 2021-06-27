@@ -107,7 +107,7 @@ class AddOrderView(APIView):
         self.margin_call(user)
         flag = False
         if Portfolio.objects.filter(user=user, stock=stock).exists() and \
-            Portfolio.objects.get(user=user, stock=stock).count > 0:
+            Portfolio.objects.get(user=user, stock=stock).count > amount:
             flag = True
         if (setting is None or setting.data['is_active']) or (not setting.data['is_active'] and type == 0) or \
             (not setting.data['is_active'] and type == 1 and flag):
@@ -133,7 +133,7 @@ class AddOrderView(APIView):
                         user_op.balance += min_count * price
                         user.balance -= min_count * price
                     if (setting is None or setting.data['is_active']) or not setting.data['is_active'] and (
-                        type == '0' or portfolio.count > 0):
+                        not type or portfolio.count >= amount):
                         if portfolio.count < 0:
                             portfolio.short_balance -= min_count * price
                             user.balance += min_count * price
@@ -173,6 +173,8 @@ class AddOrderView(APIView):
                 portfolio.save()
             else:
                 return Response({"detail": "incorrect data"}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response({"detail": "incorrect data"}, status=status.HTTP_400_BAD_REQUEST)
         return Response("/api/v1/orders/")
 
 

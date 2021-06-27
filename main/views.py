@@ -222,7 +222,18 @@ class StockDetailView(APIView):
     """
     Информация об акции
     """
-
+    @swagger_auto_schema(
+        method='get',
+        manual_parameters=[
+            Parameter(
+                name='id',
+                in_='path',
+                type=openapi.TYPE_INTEGER,
+                description='id акции, берётся из списка акций'
+            ),
+        ]
+    )
+    @action(detail=True, methods=['get'])
     def get(self, request, pk):
         """
         Отображение данных о конкретной акции при GET запросе
@@ -313,8 +324,26 @@ class StatisticsView(APIView):
 
 
 class ProfileAnotherView(APIView):
+    """
+    Отображение статистики юзера.
+
+    Работает только для админа
+    """
+
     permission_classes = (IsAdminUser,)
 
+    @swagger_auto_schema(
+        method='get',
+        manual_parameters=[
+            Parameter(
+                name='id',
+                in_='path',
+                type=openapi.TYPE_INTEGER,
+                description='ID юзера'
+            ),
+        ]
+    )
+    @action(detail=True, methods=['get'])
     def get(self, request, pk):
         user = User.objects.get(id=pk)
         serializer = serializers.ProfileDetailSerializer(user)
@@ -335,17 +364,48 @@ class ProfileDetailView(APIView):
         Отображение профиля пользователя при GET запросе
 
         Просто отображение профиля. Данные доступны только зарегистрированным пользователям.
-
-        На вход принимается только токен пользователя.
         """
         user = request.user
         return Response(serializers.ProfileDetailSerializer(user).data)
 
+    @swagger_auto_schema(
+        method='patch',
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            properties={
+                'email': openapi.Schema(
+                    type=openapi.TYPE_STRING,
+                    description='Email-адрес пользователя'
+                ),
+                'first_name': openapi.Schema(
+                    type=openapi.TYPE_STRING,
+                    description='Имя пользователя'
+                ),
+                'last_name': openapi.Schema(
+                    type=openapi.TYPE_STRING,
+                    description='Фамилия пользователя'
+                ),
+                'password': openapi.Schema(
+                    type=openapi.TYPE_STRING,
+                    description='Пароль пользователя'
+                ),
+                'password2': openapi.Schema(
+                    type=openapi.TYPE_STRING,
+                    description='Пароль пользователя (подтверждение)',
+                ),
+                'file': openapi.Schema(
+                    type=openapi.TYPE_FILE,
+                    description='Аватар пользователя'
+                ),
+            }
+        )
+    )
+    @action(detail=True, methods=['patch'])
     def patch(self, request):
         """
         Редактирование профиля
 
-        Изменение имени, фамилии, электронной почты и пароля пользователя. На вход принимается 1 параметр: токен пользователя.
+        Изменение имени, фамилии, электронной почты и пароля пользователя
         """
         user = request.user
         data = request.data

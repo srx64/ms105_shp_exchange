@@ -1,3 +1,5 @@
+from datetime import datetime, timedelta
+
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponseRedirect, HttpRequest
@@ -394,10 +396,21 @@ class CandlesView(APIView):
 
         Свечи генерируются с помощью специального бота.
         """
+        candles = []
+        refresh_minutes = None
+        if Settings.objects.filter(stock_id=-1, name='chart_settings'):
+            setting = Settings.objects.filter(stock_id=-1, name='chart_settings').last()
+            refresh_minutes = setting.data['view_time']
+        elif Settings.objects.filter(stock_id=pk, name='chart_settings'):
+            setting = Settings.objects.filter(stock_id=pk, name='chart_settings').last()
+            refresh_minutes = setting.data['view_time']
+        if refresh_minutes is None:
+            refresh_minutes = 240
+        time_shift = datetime.now() - timedelta(minutes=refresh_minutes)
         if c_type > 0:
-            candles = Candles.objects.filter(stock_id=pk, type=c_type)
+            candles = Candles.objects.filter(date__gte=time_shift, stock_id=pk, type=c_type)
         elif c_type == 0:
-            candles = Candles.objects.filter(stock_id=pk)
+            candles = Candles.objects.filter(date__gte=time_shift, stock_id=pk)
         serializer = serializers.CandlesSerializer(candles, many=True)
         return Response(serializer.data)
 

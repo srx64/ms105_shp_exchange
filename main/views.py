@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta
 
+import pytz
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponseRedirect, HttpRequest
@@ -36,7 +37,7 @@ def registration_view(request):
         data = {}
         if serializer.is_valid():
             account = serializer.save()
-            data['response'] = "succefully"
+            data['response'] = "successfully"
             data['email'] = account.email
             data['username'] = account.username
         else:
@@ -406,7 +407,7 @@ class CandlesView(APIView):
             refresh_minutes = setting.data['view_time']
         if refresh_minutes is None:
             refresh_minutes = 240
-        time_shift = datetime.now() - timedelta(minutes=refresh_minutes)
+        time_shift = datetime.now(pytz.timezone('Europe/Moscow')) - timedelta(minutes=refresh_minutes)
         if c_type > 0:
             candles = Candles.objects.filter(date__gte=time_shift, stock_id=pk, type=c_type)
         elif c_type == 0:

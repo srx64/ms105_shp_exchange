@@ -200,6 +200,7 @@ class AddOrderView(APIView):
             if order.amount == 0:
                 order.is_closed = True
                 order.date_closed = timezone.now()
+            order.save()
         return Response("/api/v1/orders/")
 
 

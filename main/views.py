@@ -107,7 +107,7 @@ class AddOrderView(APIView):
         self.margin_call(user)
         flag = False
         if Portfolio.objects.filter(user=user, stock=stock).exists() and \
-            Portfolio.objects.get(user=user, stock=stock).count > amount:
+            Portfolio.objects.get(user=user, stock=stock).count >= amount:
             flag = True
         if (setting is None or setting.data['is_active']) or (not setting.data['is_active'] and type == 0) or \
             (not setting.data['is_active'] and type == 1 and flag):

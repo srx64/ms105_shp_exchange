@@ -13,7 +13,7 @@
         color="transparent"
         title="Наш Telegram"
       >
-        Следите за новостями и обновлениями на нашем канале Telegram
+        Следите за новостями и обновлениями в нашем канале Telegram
       </base-section-heading>
 
       <v-btn

@@ -6,6 +6,7 @@
 
 import argparse
 import logging
+import math
 import os
 import signal
 import sys
@@ -27,7 +28,7 @@ except ImportError as exc:
         "forget to activate a virtual environment?"
     ) from exc
 
-from main.models import Stocks, Candles, Quotes
+from main.models import Stocks, Candles, Quotes, CandlesData
 
 """
 Список всех инструментов.
@@ -156,7 +157,30 @@ class CandleBot:
         Подготовка массива свечей всех типов для всех инструментов
         """
         global STOCKS_LIST
-        self.data: List[List[int]] = [[0, 0, 0, 0, 0] for _ in range(len(Stocks.objects.all()))]
+        if len(CandlesData.objects.all()) < 1 or len(CandlesData.objects.all().last().data) < len(Stocks.objects.all()):
+            self.data: List[List[int]] = [[0, 0, 0, 0, 0] for _ in range(len(Stocks.objects.all()))]
+        else:
+            self.data: List[List[int]] = [[0, 0, 0, 0, 0] for _ in range(len(Stocks.objects.all()))]
+            tmp = CandlesData.objects.all().last().data
+            tmp = str(tmp.replace('[', ''))
+            tmp = str(tmp.replace(']', ''))
+            tmp = str(tmp.split(sep=','))
+            tmp = str(tmp.replace(' ', ''))
+            temporary = []
+            empty = ''
+            tmp = str(tmp).replace("'", '')
+            tmp = str(tmp).replace('[', '')
+            for i in tmp:
+                if i.isdigit():
+                    empty += i
+                elif i == ',':
+                    if len(empty) > 0:
+                        temporary.append(int(empty))
+                    empty = ''
+                elif len(empty) > 0:
+                    temporary.append(int(empty))
+            for i in range(len(temporary)):
+                self.data[i // 5][i % 5] = temporary[i]
 
     def process_stock(self, stock) -> None:
         """
@@ -200,7 +224,17 @@ class CandleBot:
         """
         logging.info('Бот начал работу')
         self.main_loop()
+        self.save_data()
         logging.info('Бот закончил работу')
+
+    def save_data(self) -> None:
+        """
+        Сохранение данных в таблицу
+
+        Сохраняем данные в таблицу перед остановкой бота, во избежание повторной генерации свечей
+        """
+        if CandleBot.NEED_STOP:
+            CandlesData.objects.create(data=self.data)
 
 
 class Application:

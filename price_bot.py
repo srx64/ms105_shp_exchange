@@ -14,101 +14,116 @@ django.setup()
 
 from main.models import Stocks, Order, User, Quotes, Portfolio, Settings
 
+NEED_RESTART = False
+
 
 class CrisisFigureOne:
     @staticmethod
-    def generate(_price):
-        price = _price - _price * uniform(0.30, 0.39)
+    def generate(_price, stock_id):
+        price = _price - _price * uniform(0.06667, 0.12245310)
+        price = HandlingFunctions.check_price(price, stock_id)
         return price
 
 
 class CrisisFigureTwo:
     @staticmethod
-    def generate(_price):
-        price = _price - _price * uniform(0.40, 0.49)
+    def generate(_price, stock_id):
+        price = _price - _price * uniform(0.08766755, 0.15809768576)
+        price = HandlingFunctions.check_price(price, stock_id)
         return price
 
 
 class CrisisFigureThree:
     @staticmethod
-    def generate(_price):
-        price = _price - _price * uniform(0.50, 0.59)
+    def generate(_price, stock_id):
+        price = _price - _price * uniform(0.15345336, 0.2578978)
+        price = HandlingFunctions.check_price(price, stock_id)
         return price
 
 
 class NeutralFigureOne:
     @staticmethod
-    def generate(_price):
-        price = _price - _price * 0.05
+    def generate(_price, stock_id):
+        price = _price - _price * 0.015
+        price = HandlingFunctions.check_price(price, stock_id)
         return price
 
 
 class NeutralFigureTwo:
     @staticmethod
-    def generate(_price):
-        price = _price + _price * 0.05
+    def generate(_price, stock_id):
+        price = _price + _price * 0.015
+        price = HandlingFunctions.check_price(price, stock_id)
         return price
 
 
 class DowngradingFigureOne:
     @staticmethod
-    def generate(_price):
-        cut = randint(1, 5) * pi / 180
+    def generate(_price, stock_id):
+        cut = uniform(0.64, 4.03) * pi / 180
         price = _price - _price * sin(cut)
+        price = HandlingFunctions.check_price(price, stock_id)
         return price
 
 
 class DowngradingFigureTwo:
     @staticmethod
-    def generate(_price):
-        cut = randint(1, 5) * pi / 180
+    def generate(_price, stock_id):
+        cut = uniform(0.84, 4.27) * pi / 180
         price = _price - _price * sin(cut) * random()
+        price = HandlingFunctions.check_price(price, stock_id)
         return price
 
 
 class DowngradingFigureThree:
     @staticmethod
-    def generate(_price):
-        cut = randint(1, 5) * pi / 180
-        price = _price - _price * sin(cut) * uniform(0.8, 0.99)
+    def generate(_price, stock_id):
+        cut = uniform(1, 3.86) * pi / 180
+        price = _price - _price * sin(cut) * uniform(0.67, 0.99)
+        price = HandlingFunctions.check_price(price, stock_id)
         return price
 
 
 class DowngradingFigureFour:
     @staticmethod
-    def generate(_price):
-        price = _price - _price * uniform(0.02, 0.09)
+    def generate(_price, stock_id):
+        price = _price - _price * uniform(0.02, 0.055)
+        price = HandlingFunctions.check_price(price, stock_id)
         return price
 
 
 class RaisingFigureOne:
     @staticmethod
-    def generate(_price):
-        cut = randint(1, 5) * pi / 180
+    def generate(_price, stock_id):
+        cut = uniform(0.64, 4.03) * pi / 180
         price = _price + _price * sin(cut)
+        price = HandlingFunctions.check_price(price, stock_id)
         return price
 
 
 class RaisingFigureTwo:
     @staticmethod
-    def generate(_price):
-        cut = randint(1, 5) * pi / 180
+    def generate(_price, stock_id):
+        cut = uniform(0.84, 4.27) * pi / 180
         price = _price + _price * sin(cut) * random()
+        price = HandlingFunctions.check_price(price, stock_id)
         return price
 
 
 class RaisingFigureThree:
     @staticmethod
-    def generate(_price):
-        cut = randint(1, 5) * pi / 180
-        price = _price + _price * sin(cut) * uniform(0.8, 0.99)
+    def generate(_price, stock_id):
+        cut = uniform(1, 3.86) * pi / 180
+        price = _price + _price * sin(cut) * uniform(0.67, 0.99)
+        price = HandlingFunctions.check_price(price, stock_id)
         return price
 
 
 class RaisingFigureFour:
     @staticmethod
-    def generate(_price):
-        price = _price + _price * uniform(0.02, 0.09)
+    def generate(_price, stock_id):
+        price = _price + _price * uniform(0.02, 0.055)
+        price = HandlingFunctions.check_price(price, stock_id)
         return price
 
 
@@ -173,6 +188,26 @@ class Figures:
 class HandlingFunctions:
 
     @staticmethod
+    def limits_check(stock_id, min_price, max_price):
+        global NEED_RESTART
+        quotes = list(Quotes.objects.filter(stock_id=stock_id))
+        if len(quotes) > 1:
+            shift = 0
+            edited = list(reversed(quotes))
+            for i in range(len(edited)):
+                if i + 1 < len(edited):
+                    if edited[i].price > max_price:
+                        shift += (edited[i].date - edited[i+1].date).total_seconds()
+                        if shift >= 15:
+                            NEED_RESTART = True
+                            shift = 0
+                    elif edited[i].price < min_price:
+                        shift += (edited[i].date - edited[i+1].date).total_seconds()
+                        if shift >= 15:
+                            NEED_RESTART = True
+                            shift = 0
+
+    @staticmethod
     def get_settings(stock_id):
         if Settings.objects.filter(stock_id=-1, name='algo_quotes'):
             setting = Settings.objects.filter(stock_id=-1, name='algo_quotes').last()
@@ -230,6 +265,26 @@ class HandlingFunctions:
         portfolio.count = 100000
         portfolio.save()
 
+    @staticmethod
+    def check_price(_price, stock_id):
+        setting = HandlingFunctions.get_settings(stock_id)
+        max_price = 15000
+        min_price = 500
+        if setting is not None and setting.data['max_price'] is not None and setting.data['min_price'] is not None:
+            max_price = setting.data['max_price']
+            min_price = setting.data['min_price']
+            if _price > max_price:
+                _price = max_price - max_price * uniform(0.03, 0.1)
+            elif _price < min_price:
+                _price = min_price + min_price * uniform(0.03, 0.1)
+        else:
+            if _price > max_price:
+                _price = max_price - max_price * uniform(0.03, 0.1)
+            elif _price < min_price:
+                _price = min_price + min_price * uniform(0.03, 0.1)
+        HandlingFunctions.limits_check(stock_id, min_price, max_price)
+        return _price
+
 
 class Tendencies:
     @staticmethod
@@ -255,7 +310,7 @@ class Tendencies:
                             coefficient = setting.data['coefficient']
                             f_type = setting.data['type']
                             figure = Figures.get_figure(f_type)
-                            price = figure.generate(last_price) * coefficient
+                            price = figure.generate(last_price, stock.id) * coefficient
                             HandlingFunctions.generate_orders(user, stock, price, AMOUNT, t)
                     elif setting.data['duration'] <= 0:
                         return False
@@ -269,7 +324,7 @@ class Tendencies:
                         coefficient = setting.data['coefficient']
                         f_type = setting.data['type']
                         figure = Figures.get_figure(f_type)
-                        price = figure.generate(last_price) * coefficient
+                        price = figure.generate(last_price, stock.id) * coefficient
                         HandlingFunctions.generate_orders(user, stock, price, AMOUNT, t)
                 elif setting.data['duration'] <= 0:
                     return False
@@ -281,10 +336,19 @@ class Tendencies:
         else:
             return False
 
+    @staticmethod
+    def opposite_tendency(tendency):
+        if tendency == 'raising':
+            tendency = 'downgrading'
+        elif tendency == 'downgrading':
+            tendency = 'raising'
+        return tendency
+
 
 class MainCycle:
     @staticmethod
     def begin(am, us):
+        global NEED_RESTART
         is_frozen = False
         user = us
         AMOUNT = am
@@ -318,13 +382,30 @@ class MainCycle:
                                     duration[index] -= 1
                                     if HandlingFunctions.get_settings(stock.pk) is not None and \
                                         HandlingFunctions.get_settings(stock.pk).data['coefficient'] is not None:
-
                                         coef = HandlingFunctions.get_settings(stock.pk).data['coefficient']
-                                        price = figures[index].generate(last_price) * coef
-                                        HandlingFunctions.generate_orders(user, stock, price, AMOUNT, t)
+                                        price = figures[index].generate(last_price, stock.id) * coef
+                                        if not NEED_RESTART:
+                                            HandlingFunctions.generate_orders(user, stock, price, AMOUNT, t)
+                                        else:
+                                            f_tendency = info[0]
+                                            info = Tendencies.choose_tendency()
+                                            data[stock.pk - 1] = info
+                                            info[0] = Tendencies.opposite_tendency(f_tendency)
+                                            info[2] = Figures.set_figures(info[1], tendency)
+                                            NEED_RESTART = False
+                                            HandlingFunctions.generate_orders(user, stock, price, AMOUNT, t)
                                     else:
-                                        price = figures[index].generate(last_price)
-                                        HandlingFunctions.generate_orders(user, stock, price, AMOUNT, t)
+                                        price = figures[index].generate(last_price, stock.id)
+                                        if not NEED_RESTART:
+                                            HandlingFunctions.generate_orders(user, stock, price, AMOUNT, t)
+                                        else:
+                                            f_tendency = info[0]
+                                            info = Tendencies.choose_tendency()
+                                            data[stock.pk - 1] = info
+                                            info[0] = Tendencies.opposite_tendency(f_tendency)
+                                            info[2] = Figures.set_figures(info[1], tendency)
+                                            NEED_RESTART = False
+                                            HandlingFunctions.generate_orders(user, stock, price, AMOUNT, t)
                                 pack.append(figures)
                                 pack.append(duration)
                                 info[2] = pack

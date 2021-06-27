@@ -108,6 +108,14 @@ export default {
                 console.log(context.getters.usernames.get(security.user))
                 security.user = context.getters.usernames.get(security.user)
               }
+              response.data.sort(function (a, b) {
+                a.user.toLowerCase()
+                b.user.toLowerCase()
+                if (a.user != b.user) {
+                  return a.user > b.user ? 1 : -1
+                }
+                return 0;
+              })
             }
             context.commit('updatePortfolio', response.data)
             resolve()

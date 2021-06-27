@@ -227,6 +227,14 @@ export default {
                 console.log(this.usernames.get(order.user))
                 order.user = this.usernames.get(order.user)
               }
+              this.orders.sort(function (a, b) {
+                a.user.toLowerCase()
+                b.user.toLowerCase()
+                if (a.user != b.user) {
+                  return a.user > b.user ? 1 : -1
+                }
+                return 0;
+              })
             }
             console.log(this.orders)
           })

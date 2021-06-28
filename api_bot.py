@@ -1,5 +1,6 @@
 import os
 import django
+import getpass
 import requests
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'exchange_engine.settings')
@@ -15,7 +16,7 @@ def login(host):
     # данные пользователя
     data = {
         'username': input('Enter your username: ').strip(),
-        'password': input('Enter your password: ').strip()
+        'password': getpass.getpass('Enter your password: ')
     }
 
     # получаем токены данного пользователя

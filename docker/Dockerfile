@@ -1,7 +1,7 @@
 FROM ubuntu:latest
 MAINTAINER Daria Mishkina <dasha.mishkina117@gmail.com>
 
-RUN apt-get update && apt-get install -y build-essential nano python3 python3-dev python3-pip supervisor libpq-dev
+RUN apt-get update && apt-get install -y build-essential nano python3 python3-dev python3-pip supervisor libpq-dev nodejs
 ADD ./ /ms105_exchange_engine
 WORKDIR /ms105_exchange_engine/
 RUN pip install --no-cache-dir -r ./requirements.txt

@@ -1,7 +1,9 @@
 from __future__ import annotations
+
+import datetime
 import logging
 import os
-from typing import Tuple
+from typing import Tuple, Optional, List, Union, Literal
 
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AbstractUser
@@ -83,9 +85,9 @@ class User(AbstractUser):
         """
         Поиск юзера с самым большим балансом
         """
-        max_balance = User.objects\
-            .filter(~User.get_admin_local_Q())\
-            .aggregate(Max('balance'))\
+        max_balance = User.objects \
+            .filter(~User.get_admin_local_Q()) \
+            .aggregate(Max('balance')) \
             ['balance__max']
         return User.objects.filter(balance=max_balance).first()
 
@@ -224,10 +226,10 @@ class Portfolio(models.Model):
 
 class Quotes(models.Model):
     """
-    Котировки акций
+    Котировка акций
 
-    :param stock: Ссылка на акцию
-    :param price: Цена акции
+    :param stock: ForeignKey на акцию
+    :param price: Цена акции в тугриках
     :param date: Дата и время создания котировки
     """
 
@@ -236,8 +238,11 @@ class Quotes(models.Model):
     date = models.DateTimeField(default=timezone.now)
     line = models.IntegerField(default=-1)
 
-    def __str__(self):
-        return f'{self.stock}, price: {self.price}'
+    def __str__(self) -> str:
+        """
+        Корректное отображение котировки в админ-панели и логах
+        """
+        return f'Quote(STOCK:{self.stock}; DT:{self.date}; PR:{self.price}'
 
 
 class LeverageData(models.Model):
@@ -279,7 +284,8 @@ class Candles(models.Model):
     :param low: Минимальная цена
     :param date: Дата
     :param stock: Ссылка на акцию
-    :param type: Тип свечи (1 минута, 5 минут и т.д.)
+    :param type: Тип свечи (1 - это минута, 2 - 5 минут, 3 - 15 минут, 4 - 30 минут, 5 - час.)
+    :param DURATIONS: кортеж пар, определяющий связи между типами свечей и их длительностями
     """
 
     open = models.FloatField()
@@ -290,8 +296,159 @@ class Candles(models.Model):
     stock = models.ForeignKey(to=Stocks, on_delete=models.CASCADE)
     type = models.IntegerField(default=1)
 
-    def __str__(self):
-        return f'{self.stock}, type: {self.type}, open: {self.open}, close: {self.close}, high: {self.high}, low: {self.low}'
+    DURATIONS: Tuple[Tuple[int]] = (
+        (1, 1),
+        (2, 5),
+        (3, 15),
+        (4, 30),
+        (5, 60)
+    )
+
+    def __str__(self) -> str:
+        """
+        Корректное отображение свечи в админ-панели и логах
+        """
+        return f'Candle (ST:{self.stock}; T:{self.type}; OP:{self.open}; HI:{self.high}; LO:{self.low}; CL:{self.close}'
+
+    @staticmethod
+    def get_duration_by_param(param: Literal['type', 'duration'] = 'type', value: int = 1) -> int:
+        """
+        Преобразование из типа длительности в саму длительность и обратно
+
+        Обычный проход по массивы и возврат значения в зависимости от простого условия
+
+        :param param: Строка, определяющая возвращаемое значение.
+        :param value: искомое значение
+        :raises AttributeError: Если строка param не равна `'type'` или `'duration'`
+        :raises RuntimeError: Если длительность с указанными параметрами не существует
+        :return: Если param равен `type`, то возвратится количество минут, соответствующее длительности с типом `value`
+        :return: Если param равен `duration`, то возвратится тип свечи, которому соответствет длительность `value`
+        """
+        if param not in ['type', 'duration']:
+            error_msg = f'Преобразование длины свечи - неправильное значение параметра. ' \
+                        f'PARAM: {param}, должен быть [\'type\', \'duration\']'
+            logging.error(error_msg)
+            raise AttributeError(error_msg)
+        for record in Candles.DURATIONS:
+            if param == 'type' and record[0] == value:
+                return record[1]
+            elif param == 'duration' and record[1] == value:
+                return record[0]
+        logging.error(f'Неизвестная длина диапазона свечи: PARAM: {param}, VALUE: {value}')
+        raise RuntimeError('Unknown candle duration')
+
+    @staticmethod
+    def get_duration_by_type(type: int) -> int:
+        """
+        Получение длительности свечи по указанному типу
+        
+        :param type: тип свечи
+        :raises RuntimeError: если указанный тип длительности не существует
+        :return: количество минут, соответствующее этому типу длительности
+        """
+        return Candles.get_duration_by_param('type', type)
+
+    @staticmethod
+    def get_type_by_duration(duration: int) -> int:
+        """
+        Получение длительности свечи по указанному типу
+
+        :param duration: минуты
+        :raises RuntimeError: если тип длительности с такими минутами не существует
+        :return: тип длительности, соответствующий этому количеству минут
+        """
+        return Candles.get_duration_by_param('duration', duration)
+
+    @staticmethod
+    def get_last_candle(duration_type: int) -> Candles:
+        """
+        Получение последней свечи с указанной длительностью
+
+        :param duration_type: количество минут
+        """
+        return Candles.objects.filter(type=duration_type).order_by('date').last()
+
+    @staticmethod
+    def get_all_candles_by_duration(stock: Stocks, duration_type: int) -> QuerySet[Candles]:
+        """
+        Получение всех свечей по определённой акции с определённым типом длительности
+        """
+        return Candles.objects.filter(stock=stock, type=duration_type).order_by('date')
+
+    @staticmethod
+    def get_candles_by_duration(stock: Stocks, duration_type: int) -> QuerySet[Candles]:
+        """
+        Получение свечей по определённой акции с определённым типом длительности.
+
+        Возвращается определённое количество свечей.
+        Количество зависит от настройки `chart_settings`. Если такое, конечно же, имеется.
+        А если нет - возвращается 60 свечей.
+
+        :param stock: финансовй инструмент
+        :param duration_type: тип длительности
+        """
+        try:
+            setting = Settings.objects.get(stock_id=-1, name='chart_settings')
+            refresh_minutes = setting.data['view_time']
+        except Settings.DoesNotExist:
+            refresh_minutes = Candles.get_duration_by_type(duration_type) * 60
+        candles_count = refresh_minutes // duration_type
+        return Candles.objects.filter(stock=stock, type=duration_type).order_by('date')[-candles_count:]
+
+    @staticmethod
+    def get_duration_types_list() -> List[int]:
+        """
+        Получение всех типов длительности, доступных на бирже в данный момент
+
+        :return: Список всех типов. Чаще всего он равен `[1, 2, 3, 4, 5]`.
+                 Исключение - криво написанный candle'bot, пишущий только определённые типы свечей.
+        """
+        return Candles.objects.all().distinct('type')
+
+    def update_candle_with_value(self, quote: Quotes) -> Optional[Candles]:
+        """
+        Обновление данных свечи при помощи новой поступившей котировки
+
+        Проверяет, а можно ли эту котировку записать (при помощи даты и длительности), дальше обновляет необходимые поля
+
+        :param quote: Новая котировка, которую нужно сюда записать
+        :return: Свеча в случае, если её удалось обновить
+        :return: None в случае, если новая котировка не попадает в таймфрейм свечи
+        """
+        if self.need_new_candle(quote.date):
+            logging.warning('Предотвращена попытка записи новой котировки в свечу, которая для этого не годится.')
+            logging.debug(str(self))
+            logging.debug(str(quote))
+            return None
+        self.high = max(self.high, quote.price)
+        self.low = min(self.low, quote.price)
+        self.close = quote.price
+        self.save()
+        return self
+
+    def is_ascending(self) -> bool:
+        """
+        Определяет тенденцию свечи (для раскрашивания её на фронтенде)
+
+        Тенденция определяется на основе значений открытия и закрытия
+
+        :return: True, если в свече идёт возрастающая тенденция
+        :return: False, если в свече идёт убывающая тенденция
+        """
+        return self.open < self.close
+
+    def need_new_candle(self, current_datetime: datetime.datetime) -> bool:
+        """
+        Определение необходимости создания новой свечи
+
+        Вычисляется на основе сравнения текущего времени с временем свечи (с учётом длительности свечи)
+
+        :param current_datetime: Текущее время на бирже
+        :return: True, если текущее время не попадает в промежуток времени, обрабатываемый данной свечой
+                 и нужно создавать новую свечу
+        :return: False, в ином случае
+        """
+        return self.date + datetime.timedelta(minutes=Candles.get_duration_by_type(self.type)) >= current_datetime
 
 
 class Statistics(models.Model):

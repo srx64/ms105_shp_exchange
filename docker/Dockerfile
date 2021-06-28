@@ -6,7 +6,7 @@ ADD ./ /ms105_exchange_engine
 WORKDIR /ms105_exchange_engine/
 RUN pip install --no-cache-dir -r ./requirements.txt
 
-WORKDIR cd /ms105_exchange_engine/exchange_engine_frontend
+WORKDIR /ms105_exchange_engine/exchange_engine_frontend
 RUN npm install
 RUN npm run build
 

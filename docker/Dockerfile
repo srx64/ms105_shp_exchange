@@ -6,6 +6,10 @@ ADD ./ /ms105_exchange_engine
 WORKDIR /ms105_exchange_engine/
 RUN pip install --no-cache-dir -r ./requirements.txt
 
+WORKDIR cd /ms105_exchange_engine/exchange_engine_frontend
+RUN npm install
+RUN npm run build
+
 RUN mkdir -p /var/log/ms105_exchange_engine
 RUN chmod u+x /var/log/ms105_exchange_engine && mkdir -p /var/log/supervisor
 

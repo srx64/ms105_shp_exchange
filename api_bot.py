@@ -85,10 +85,10 @@ def readable_orders_print(orders, style):
         print('---ID----NAME----COUNT---PRICE--------TYPE--------STATE----USER_ID----DESCRIPTION')
     elif style == 'default':
         for order in orders:
-            print(f"Order for stock {order['stock']['name']} with ID {order['stock']['id']} and description: "
-                  f"{order['stock']['description']} - {'buying' if not order['type'] else 'selling'} "
-                  f"{order['count']} * {order['price']} is {'closed' if order['is_closed'] else 'open'} "
-                  f"and was created by user with ID {order['user']}.")
+            print(f"Stock ID: {order['stock']['id']}, stock name: {order['stock']['name']}, stock description: "
+                  f"{order['stock']['description']}. Order price: {order['price']}, order amount: {order['count']}, "
+                  f"order type: {'buy' if not order['type'] else 'sell'}, "
+                  f"order state: {'closed' if order['is_closed'] else 'open'}. User ID: {order['user']}.")
 
 
 def main():

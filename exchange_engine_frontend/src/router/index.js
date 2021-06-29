@@ -65,22 +65,6 @@ const routes = [
       }
     ]
   },
-  {
-    path: '/test',
-    component: () => import('../views/test/Graph.vue'),
-    children: [
-      {
-        path: 'hexagon-ava',
-        name: 'Hexagon',
-        component: () => import('../views/test/Hexagon.vue')
-      },
-      {
-        path: 'graph',
-        name: 'Graph',
-        component: () => import('../views/test/Graph.vue')
-      }
-    ]
-  }
 ]
 
 const router = new VueRouter({

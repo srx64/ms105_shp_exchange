@@ -51,7 +51,7 @@ schema_view = get_schema_view(
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', TemplateView.as_view(template_name='index.html')),
+    # path('', TemplateView.as_view(template_name='index.html')),
     path('api-token/', TokenObtainPairView.as_view(), name='api_token'),
     path('api-token-refresh/', TokenRefreshView.as_view()),
     path('api/v1/stocks/', StocksListView.as_view(), name='stocks'),
@@ -93,7 +93,7 @@ urlpatterns = [
     path('profile/balance_add', login_required(views.ProfileBalanceAdd.as_view()), name='balance_add'),
 
     url(r'^swagger(?P<format>\.json|\.yaml)$', schema_view.without_ui(cache_timeout=0), name='schema-json'),
-    url(r'^swagger/$', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
+    url(r'^$', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     url(r'^redoc/$', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
 ]
 

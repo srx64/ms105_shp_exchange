@@ -165,6 +165,7 @@
       ratio: 0,
       item: '',
       stocksInterval: undefined,
+      candlesTimeout: undefined,
       options: {
         chart: {
           id: 'main-chart',
@@ -260,7 +261,8 @@
               return [Date.parse(candle.date), [candle.open, candle.high, candle.low, candle.close].map((price) => (price.toFixed(2)))]
             })
 
-            this.candlesInterval = setInterval(function() {
+            clearTimeout(this.candlesTimeout)
+            this.candlesTimeout = setTimeout(function() {
               this.getCandles()
             }.bind(this), 60000)
 
@@ -330,6 +332,7 @@
 
     destroyed () {
       clearInterval(this.stocksInterval)
+      clearTimeout(this.candlesTimeout)
     }
   }
 </script>

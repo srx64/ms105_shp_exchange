@@ -46,7 +46,6 @@ export default {
           password2: usercredentials.password2
         })
           .then(response => {
-            console.log(response);
             resolve(response)
           })
           .catch(err => {
@@ -102,10 +101,8 @@ export default {
             if (context.getters.profile.is_superuser) {
               for (let security of response.data) {
                 if (!context.getters.usernames.has(security.user)) {
-                  console.log('load')
                   context.dispatch('loadUsername', { id: security.user })
                 }
-                console.log(context.getters.usernames.get(security.user))
                 security.user = context.getters.usernames.get(security.user)
               }
               response.data.sort(function (a, b) {

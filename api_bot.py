@@ -16,7 +16,7 @@ def login(host):
     # данные пользователя
     data = {
         'username': input('Enter your username: ').strip(),
-        'password': getpass.getpass('Enter your password: ')
+        'password': getpass.getpass('Enter your password: ').strip()
     }
 
     # получаем токены данного пользователя

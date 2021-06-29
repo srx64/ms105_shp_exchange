@@ -1,10 +1,5 @@
-import os
-import django
 import getpass
 import requests
-
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'exchange_engine.settings')
-django.setup()
 
 
 def login(host):

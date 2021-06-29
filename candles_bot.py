@@ -28,13 +28,26 @@ except ImportError as exc:
         "forget to activate a virtual environment?"
     ) from exc
 
-from main.models import Stocks, Candles, Quotes, CandlesData
+from main.models import Stocks, Candles, Quotes, CandlesData, Settings
 
 """
 Список всех инструментов.
 Загружается только один раз. Для обновления используйте сигнал SIGHUP или просто перезапустите бота.
 """
 STOCKS_LIST = None
+
+
+def get_acceleration(stock_id):
+    setting = None
+    if Settings.objects.filter(stock_id=-1, name='chart_settings'):
+        setting = Settings.objects.filter(stock_id=-1, name='chart_settings').last()
+    elif Settings.objects.filter(stock_id=stock_id, name='chart_settings'):
+        setting = Settings.objects.filter(stock_id=stock_id, name='chart_settings').last()
+    if setting is not None:
+        return setting.data['acceleration']
+    else:
+        return 1
+
 
 
 def generate(prices: List[Quotes], prices_amount: int, stock: Stocks, timeframe_duration: int,
@@ -77,6 +90,9 @@ def generate(prices: List[Quotes], prices_amount: int, stock: Stocks, timeframe_
     .. todo::
        После рефакторинга - добавить сюда логирование.
     """
+
+    accelerator = get_acceleration(stock.pk)
+    timeframe_duration = timeframe_duration / accelerator
     is_exist = False
     stock_prices = []
     shift = prices[0].date - prices[0].date

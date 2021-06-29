@@ -221,10 +221,8 @@ export default {
             if (this.profile.is_superuser) {
               for (let order of this.orders) {
                 if (!this.usernames.has(order.user)) {
-                  console.log('load')
                   this.$store.dispatch('loadUsername', { id: order.user })
                 }
-                console.log(this.usernames.get(order.user))
                 order.user = this.usernames.get(order.user)
               }
               this.orders.sort(function (a, b) {
@@ -236,7 +234,6 @@ export default {
                 return 0;
               })
             }
-            console.log(this.orders)
           })
           .catch(err => {
             console.log(err)
@@ -262,7 +259,6 @@ export default {
         })
       },
       usernames() {
-        console.log(this.$store.getters.usernames)
         return this.$store.getters.usernames
       },
       profile() {

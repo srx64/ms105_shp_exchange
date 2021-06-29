@@ -255,7 +255,7 @@
           })
       },
       getCandles () {
-        getAPI.get('http://shp-exchange.tk/api/v1/candles/' + this.selectedStonkID + '/' + (this.selectedCandlesType + 1))
+        getAPI.get('api/v1/candles/' + this.selectedStonkID + '/' + (this.selectedCandlesType + 1))
           .then(response => {
             let data = response.data.map(function(candle) {
               return [Date.parse(candle.date), [candle.open, candle.high, candle.low, candle.close].map((price) => (price.toFixed(2)))]

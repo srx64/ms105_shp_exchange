@@ -115,7 +115,6 @@ export default {
 
   computed: {
     portfolio() {
-      console.log(this.$store.getters.portfolio)
       return this.$store.getters.portfolio
     },
     profile() {

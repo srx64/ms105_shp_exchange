@@ -74,6 +74,14 @@ def list_stocks(host):
     return response.json()
 
 
+def readable_orders_print(orders):
+    for order in orders:
+        print(f"Stock ID: {order['stock']['id']}, stock name: {order['stock']['name']}, stock description: "
+              f"{order['stock']['description']}. Order price: {order['price']}, order amount: {order['count']}, "
+              f"order type: {'buy' if not order['type'] else 'sell'}, "
+              f"order state: {'closed' if order['is_closed'] else 'open'}. User ID: {order['user']}.")
+
+
 def main():
     """
     Пример клиентского API бота для создания ордеров
@@ -87,7 +95,7 @@ def main():
 
     # просмотр списка ордеров
     orders = list_orders(host, headers)
-    print(orders)
+    readable_orders_print(orders)
 
 
 if __name__ == "__main__":

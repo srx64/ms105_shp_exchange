@@ -74,12 +74,21 @@ def list_stocks(host):
     return response.json()
 
 
-def readable_orders_print(orders):
-    for order in orders:
-        print(f"Stock ID: {order['stock']['id']}, stock name: {order['stock']['name']}, stock description: "
-              f"{order['stock']['description']}. Order price: {order['price']}, order amount: {order['count']}, "
-              f"order type: {'buy' if not order['type'] else 'sell'}, "
-              f"order state: {'closed' if order['is_closed'] else 'open'}. User ID: {order['user']}.")
+def readable_orders_print(orders, style):
+    if style == 'table':
+        print('---ID----NAME----COUNT---PRICE--------TYPE--------STATE----USER_ID----DESCRIPTION')
+        for order in orders:
+            print(f"   {order['stock']['id']}     {order['stock']['name']}      {order['count']}     "
+                  f"{format(order['price'], '.2f') if (10000 > int(order['price']) >= 1000)  else format(order['price'], '.3f') if int(order['price']) < 1000 else format(order['price'], '.1f') if int(order['price']) >= 10000 else format(order['price'], '.0f')}      "
+                  f"{'buying'.ljust(7) if not order['type'] else 'selling'}     "
+                  f"{'closed' if order['is_closed'] else 'open'}     {order['user']}       {order['stock']['description']}")
+        print('---ID----NAME----COUNT---PRICE--------TYPE--------STATE----USER_ID----DESCRIPTION')
+    elif style == 'default':
+        for order in orders:
+            print(f"Stock ID: {order['stock']['id']}, stock name: {order['stock']['name']}, stock description: "
+                  f"{order['stock']['description']}. Order price: {order['price']}, order amount: {order['count']}, "
+                  f"order type: {'buy' if not order['type'] else 'sell'}, "
+                  f"order state: {'closed' if order['is_closed'] else 'open'}. User ID: {order['user']}.")
 
 
 def main():
@@ -95,7 +104,7 @@ def main():
 
     # просмотр списка ордеров
     orders = list_orders(host, headers)
-    readable_orders_print(orders)
+    readable_orders_print(orders, 'table')
 
 
 if __name__ == "__main__":

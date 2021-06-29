@@ -68,6 +68,12 @@ def list_candles(host, headers):
     return response.json()
 
 
+def list_stocks(host):
+    orders_list_url = f'{host}/api/v1/stocks/'
+    response = requests.get(orders_list_url)
+    return response.json()
+
+
 def main():
     """
     Пример клиентского API бота для создания ордеров

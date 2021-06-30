@@ -105,13 +105,6 @@ class AddOrderView(APIView):
 
             if order.amount != 0:
                 if order.is_limit:
-                    if order.type == 0:
-                        if stock.price <= order.price:
-                            order.is_limit = False
-                            order.save()
-                    else:
-                        if stock.price >= order.price:
-                            order.save()
                     order.save()
                 if not order.is_limit:
                     print('qwertqwerq')
@@ -119,8 +112,6 @@ class AddOrderView(APIView):
                         if user.balance >= order.amount * order.price:
                             portfolio.count += order.amount
                             user.balance -= order.amount * order.price
-                            user.save()
-                            portfolio.save()
                         else:
                             # обработать ошибку не хватки денег
                             return Response({"detail": "incorrect data"}, status=status.HTTP_400_BAD_REQUEST)
@@ -128,16 +119,13 @@ class AddOrderView(APIView):
                     elif type == 1 and portfolio.count >= order.amount and not portfolio.is_debt:
                         portfolio.count -= order.amount
                         user.balance += order.amount * stock.price
-                        user.save()
-                        portfolio.save()
 
                     elif type == 1 and portfolio.count == 0 and not portfolio.is_debt:
                         if (setting is None or setting.data['is_active']) or not setting.data['is_active']:
-                            if order.amount * order.price <= 100000:
+                            if order.amount * order.price <= 100000 and portfolio.short_balance <= 0:
                                 portfolio.short_balance += order.amount * order.price
                                 portfolio.is_debt = True
                                 portfolio.count = -order.amount
-                                portfolio.save()
                             else:
                                   # обработать ошибку нельзя торговать шорт при захождении заграницу
                                 return Response({"detail": "incorrect data"}, status=status.HTTP_400_BAD_REQUEST)
@@ -146,13 +134,11 @@ class AddOrderView(APIView):
                             return Response({"detail": "incorrect data"}, status=status.HTTP_400_BAD_REQUEST)
                     elif type == 1 and portfolio.count < order.amount and portfolio.count != 0 and not portfolio.is_debt:
                         if setting.data['is_active']:
-                            if (order.amount - portfolio.count) * order.price <= 100000:
+                            if (order.amount - portfolio.count) * order.price <= 100000 and and portfolio.short_balance <= 0:
                                 user.balance += portfolio.count * stock.price # цена на данный момент
                                 portfolio.is_debt = True
                                 portfolio.count = portfolio.count - order.amount
                                 portfolio.short_balance -= portfolio.count * stock.price
-                                user.save()
-                                portfolio.save()
                             else:
                                 # обработать ошибку нельзя торговать шорт при захождении заграницу
                                 return Response({"detail": "incorrect data"}, status=status.HTTP_400_BAD_REQUEST)
@@ -161,24 +147,21 @@ class AddOrderView(APIView):
                             return Response({"detail": "incorrect data"}, status=status.HTTP_400_BAD_REQUEST)
 
                     elif type == 1 and portfolio.is_debt:
-                        if order.amount * order.price <= 100000:
+                        if order.amount * order.price <= 100000 and portfolio.short_balance <= 0:
                             portfolio.short_balance += order.amount * order.price
                             portfolio.count -= order.amount
-                            user.save()
-                            portfolio.save()
+                        else:
+                            # обработать ошибку нельзя торговать шорт при захождении заграницу
+                            return Response({"detail": "incorrect data"}, status=status.HTTP_400_BAD_REQUEST)
 
                     elif type == 0 and portfolio.is_debt and portfolio.count < -order.amount:
                         user.balance += (100000 - portfolio.short_balance) - order.amount * stock.price
                         portfolio.count += order.amount
-                        user.save()
-                        portfolio.save()
 
                     elif type == 0 and portfolio.is_debt and portfolio.count == -order.amount:
                         user.balance += (100000 - portfolio.short_balance) - order.amount * stock.price
                         portfolio.count = 0
                         portfolio.is_debt = False
-                        user.save()
-                        portfolio.save()
 
                     elif type == 0 and portfolio.is_debt and portfolio.count > -order.amount:
                         if order.amount + portfolio.count * order.price < user.balance:
@@ -186,14 +169,13 @@ class AddOrderView(APIView):
                             portfolio.count = order.amount + portfolio.count
                             portfolio.is_debt = False
                             user.balance -= portfolio.count * order.price
-                            user.save()
-                            portfolio.save()
                         else:
                             # обработать ошибку не хватки денег
                             return Response({"detail": "incorrect data"}, status=status.HTTP_400_BAD_REQUEST)
 
                     order.is_closed = True
                     order.date_closed = timezone.now()
+                    user.save()
                     order.save()
                     portfolio.save()
 

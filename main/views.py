@@ -64,22 +64,6 @@ class AddOrderView(APIView):
                     object.is_closed = True
                     object.save()
 
-    @staticmethod
-    def set_percentage(user_portfolio):
-        """
-        Установка процента в портфолио
-        """
-        sum = 0
-        portfolios = Portfolio.objects.filter(stock_id=user_portfolio.stock_id)
-        for object in portfolios:
-            sum += object.count
-        if sum == 0:
-            per_stocks = 100
-        else:
-            per_stocks = (user_portfolio.count / sum) * 100
-        user_portfolio.percentage = per_stocks
-        user_portfolio.save()
-
     def post(self, request):
         """
         Создание ордера и обработка данных при POST запросе
@@ -98,6 +82,7 @@ class AddOrderView(APIView):
         is_limit = False
         if price == 0:
             price = stock.price
+        else:
             is_limit = True
         setting = None
         if Settings.objects.filter(stock_id=-1, name='short_switch'):
@@ -115,19 +100,21 @@ class AddOrderView(APIView):
         if (setting is None or setting.data['is_active']) or (not setting.data['is_active'] and type == 0) or \
             (not setting.data['is_active'] and type == 1 and flag):
             portfolio, created = Portfolio.objects.get_or_create(user=user, stock=stock)
-            self.set_percentage(portfolio)
-            order = Order(user=user, stock=stock, type=type, price=price, is_closed=False, amount=amount, count=amount)
+
+            order = Order(user=user, stock=stock, type=type, price=price, is_closed=False, amount=amount, count=amount, is_limit=is_limit)
 
             if order.amount != 0:
-                if is_limit:
+                if order.is_limit:
                     if order.type == 0:
                         if stock.price <= order.price:
                             order.is_limit = False
+                            order.save()
                     else:
                         if stock.price >= order.price:
-                            order.is_limit = False
+                            order.save()
                     order.save()
-                if not is_limit:
+                if not order.is_limit:
+                    print('qwertqwerq')
                     if type == 0 and not portfolio.is_debt:
                         if user.balance >= order.amount * order.price:
                             portfolio.count += order.amount
@@ -204,19 +191,17 @@ class AddOrderView(APIView):
                         else:
                             # обработать ошибку не хватки денег
                             return Response({"detail": "incorrect data"}, status=status.HTTP_400_BAD_REQUEST)
-                    if not order.is_limit:
-                        order.is_closed = True
-                        order.date_closed = timezone.now()
-                        order.save()
-                        portfolio.save()
+
+                    order.is_closed = True
+                    order.date_closed = timezone.now()
+                    order.save()
+                    portfolio.save()
 
 
                 self.margin_call(user)
-                self.set_percentage(portfolio)
                 sred = portfolio.count
                 portfolio.aver_price = ((sred * (sred - order.amount)
                                         + abs(order.amount) * order.price) / max(abs(sred), 1) * bool(sred))
-
 
         return Response("/api/v1/orders/")
 

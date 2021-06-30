@@ -181,7 +181,7 @@ class AddOrderView(APIView):
 
                 self.margin_call(user)
                 sred = portfolio.count
-                portfolio.aver_price = ((sred * (sred - order.amount)
+                portfolio.aver_price = ((portfolio.aver_price * (sred - order.amount)
                                         + abs(order.amount) * order.price) / max(abs(sred), 1) * bool(sred))
                 portfolio.save()
 

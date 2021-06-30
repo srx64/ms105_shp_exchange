@@ -2,17 +2,19 @@ import os
 import time
 from datetime import datetime
 from math import sin, pi
-
+from django.utils import timezone
 from random import randint, choice, random, uniform
-
 import django
 import pandas
 import logging
 
+from rest_framework import status
+from rest_framework.response import Response
+
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'exchange_engine.settings')
 django.setup()
 
-from main.models import Stocks, Order, User, Quotes, Portfolio, Settings
+from main.models import Stocks, Order, User, Quotes, Portfolio, Settings, LeverageData
 
 NEED_RESTART = False
 
@@ -186,7 +188,6 @@ class Figures:
 
 
 class HandlingFunctions:
-
     @staticmethod
     def limits_check(stock_id, min_price, max_price):
         global NEED_RESTART
@@ -206,6 +207,124 @@ class HandlingFunctions:
                         if shift >= 15:
                             NEED_RESTART = True
                             shift = 0
+
+    @staticmethod
+    def margin_call(user):
+        """
+        Margin call
+        """
+        if LeverageData.objects.filter(user=user):
+            user_data = LeverageData.objects.get(user=user)
+            if user.balance <= 0:
+                for object in Order.objects.filter(user=user, stock=user_data.stock):
+                    object.is_closed = True
+                    object.save()
+
+    @staticmethod
+    def limit_order_counting(order):
+        stock = Stocks.objects.get(id=order.stock_id)
+        if Settings.objects.filter(stock_id=-1, name='short_switch'):
+            setting = Settings.objects.filter(stock_id=-1, name='short_switch').last()
+        elif Settings.objects.filter(stock_id=stock.id, name='short_switch'):
+            setting = Settings.objects.filter(stock_id=stock.id, name='short_switch').last()
+        type = order.type
+        portfolio = Portfolio.objects.get(user_id=order.user_id, stock=order.stock_id)
+        user = User.objects.get(id=order.user_id)
+        order.is_limit = False
+
+        if type == 0 and not portfolio.is_debt:
+            if user.balance >= order.amount * order.price:
+
+                portfolio.count += order.amount
+                user.balance -= order.amount * order.price
+            else:
+                # обработать ошибку нехватки денег
+                return Response({"detail": "incorrect data"}, status=status.HTTP_400_BAD_REQUEST)
+
+        elif type == 1 and portfolio.count >= order.amount and not portfolio.is_debt:
+            portfolio.count -= order.amount
+            user.balance += order.amount * stock.price
+
+        elif type == 1 and portfolio.count == 0 and not portfolio.is_debt:
+            if (setting is None or setting.data['is_active']) or not setting.data['is_active']:
+                if order.amount * order.price <= 100000 and portfolio.short_balance <= 0:
+                    portfolio.short_balance += order.amount * order.price
+                    portfolio.is_debt = True
+                    portfolio.count = -order.amount
+                else:
+                    # обработать ошибку нельзя торговать шорт при переходе границы
+                    return Response({"detail": "incorrect data"}, status=status.HTTP_400_BAD_REQUEST)
+            else:
+                # торговать в шорт не возможно
+                return Response({"detail": "incorrect data"}, status=status.HTTP_400_BAD_REQUEST)
+
+        elif type == 1 and portfolio.count < order.amount and portfolio.count != 0 and not portfolio.is_debt:
+            if setting.data['is_active']:
+                if (order.amount - portfolio.count) * order.price <= 100000 and portfolio.short_balance <= 0:
+                    user.balance += portfolio.count * stock.price  # цена на данный момент
+                    portfolio.is_debt = True
+                    portfolio.count = portfolio.count - order.amount
+                    portfolio.short_balance -= portfolio.count * stock.price
+                else:
+                    # обработать ошибку нельзя торговать шорт при переходе границы
+                    return Response({"detail": "incorrect data"}, status=status.HTTP_400_BAD_REQUEST)
+            else:
+                # торговать в шорт не возможно
+                return Response({"detail": "incorrect data"}, status=status.HTTP_400_BAD_REQUEST)
+
+        elif type == 1 and portfolio.is_debt:
+            if order.amount * order.price <= 100000 and portfolio.short_balance <= 0:
+                portfolio.short_balance += order.amount * order.price
+                portfolio.count -= order.amount
+            else:
+                # торговать в шорт невозможно
+                return Response({"detail": "incorrect data"}, status=status.HTTP_400_BAD_REQUEST)
+
+        elif type == 0 and portfolio.is_debt and portfolio.count < -order.amount:
+            user.balance += (100000 - portfolio.short_balance) - order.amount * stock.price
+            portfolio.count += order.amount
+
+        elif type == 0 and portfolio.is_debt and portfolio.count == -order.amount:
+            user.balance += (100000 - portfolio.short_balance) - order.amount * stock.price
+            portfolio.count = 0
+            portfolio.is_debt = False
+
+        elif type == 0 and portfolio.is_debt and portfolio.count > -order.amount:
+            if order.amount + portfolio.count * order.price < user.balance:
+                user.balance += (
+                                    100000 - portfolio.short_balance) - portfolio.count * stock.price
+                portfolio.count = order.amount + portfolio.count
+                portfolio.is_debt = False
+                user.balance -= portfolio.count * order.price
+            else:
+                # обработать ошибку не хватки денег
+                return Response({"detail": "incorrect data"}, status=status.HTTP_400_BAD_REQUEST)
+
+        order.is_closed = True
+        order.date_closed = timezone.now()
+        user.save()
+        order.save()
+        portfolio.save()
+
+        HandlingFunctions.margin_call(user)
+        sred = portfolio.count
+        portfolio.aver_price = ((portfolio.aver_price * (sred - order.amount)
+                                 + abs(order.amount) * order.price) / max(abs(sred), 1) * bool(sred))
+        portfolio.save()
+
+    @staticmethod
+    def limit_order_update():
+        orders = Order.objects.filter(is_limit=True, is_closed=False)
+        for order in orders:
+            stock = Stocks.objects.get(id=order.stock_id)
+            if order.amount != 0:
+                if order.is_limit:
+                    if order.type == 0:
+                        if stock.price <= order.price:
+                            HandlingFunctions.limit_order_counting(order)
+                    else:
+                        if stock.price >= order.price:
+                            HandlingFunctions.limit_order_counting(order)
 
     @staticmethod
     def get_settings(stock_id):
@@ -264,6 +383,7 @@ class HandlingFunctions:
         portfolio, created = Portfolio.objects.get_or_create(user=user, stock=stock)
         portfolio.count = 100000
         portfolio.save()
+        HandlingFunctions.limit_order_update()
 
     @staticmethod
     def check_price(_price, stock_id):

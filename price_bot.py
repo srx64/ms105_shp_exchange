@@ -232,18 +232,11 @@ class HandlingFunctions:
             user = User.objects.get(id=order.user_id)
             if order.amount != 0:
                 if order.is_limit:
-
                     if order.type == 0:
-                        print(stock.price, order.price)
                         if stock.price <= order.price:
-                            print(
-                                "5555555555555555555555555555555555555555555")
                             order.is_limit = False
 
-
                             if type == 0 and not portfolio.is_debt:
-                                print(
-                                    "6666666666666666666666666666666666666666666666")
                                 if user.balance >= order.amount * order.price:
 
                                     portfolio.count += order.amount
@@ -252,12 +245,10 @@ class HandlingFunctions:
                                     # обработать ошибку не хватки денег
                                     return Response({"detail": "incorrect data"},tatus=status.HTTP_400_BAD_REQUEST)
 
-
                             elif type == 1 and portfolio.count >= order.amount and not portfolio.is_debt:
 
                                 portfolio.count -= order.amount
                                 user.balance += order.amount * stock.price
-
 
                             elif type == 1 and portfolio.count == 0 and not portfolio.is_debt:
                                 if (setting is None or setting.data['is_active']) or not setting.data['is_active']:
@@ -273,6 +264,7 @@ class HandlingFunctions:
                                     # торговать в шорт не возможно
                                     return Response({"detail": "incorrect data"},
                                                     status=status.HTTP_400_BAD_REQUEST)
+
                             elif type == 1 and portfolio.count < order.amount and portfolio.count != 0 and not portfolio.is_debt:
                                 if setting.data['is_active']:
                                     if (order.amount - portfolio.count) * order.price <= 100000 and portfolio.short_balance <= 0:
@@ -280,7 +272,6 @@ class HandlingFunctions:
                                         portfolio.is_debt = True
                                         portfolio.count = portfolio.count - order.amount
                                         portfolio.short_balance -= portfolio.count * stock.price
-
                                     else:
                                         # обработать ошибку нельзя торговать шорт при захождении заграницу
                                         return Response({"detail": "incorrect data"},
@@ -331,6 +322,7 @@ class HandlingFunctions:
                         portfolio.aver_price = ((sred * (sred - order.amount)
                                                  + abs(order.amount) * order.price) / max(abs(sred), 1) * bool(
                             sred))
+                        portfolio.save()
                     else:
 
                         if stock.price >= order.price:
@@ -436,7 +428,7 @@ class HandlingFunctions:
                         portfolio.aver_price = ((sred * (sred - order.amount)
                                                  + abs(order.amount) * order.price) / max(abs(sred), 1) * bool(
                             sred))
-
+                        portfolio.save()
 
 
     @staticmethod

@@ -134,7 +134,7 @@ class AddOrderView(APIView):
                             return Response({"detail": "incorrect data"}, status=status.HTTP_400_BAD_REQUEST)
                     elif type == 1 and portfolio.count < order.amount and portfolio.count != 0 and not portfolio.is_debt:
                         if setting.data['is_active']:
-                            if (order.amount - portfolio.count) * order.price <= 100000 and and portfolio.short_balance <= 0:
+                            if (order.amount - portfolio.count) * order.price <= 100000 and portfolio.short_balance <= 0:
                                 user.balance += portfolio.count * stock.price # цена на данный момент
                                 portfolio.is_debt = True
                                 portfolio.count = portfolio.count - order.amount
@@ -179,11 +179,11 @@ class AddOrderView(APIView):
                     order.save()
                     portfolio.save()
 
-
                 self.margin_call(user)
                 sred = portfolio.count
                 portfolio.aver_price = ((sred * (sred - order.amount)
                                         + abs(order.amount) * order.price) / max(abs(sred), 1) * bool(sred))
+                portfolio.save()
 
         return Response("/api/v1/orders/")
 

@@ -313,9 +313,8 @@ class HandlingFunctions:
 
         HandlingFunctions.margin_call(user)
         sred = portfolio.count
-        portfolio.aver_price = ((sred * (sred - order.amount)
-                                 + abs(order.amount) * order.price) / max(abs(sred), 1) * bool(
-            sred))
+        portfolio.aver_price = ((portfolio.aver_price * (sred - order.amount)
+                                 + abs(order.amount) * order.price) / max(abs(sred), 1) * bool(sred))
         portfolio.save()
 
     @staticmethod

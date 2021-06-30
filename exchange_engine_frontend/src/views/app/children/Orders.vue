@@ -94,7 +94,7 @@
         v-if="!purchaseOrders.length"
         class="ml-15"
       >
-        У вас пока нет заявок на продажу
+        У вас пока нет заявок на покупку
       </h5>
 
       <v-divider/>

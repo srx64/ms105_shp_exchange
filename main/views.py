@@ -155,19 +155,21 @@ class AddOrderView(APIView):
                             return Response({"detail": "incorrect data"}, status=status.HTTP_400_BAD_REQUEST)
 
                     elif type == 0 and portfolio.is_debt and portfolio.count < -order.amount:
-                        user.balance += (100000 - portfolio.short_balance) - order.amount * stock.price
+                        user.balance += (100000 - abs(portfolio.short_balance)) - order.amount * stock.price
                         portfolio.count += order.amount
 
                     elif type == 0 and portfolio.is_debt and portfolio.count == -order.amount:
-                        user.balance += (100000 - portfolio.short_balance) - order.amount * stock.price
+                        user.balance += (100000 - abs(portfolio.short_balance)) - order.amount * stock.price
                         portfolio.count = 0
                         portfolio.is_debt = False
+                        portfolio.short_balance = -100000
 
                     elif type == 0 and portfolio.is_debt and portfolio.count > -order.amount:
                         if order.amount + portfolio.count * order.price < user.balance:
-                            user.balance += (100000 - portfolio.short_balance) - portfolio.count * stock.price
-                            portfolio.count = order.amount + portfolio.count
+                            user.balance += (100000 - abs(portfolio.short_balance)) - abs(portfolio.count) * stock.price
+                            portfolio.count += order.amount
                             portfolio.is_debt = False
+                            portfolio.short_balance = -100000
                             user.balance -= portfolio.count * order.price
                         else:
                             # обработать ошибку не хватки денег

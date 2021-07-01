@@ -337,6 +337,45 @@ class HandlingFunctions:
         return None
 
     @staticmethod
+    def check_different_types():
+        default = 0
+        table = 0
+        formula = 0
+        if Settings.objects.filter(name='algo_quotes'):
+            settings = Settings.objects.filter(name='algo_quotes')
+            for setting in settings:
+                s_type = setting.data['generation_type']
+                if s_type is not None:
+                    if s_type == 'default':
+                        default += 1
+                    elif s_type == 'table':
+                        table += 1
+                    elif s_type == 'formula':
+                        formula += 1
+            if (default >= 1 and table >= 1 or formula >= 1) or table >= 1 and default >= 1 or formula >= 1:
+                print('Все путем')
+                return True
+            else:
+                print('Все путем, но немного другим')
+                return False
+
+    @staticmethod
+    def get_generation_type(stock_id):
+        if Settings.objects.filter(stock_id=-1, name='algo_quotes'):
+            setting = Settings.objects.filter(stock_id=-1, name='algo_quotes').last()
+            if setting.data['generation_type'] == 'default':
+                return None
+            else:
+                return setting.data['generation_type']
+        elif Settings.objects.filter(stock_id=stock_id, name='algo_quotes'):
+            setting = Settings.objects.filter(stock_id=stock_id, name='algo_quotes').last()
+            if setting.data['generation_type'] == 'default':
+                return None
+            else:
+                return setting.data['generation_type']
+        return None
+
+    @staticmethod
     def get_timer(stock_id):
         setting = None
         if Settings.objects.filter(stock_id=-1, name='frequency_generating_quotes'):
@@ -373,10 +412,10 @@ class HandlingFunctions:
 
     @staticmethod
     def generate_orders(user, stock, price, AMOUNT, line=-1):
-        Order.objects.create(user=user, stock=stock, type=True, price=price, amount=AMOUNT, is_closed=True)
-        Order.objects.create(user=user, stock=stock, type=False, price=price, amount=AMOUNT, is_closed=True)
-        Order.objects.create(user=user, stock=stock, type=True, price=price, amount=AMOUNT * 10, is_closed=False)
-        Order.objects.create(user=user, stock=stock, type=False, price=price, amount=AMOUNT * 10, is_closed=False)
+        # Order.objects.create(user=user, stock=stock, type=True, price=price, amount=AMOUNT, is_closed=True)
+        # Order.objects.create(user=user, stock=stock, type=False, price=price, amount=AMOUNT, is_closed=True)
+        # Order.objects.create(user=user, stock=stock, type=True, price=price, amount=AMOUNT * 10, is_closed=False)
+        # Order.objects.create(user=user, stock=stock, type=False, price=price, amount=AMOUNT * 10, is_closed=False)
         Quotes.objects.create(stock=stock, price=price, line=line)
         stock.price = price
         stock.save()
@@ -384,6 +423,7 @@ class HandlingFunctions:
         portfolio.count = 100000
         portfolio.save()
         HandlingFunctions.limit_order_update()
+        print(datetime.now().minute, ':', datetime.now().second, 'created quote for ', stock.name)
 
     @staticmethod
     def check_price(_price, stock_id):
@@ -526,6 +566,7 @@ class MainCycle:
                                             info[2] = Figures.set_figures(info[1], tendency)
                                             NEED_RESTART = False
                                             HandlingFunctions.generate_orders(user, stock, price, AMOUNT, t)
+                                print('Formula moment')
                                 pack.append(figures)
                                 pack.append(duration)
                                 info[2] = pack
@@ -545,7 +586,9 @@ def price_bot():
         settings_interruption = 0
         timer = 30
         is_exist = False
-        for i in range(min_file_length - 1):
+        gen_type = None
+        i = 0
+        while i in range(min_file_length - 1) or gen_type == 'table':
             if not is_frozen:
                 if settings_interruption == 0:
                     for file in files:
@@ -560,17 +603,24 @@ def price_bot():
                         last_price = HandlingFunctions.get_last_price(stock)
                         timer = HandlingFunctions.get_timer(stock.pk)
                         is_frozen = HandlingFunctions.get_pause(stock.pk)
+                        gen_type = HandlingFunctions.get_generation_type(stock.pk)
+                        HandlingFunctions.check_different_types()
                         if Quotes.objects.filter(price=price, stock=stock, line=i):
                             is_exist = True
-                        if not Tendencies.settings_check(stock, user, AMOUNT, last_price, timer) and not is_exist:
+                        if not Tendencies.settings_check(stock, user, AMOUNT, last_price, timer) and not is_exist \
+                            or gen_type == 'table':
+                            print('Table moment')
                             HandlingFunctions.generate_orders(user, stock, price, AMOUNT, i)
                         else:
                             settings_interruption = 1
-                    if not is_exist:
+                    if not is_exist or gen_type == 'table':
                         time.sleep(timer)
                 else:
+                    print('Я упал')
                     break
-        MainCycle.begin(AMOUNT, user)
+            i += 1
+        if gen_type != 'table':
+            MainCycle.begin(AMOUNT, user)
 
     except KeyboardInterrupt:
         logging.info('Бот остановлен пользователем')

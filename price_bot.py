@@ -18,7 +18,8 @@ from main.models import Stocks, Order, User, Quotes, Portfolio, Settings, Levera
 
 NEED_RESTART = False
 START_FORMULAS = False
-SAVE = 649
+SAVE = 0
+IS_BROKEN = False
 
 
 class CrisisFigureOne:
@@ -592,7 +593,7 @@ class TableCycle:
                             if HandlingFunctions.get_stock_generation_type(stock.pk) == 'table' and cur <= limit and duration > 0:
                                 HandlingFunctions.generate_orders(user, stock, price, AMOUNT, t)
                                 info = data[stock.pk - 1]
-                                
+
                                 cur = info[1]
                                 duration = info[3]
                                 duration -= 1
@@ -678,9 +679,12 @@ class MainCycle:
                                 pack.append(figures)
                                 pack.append(duration)
                                 info[2] = pack
+
             if data[0][2] != [] and f_generated != 0:
                 time.sleep(t)
                 if different_types or not different_types and f_generated >= f_required:
+                    global IS_BROKEN
+                    IS_BROKEN = True
                     break
 
 
@@ -750,6 +754,9 @@ def price_bot():
                     TableCycle.begin(AMOUNT, user)
                 elif HandlingFunctions.get_stock_generation_type(stock.pk) != 'table' or different_types or gen_type != 'table':
                     MainCycle.begin(AMOUNT, user, t_stocks)
+                    global IS_BROKEN
+                    if IS_BROKEN:
+                        break
 
 
     except KeyboardInterrupt:

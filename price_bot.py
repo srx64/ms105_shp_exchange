@@ -17,6 +17,8 @@ django.setup()
 from main.models import Stocks, Order, User, Quotes, Portfolio, Settings, LeverageData
 
 NEED_RESTART = False
+START_FORMULAS = False
+SAVE = 0
 
 
 class CrisisFigureOne:
@@ -327,6 +329,14 @@ class HandlingFunctions:
                             HandlingFunctions.limit_order_counting(order)
 
     @staticmethod
+    def check_for_default():
+        if Settings.objects.filter( name='algo_quotes'):
+            for setting in Settings.objects.filter( name='algo_quotes'):
+                if setting.data['generation_type'] is not None and setting.data['generation_type'] == 'default':
+                    return True
+        return False
+
+    @staticmethod
     def get_settings(stock_id):
         if Settings.objects.filter(stock_id=-1, name='algo_quotes'):
             setting = Settings.objects.filter(stock_id=-1, name='algo_quotes').last()
@@ -334,6 +344,24 @@ class HandlingFunctions:
         elif Settings.objects.filter(stock_id=stock_id, name='algo_quotes'):
             setting = Settings.objects.filter(stock_id=stock_id, name='algo_quotes').last()
             return setting
+        return None
+
+    @staticmethod
+    def get_stock_generation_type(stock_id):
+        if Settings.objects.filter(stock_id=-1, name='algo_quotes'):
+            setting = Settings.objects.filter(stock_id=-1, name='algo_quotes').last()
+            if setting.data['generation_type'] is not None:
+                if not HandlingFunctions.check_for_default():
+                    return setting.data['generation_type']
+                else:
+                    return 'default'
+        elif Settings.objects.filter(stock_id=stock_id, name='algo_quotes'):
+            setting = Settings.objects.filter(stock_id=stock_id, name='algo_quotes').last()
+            if setting.data['generation_type'] is not None:
+                if not HandlingFunctions.check_for_default():
+                    return setting.data['generation_type']
+                else:
+                    return 'default'
         return None
 
     @staticmethod
@@ -352,25 +380,41 @@ class HandlingFunctions:
                         table += 1
                     elif s_type == 'formula':
                         formula += 1
-            if (default >= 1 and table >= 1 or formula >= 1) or table >= 1 and default >= 1 or formula >= 1:
-                print('Все путем')
+            if HandlingFunctions.check_for_default():
+                return False
+            elif (default >= 1 and table >= 1 or formula >= 1) or table >= 1 and default >= 1 or formula >= 1:
+                # print('Все путем')
                 return True
             else:
-                print('Все путем, но немного другим')
+                # print('Все путем, но немного другим')
                 return False
+
+    @staticmethod
+    def get_table_generations(i, min_len):
+        count = 0
+        if Settings.objects.filter(name='algo_quotes'):
+            settings = Settings.objects.filter(name='algo_quotes')
+            for setting in settings:
+                s_type = setting.data['generation_type']
+                if s_type is not None:
+                    if s_type == 'table':
+                        count += 1
+                    elif s_type == 'default' and i <= min_len:
+                        count += 1
+        return count
 
     @staticmethod
     def get_generation_type(stock_id):
         if Settings.objects.filter(stock_id=-1, name='algo_quotes'):
             setting = Settings.objects.filter(stock_id=-1, name='algo_quotes').last()
             if setting.data['generation_type'] == 'default':
-                return None
+                return 'default'
             else:
                 return setting.data['generation_type']
         elif Settings.objects.filter(stock_id=stock_id, name='algo_quotes'):
             setting = Settings.objects.filter(stock_id=stock_id, name='algo_quotes').last()
             if setting.data['generation_type'] == 'default':
-                return None
+                return 'default'
             else:
                 return setting.data['generation_type']
         return None
@@ -423,7 +467,7 @@ class HandlingFunctions:
         portfolio.count = 100000
         portfolio.save()
         HandlingFunctions.limit_order_update()
-        print(datetime.now().minute, ':', datetime.now().second, 'created quote for ', stock.name)
+        print(datetime.now().minute, ':', datetime.now().second, 'created quote for ', stock.name, 'with price', price)
 
     @staticmethod
     def check_price(_price, stock_id):
@@ -507,7 +551,7 @@ class Tendencies:
 
 class MainCycle:
     @staticmethod
-    def begin(am, us):
+    def begin(am, us, t_stocks):
         global NEED_RESTART
         is_frozen = False
         user = us
@@ -515,7 +559,11 @@ class MainCycle:
         t = 30
         stocks = Stocks.objects.all()
         data = [['none', 0, []] for _ in range(len(Stocks.objects.all()))]
+        f_generated = 0
+        f_required = len(Stocks.objects.all()) - len(t_stocks)
         while True:
+            print('Entered formulas')
+            different_types = HandlingFunctions.check_different_types()
             for stock in stocks:
                 info = data[stock.pk - 1]
                 tendency = info[0]
@@ -523,8 +571,10 @@ class MainCycle:
                 last_price = HandlingFunctions.get_last_price(stock)
                 t = HandlingFunctions.get_timer(stock.pk)
                 is_frozen = HandlingFunctions.get_pause(stock.pk)
+                # print('Formulas 1')
                 if not is_frozen:
                     if not Tendencies.settings_check(stock, user, AMOUNT, last_price, t):
+                        # print('Formula settings')
                         if duration == 0:
                             info = Tendencies.choose_tendency()
                             data[stock.pk - 1] = info
@@ -540,87 +590,122 @@ class MainCycle:
                                     info[1] = 0
                                 else:
                                     duration[index] -= 1
-                                    if HandlingFunctions.get_settings(stock.pk) is not None and \
-                                        HandlingFunctions.get_settings(stock.pk).data['coefficient'] is not None:
-                                        coef = HandlingFunctions.get_settings(stock.pk).data['coefficient']
-                                        price = figures[index].generate(last_price, stock.id) * coef
-                                        if not NEED_RESTART:
-                                            HandlingFunctions.generate_orders(user, stock, price, AMOUNT, t)
-                                        else:
-                                            f_tendency = info[0]
-                                            info = Tendencies.choose_tendency()
-                                            data[stock.pk - 1] = info
-                                            info[0] = Tendencies.opposite_tendency(f_tendency)
-                                            info[2] = Figures.set_figures(info[1], tendency)
-                                            NEED_RESTART = False
-                                            HandlingFunctions.generate_orders(user, stock, price, AMOUNT, t)
-                                    else:
-                                        price = figures[index].generate(last_price, stock.id)
-                                        if not NEED_RESTART:
-                                            HandlingFunctions.generate_orders(user, stock, price, AMOUNT, t)
-                                        else:
-                                            f_tendency = info[0]
-                                            info = Tendencies.choose_tendency()
-                                            data[stock.pk - 1] = info
-                                            info[0] = Tendencies.opposite_tendency(f_tendency)
-                                            info[2] = Figures.set_figures(info[1], tendency)
-                                            NEED_RESTART = False
-                                            HandlingFunctions.generate_orders(user, stock, price, AMOUNT, t)
+                                    # print('Formulas 2')
+                                    if HandlingFunctions.get_stock_generation_type(stock.pk) != 'table' or START_FORMULAS and HandlingFunctions.get_stock_generation_type(stock.pk) != 'table':
+                                        if stock not in t_stocks or t_stocks == []:
+                                            if HandlingFunctions.get_settings(stock.pk) is not None and \
+                                                HandlingFunctions.get_settings(stock.pk).data['coefficient'] is not None:
+                                                coef = HandlingFunctions.get_settings(stock.pk).data['coefficient']
+                                                price = figures[index].generate(last_price, stock.id) * coef
+                                                if not NEED_RESTART:
+                                                    HandlingFunctions.generate_orders(user, stock, price, AMOUNT, t)
+                                                    f_generated += 1
+                                                else:
+                                                    f_tendency = info[0]
+                                                    info = Tendencies.choose_tendency()
+                                                    data[stock.pk - 1] = info
+                                                    info[0] = Tendencies.opposite_tendency(f_tendency)
+                                                    info[2] = Figures.set_figures(info[1], tendency)
+                                                    NEED_RESTART = False
+                                                    HandlingFunctions.generate_orders(user, stock, price, AMOUNT, t)
+                                                    f_generated += 1
+                                            else:
+                                                # print('Formulas 3')
+                                                price = figures[index].generate(last_price, stock.id)
+                                                if not NEED_RESTART:
+                                                    f_generated += 1
+                                                    HandlingFunctions.generate_orders(user, stock, price, AMOUNT, t)
+                                                else:
+                                                    f_tendency = info[0]
+                                                    info = Tendencies.choose_tendency()
+                                                    data[stock.pk - 1] = info
+                                                    info[0] = Tendencies.opposite_tendency(f_tendency)
+                                                    info[2] = Figures.set_figures(info[1], tendency)
+                                                    NEED_RESTART = False
+                                                    HandlingFunctions.generate_orders(user, stock, price, AMOUNT, t)
+                                                    f_generated += 1
+
                                 print('Formula moment')
                                 pack.append(figures)
                                 pack.append(duration)
                                 info[2] = pack
-            if data[0][2] != []:
+            print(f_generated)
+            if data[0][2] != [] and f_generated != 0:
                 time.sleep(t)
+                if different_types or not different_types and f_generated >= f_required:
+                    print('Я грохнулся')
+                    break
 
 
 def price_bot():
     logging.basicConfig(format='', level=logging.INFO)
     try:
-        logging.info('Бот начал работу')
-        files = next(os.walk('data/'))[2]
-        min_file_length = min([len(open(f'data/{file}', 'r').readlines()) for file in files])
-        user = User.objects.get(username='admin')
-        AMOUNT = 10000
-        is_frozen = False
-        settings_interruption = 0
-        timer = 30
-        is_exist = False
-        gen_type = None
-        i = 0
-        while i in range(min_file_length - 1) or gen_type == 'table':
-            if not is_frozen:
-                if settings_interruption == 0:
-                    for file in files:
-                        df = pandas.read_csv(f'data/{file}', nrows=1, skiprows=i, sep=';')
-                        name = df.iloc[0][0]
-                        if name[len(name) - 3:] != '-RM':
-                            name = name.split('.')[1].split(':')[0]
-                        else:
-                            name = name[:-3]
-                        stock = Stocks.objects.get(name=name)
-                        price = df.iloc[:, [7]][df.iloc[:, [7]].columns[0]][0]
-                        last_price = HandlingFunctions.get_last_price(stock)
-                        timer = HandlingFunctions.get_timer(stock.pk)
-                        is_frozen = HandlingFunctions.get_pause(stock.pk)
-                        gen_type = HandlingFunctions.get_generation_type(stock.pk)
-                        HandlingFunctions.check_different_types()
-                        if Quotes.objects.filter(price=price, stock=stock, line=i):
-                            is_exist = True
-                        if not Tendencies.settings_check(stock, user, AMOUNT, last_price, timer) and not is_exist \
-                            or gen_type == 'table':
-                            print('Table moment')
-                            HandlingFunctions.generate_orders(user, stock, price, AMOUNT, i)
-                        else:
-                            settings_interruption = 1
-                    if not is_exist or gen_type == 'table':
-                        time.sleep(timer)
-                else:
-                    print('Я упал')
-                    break
-            i += 1
-        if gen_type != 'table':
-            MainCycle.begin(AMOUNT, user)
+        while True:
+            logging.info('Бот начал работу')
+            global SAVE
+            global START_FORMULAS
+            files = next(os.walk('data/'))[2]
+            min_file_length = min([len(open(f'data/{file}', 'r').readlines()) for file in files])
+            user = User.objects.get(username='admin')
+            AMOUNT = 10000
+            is_frozen = False
+            settings_interruption = 0
+            timer = 30
+            is_exist = False
+            gen_type = None
+            # i = 0
+            t_generated = 0
+            t_required = 0
+            t_stocks = []
+            different_types = HandlingFunctions.check_different_types()
+            while SAVE in range(min_file_length - 1) or gen_type == 'table' and not different_types:
+                print(SAVE, '----')
+                if not is_frozen:
+                    if settings_interruption == 0:
+                        for file in files:
+                            df = pandas.read_csv(f'data/{file}', nrows=1, skiprows=SAVE, sep=';')
+                            name = df.iloc[0][0]
+                            if name[len(name) - 3:] != '-RM':
+                                name = name.split('.')[1].split(':')[0]
+                            else:
+                                name = name[:-3]
+                            stock = Stocks.objects.get(name=name)
+                            print(stock)
+                            price = df.iloc[:, [7]][df.iloc[:, [7]].columns[0]][0]
+                            last_price = HandlingFunctions.get_last_price(stock)
+                            timer = HandlingFunctions.get_timer(stock.pk)
+                            is_frozen = HandlingFunctions.get_pause(stock.pk)
+                            gen_type = HandlingFunctions.get_generation_type(stock.pk)
+                            different_types = HandlingFunctions.check_different_types()
+                            t_required = HandlingFunctions.get_table_generations(SAVE, min_file_length)
+                            if Quotes.objects.filter(price=price, stock=stock, line=SAVE):
+                                is_exist = True
+                            if not Tendencies.settings_check(stock, user, AMOUNT, last_price, timer) and not is_exist \
+                                or gen_type == 'table' or not START_FORMULAS and gen_type == 'default':
+                                print('Table moment', t_generated, t_required)
+                                HandlingFunctions.generate_orders(user, stock, price, AMOUNT, SAVE)
+                                if stock not in t_stocks:
+                                    t_stocks.append(stock)
+                                t_generated += 1
+                            elif gen_type != 'default':
+                                settings_interruption = 1
+                        if not is_exist or gen_type == 'table' and not different_types:
+                            time.sleep(timer)
+                    if not different_types or t_generated >= t_required or settings_interruption != 0:
+
+                        t_generated = 0
+                        # i += 1
+                        SAVE += 1
+                        if SAVE >= min_file_length:
+                            t_stocks = []
+                            START_FORMULAS = True
+                        print('Я упал')
+                        break
+                    else:
+                        # i += 1
+                        SAVE += 1
+            if gen_type != 'table' or different_types:
+                MainCycle.begin(AMOUNT, user, t_stocks)
 
     except KeyboardInterrupt:
         logging.info('Бот остановлен пользователем')

@@ -18,7 +18,7 @@ from main.models import Stocks, Order, User, Quotes, Portfolio, Settings, Levera
 
 NEED_RESTART = False
 START_FORMULAS = False
-SAVE = 649
+SAVE = 0
 IS_BROKEN = False
 
 
@@ -713,7 +713,6 @@ def price_bot():
             timer = 30
             is_exist = False
             gen_type = None
-            # i = 0
             t_generated = 0
             t_required = 0
             t_stocks = []
@@ -751,21 +750,20 @@ def price_bot():
                     if not different_types or t_generated >= t_required or settings_interruption != 0:
                         t_generated = 0
                         SAVE += 1
-                        if SAVE >= min_file_length:
+                        if SAVE + 1 >= min_file_length:
                             t_stocks = []
                             START_FORMULAS = True
                         break
                     else:
                         SAVE += 1
             for stock in Stocks.objects.all():
-                if HandlingFunctions.get_stock_generation_type(stock.pk) == 'table' or gen_type == 'table':
+                if (HandlingFunctions.get_stock_generation_type(stock.pk) == 'table' or gen_type == 'table') and START_FORMULAS:
                     TableCycle.begin(AMOUNT, user)
                 elif HandlingFunctions.get_stock_generation_type(stock.pk) != 'table' or different_types or gen_type != 'table':
                     MainCycle.begin(AMOUNT, user, t_stocks)
                     global IS_BROKEN
                     if IS_BROKEN:
                         break
-
 
     except KeyboardInterrupt:
         logging.info('Бот остановлен пользователем')

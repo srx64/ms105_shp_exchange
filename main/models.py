@@ -141,6 +141,7 @@ class Order(models.Model):
     count = models.IntegerField(default=1, null=True, blank=True)
     is_closed = models.BooleanField(default=False)
     date_closed = models.DateTimeField(default=None, null=True)
+    is_limit = models.BooleanField(default=False)
 
     def __str__(self) -> str:
         return f"{self.user} -> {self.stock} ({'BUY' if self.type else 'SELL'}). Price: {self.price:.2f}, execution: {self.count} / {self.amount}"

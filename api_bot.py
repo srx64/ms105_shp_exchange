@@ -39,7 +39,7 @@ def create_order(host, headers):
 
 def list_orders(host, headers):
     """
-    Список всех ордеров
+    Список всех ордеров пользователя
     """
     # смотрим список всех ордеров, убеждаясь, что ордер создан
     orders_list_url = f'{host}/api/v1/orders/'
@@ -64,12 +64,20 @@ def list_candles(host, headers):
 
 
 def list_stocks(host):
+    """
+    Список всех акций
+    """
     orders_list_url = f'{host}/api/v1/stocks/'
     response = requests.get(orders_list_url)
     return response.json()
 
 
 def readable_orders_print(orders, style):
+    """
+    Удобная отрисовка списка ордеров пользователя
+
+    `table` - если вы хотите вывести ордера в виде таблицы, `default` - если вы хотите их вывести в стандартном формате.
+    """
     if style == 'table':
         print('---ID----NAME----COUNT---PRICE--------TYPE--------STATE----USER_ID----DESCRIPTION')
         for order in orders:

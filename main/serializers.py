@@ -92,3 +92,11 @@ class PriceSerializer(serializers.ModelSerializer):
     class Meta:
         model = Quotes
         fields = '__all__'
+
+
+class StatisticsBalanceSerializer(serializers.ModelSerializer):
+    """ Детальная информация о пользователе"""
+
+    class Meta:
+        model = User
+        fields = ('username', 'first_name', 'last_name', 'balance')

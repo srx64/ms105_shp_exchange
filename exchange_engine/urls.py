@@ -29,7 +29,7 @@ from django.views.generic import TemplateView
 
 from main.views import StocksListView, StockDetailView, StatisticsView, OrdersView, PortfolioUserView, \
     ProfileDetailView, PricesView, registration_view, CandlesView, SettingsView, CryptocurrenciesView, \
-    ProfileAnotherView
+    ProfileAnotherView, StatisticsBalanceView
 
 from django.conf import settings
 from django.conf.urls.static import static
@@ -54,6 +54,7 @@ urlpatterns = [
     path('', TemplateView.as_view(template_name='index.html')),
     path('api-token/', TokenObtainPairView.as_view(), name='api_token'),
     path('api-token-refresh/', TokenRefreshView.as_view()),
+    path('api/v1/balance_statistics/', StatisticsBalanceView.as_view(), name='balance_statistics'),
     path('api/v1/stocks/', StocksListView.as_view(), name='stocks'),
     path('api/v1/stocks/<int:pk>/', StockDetailView.as_view(), name='stock'),
     path('api/v1/candles/<int:pk>/<int:c_type>', CandlesView.as_view(), name='candles'),

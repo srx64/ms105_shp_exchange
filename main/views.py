@@ -679,6 +679,11 @@ class StatisticsBalanceView(APIView):
     permission_classes = (IsAuthenticated,)
 
     def get(self, request):
+        """
+        Таблица результатов по балансу
+
+        На вход принимается только токен пользователя. На данной странице вы можете видеть топ людей по балансу.
+        """
         users = User.objects.filter(is_staff=False).order_by('-balance')
         serializer = serializers.StatisticsBalanceSerializer(users, many=True)
         return Response(serializer.data)

@@ -18,7 +18,7 @@ from main.models import Stocks, Order, User, Quotes, Portfolio, Settings, Levera
 
 NEED_RESTART = False
 START_FORMULAS = False
-SAVE = 0
+SAVE = 649
 IS_BROKEN = False
 
 
@@ -546,6 +546,7 @@ class Tendencies:
             tendency = 'raising'
         return tendency
 
+
 class TableCycle:
     @staticmethod
     def begin(am, us):
@@ -580,9 +581,9 @@ class TableCycle:
                         for file in files:
                             df = pandas.read_csv(f'data/{file}', nrows=1, skiprows=start, sep=';')
                             name = df.iloc[0][0]
-                            if name[len(name) - 3:] != '-RM':
+                            if name[:4] == 'MOEX':
                                 name = name.split('.')[1].split(':')[0]
-                            else:
+                            elif name[len(name) - 3:] == '-RM':
                                 name = name[:-3]
                             stock = Stocks.objects.get(name=name)
                             info = data[stock.pk - 1]
@@ -593,16 +594,24 @@ class TableCycle:
                             if HandlingFunctions.get_stock_generation_type(stock.pk) == 'table' and cur <= limit and duration > 0:
                                 HandlingFunctions.generate_orders(user, stock, price, AMOUNT, t)
                                 info = data[stock.pk - 1]
-
                                 cur = info[1]
                                 duration = info[3]
                                 duration -= 1
                                 cur += 1
                                 info[1] = cur
                                 info[3] = duration
-
+                        for i in data:
+                            if i[3] == 0:
+                                info = i
+                                duration = randint(randint(5, 10), randint(10, 15))
+                                start = randint(0, min_file_length - duration)
+                                cur = start
+                                limit = cur + duration
+                                info[0] = start
+                                info[1] = cur
+                                info[2] = limit
+                                info[3] = duration
                         time.sleep(t)
-
 
 
 class MainCycle:
@@ -691,8 +700,8 @@ class MainCycle:
 def price_bot():
     logging.basicConfig(format='', level=logging.INFO)
     try:
+        logging.info('Бот начал работу')
         while True:
-            logging.info('Бот начал работу')
             global SAVE
             global START_FORMULAS
             files = next(os.walk('data/'))[2]
@@ -715,9 +724,9 @@ def price_bot():
                         for file in files:
                             df = pandas.read_csv(f'data/{file}', nrows=1, skiprows=SAVE, sep=';')
                             name = df.iloc[0][0]
-                            if name[len(name) - 3:] != '-RM':
+                            if name[:4] == 'MOEX':
                                 name = name.split('.')[1].split(':')[0]
-                            else:
+                            elif name[len(name) - 3:] == '-RM':
                                 name = name[:-3]
                             stock = Stocks.objects.get(name=name)
                             price = df.iloc[:, [7]][df.iloc[:, [7]].columns[0]][0]
@@ -740,7 +749,6 @@ def price_bot():
                         if not is_exist or gen_type == 'table' and not different_types:
                             time.sleep(timer)
                     if not different_types or t_generated >= t_required or settings_interruption != 0:
-
                         t_generated = 0
                         SAVE += 1
                         if SAVE >= min_file_length:

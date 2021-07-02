@@ -550,6 +550,7 @@ class Tendencies:
 class TableCycle:
     @staticmethod
     def begin(am, us):
+        logging.basicConfig(format='', level=logging.INFO)
         is_frozen = False
         user = us
         t = 30
@@ -593,6 +594,7 @@ class TableCycle:
                             duration = info[3]
                             if HandlingFunctions.get_stock_generation_type(stock.pk) == 'table' and cur <= limit and duration > 0:
                                 HandlingFunctions.generate_orders(user, stock, price, AMOUNT, t)
+                                logging.info('Добавлена новая котировка по таблице')
                                 info = data[stock.pk - 1]
                                 cur = info[1]
                                 duration = info[3]
@@ -617,6 +619,7 @@ class TableCycle:
 class MainCycle:
     @staticmethod
     def begin(am, us, t_stocks):
+        logging.basicConfig(format='', level=logging.INFO)
         global NEED_RESTART
         is_frozen = False
         user = us
@@ -684,6 +687,7 @@ class MainCycle:
                                                     NEED_RESTART = False
                                                     HandlingFunctions.generate_orders(user, stock, price, AMOUNT, t)
                                                     f_generated += 1
+                                            logging.info('Добавлена новая котировка по формуле')
 
                                 pack.append(figures)
                                 pack.append(duration)
@@ -740,6 +744,7 @@ def price_bot():
                             if not Tendencies.settings_check(stock, user, AMOUNT, last_price, timer) and not is_exist \
                                 or gen_type == 'table' or not START_FORMULAS and gen_type == 'default':
                                 HandlingFunctions.generate_orders(user, stock, price, AMOUNT, SAVE)
+                                logging.info('Добавлена новая котировка по таблице')
                                 if stock not in t_stocks:
                                     t_stocks.append(stock)
                                 t_generated += 1

@@ -94,7 +94,6 @@ class AddOrderView(APIView):
         )
     )
     @action(detail=True, methods=['post'])
-
     def post(self, request):
         """
         Создание ордера и обработка данных при POST запросе
@@ -673,4 +672,13 @@ class PricesView(APIView):
         """
         prices = Quotes.objects.all()
         serializer = serializers.PriceSerializer(prices, many=True)
+        return Response(serializer.data)
+
+
+class StatisticsBalanceView(APIView):
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request):
+        users = User.objects.filter(is_staff=False).order_by('-balance')
+        serializer = serializers.StatisticsBalanceSerializer(users, many=True)
         return Response(serializer.data)

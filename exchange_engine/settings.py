@@ -21,13 +21,18 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'v1i_fb$_jf2#1v_lcsbu&eon4u-os0^px=s^iycegdycqy&5)6'
-
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = bool(os.environ.get('EXCHANGE_DEBUG', True))
 
-ALLOWED_HOSTS = []
+if DEBUG:
+    SECRET_KEY = 'v1i_fb$_jf2#1v_lcsbu&eon4u-os0^px=s^iycegdycqy&5)6'
+    ALLOWED_HOSTS = []
+else:
+    SECRET_KEY = os.environ.get('EXCHANGE_SECRET_KEY', 'define me')
+    ALLOWED_HOSTS = [
+        '127.0.0.1',
+        'shp-exchange.tk'
+    ]
 
 
 # Application definition
@@ -66,7 +71,6 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
-            # 'main/templates',
             BASE_DIR.joinpath('templates')
         ],
         'APP_DIRS': True,
@@ -93,11 +97,11 @@ if not TESTING:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql',
-            'NAME': 'exchange',
-            'USER': 'shp',
-            'PASSWORD': 'promprog',
-            'HOST': '127.0.0.1',
-            'PORT': '5432',
+            'NAME': os.environ.get('EXCHANGE_DATABASE_NAME', 'exchange'),
+            'USER': os.environ.get('EXCHANGE_DATABASE_USER', 'shp'),
+            'PASSWORD': os.environ.get('EXCHANGE_DATABASE_PASSWORD', 'promprog'),
+            'HOST': os.environ.get('EXCHANGE_DATABASE_HOST', '127.0.0.1'),
+            'PORT': os.environ.get('EXCHANGE_DATABASE_PORT', '5432'),
             'TEST': {
                 'ENGINE': 'django.db.backends.sqlite3',
                 'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
@@ -152,6 +156,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = 'staticroot'
 
 STATICFILES_DIRS = [
     BASE_DIR.joinpath('static')

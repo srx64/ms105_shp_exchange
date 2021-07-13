@@ -1,6 +1,6 @@
 # Engine
-Django==3.1.7
-Pillow==8.1.2
+Django>=3.1.12
+Pillow>=8.2.0
 beautifulsoup4==4.9.3
 requests==2.25.1
 

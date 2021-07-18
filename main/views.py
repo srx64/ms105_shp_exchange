@@ -623,6 +623,7 @@ class ProfileBalanceAdd(APIView):
     """
     Пополнение баланса пользователя
     """
+    permission_classes = (IsAuthenticated,)
 
     def get(self, request):
         """
@@ -651,8 +652,8 @@ class ProfileBalanceAdd(APIView):
                 user.save()
                 return render(request, 'profile/balance_add_successfully.html', context)
             except ValueError:
-                return render(request, 'profile/balance_add_failed.html')
-        return render(request, 'profile/balance_add_failed.html')
+                return Response({"detail": "incorrect data"}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({"detail": "incorrect data"}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class PricesView(APIView):

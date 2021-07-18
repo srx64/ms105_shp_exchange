@@ -152,7 +152,7 @@ class BalanceAddTest(TestCase):
 
     def test_letters(self) -> None:
         resp = self.client.post(self.url, data={'money': 'qwerty'})
-        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(resp.status_code, 400)
 
     def test_numbers(self) -> None:
         resp = self.client.post(self.url, data={'money': 111})
@@ -164,6 +164,18 @@ class BalanceAddTest(TestCase):
 
     def test_negative_numbers(self) -> None:
         resp = self.client.post(self.url, data={'money': -12})
+        self.assertEqual(resp.status_code, 200)
+
+    def test_nothing_string(self) -> None:
+        resp = self.client.post(self.url, data={'money': ''})
+        self.assertEqual(resp.status_code, 400)
+
+    def test_incorrect_numbers(self) -> None:
+        resp = self.client.post(self.url, data={'money': '1..2'})
+        self.assertEqual(resp.status_code, 400)
+
+    def test_string_numbers(self) -> None:
+        resp = self.client.post(self.url, data={'money': '1.2'})
         self.assertEqual(resp.status_code, 200)
 
 

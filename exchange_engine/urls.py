@@ -67,6 +67,7 @@ urlpatterns = [
     path('api/v1/cryptocurrencies/', CryptocurrenciesView.as_view(), name='cryptocurrencies'),
     path('api/v1/profile/', ProfileDetailView.as_view(), name='profile'),
     path('api/v1/profile/<int:pk>/', ProfileAnotherView.as_view(), name='another_profile'),
+    path('api/v1/profile/balance_add/', views.ProfileBalanceAdd.as_view(), name='balance_add'),
     path('orders/add', views.AddOrderView.as_view(), name='add_order'),
     path('api/v1/prices/', PricesView.as_view(), name='prices'),
     path('login/', auth_views.LoginView.as_view(), name='login'),
@@ -91,7 +92,6 @@ urlpatterns = [
     path('reset_password_complete/',
          auth_views.PasswordResetCompleteView.as_view(template_name='password/password_reset_complete.html'),
          name='password_reset_complete'),
-    path('profile/balance_add', login_required(views.ProfileBalanceAdd.as_view()), name='balance_add'),
 
     url(r'^swagger(?P<format>\.json|\.yaml)$', schema_view.without_ui(cache_timeout=0), name='schema-json'),
     url(r'^swagger/$', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),

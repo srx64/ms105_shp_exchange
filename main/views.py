@@ -1,7 +1,6 @@
 from datetime import datetime, timedelta
 
 import pytz
-from django.contrib.auth import get_user_model
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponseRedirect, HttpRequest
 from django.shortcuts import render

@@ -139,7 +139,7 @@ class AddOrderView(APIView):
                             portfolio.count += order.amount
                             user.balance -= order.amount * order.price
                         else:
-                            # обработать ошибку не хватки денег
+                            # обработать ошибку нехватки денег
                             return Response({"detail": "incorrect data"}, status=status.HTTP_400_BAD_REQUEST)
 
                     elif type == 1 and portfolio.count >= order.amount and not portfolio.is_debt:
@@ -156,7 +156,7 @@ class AddOrderView(APIView):
                                 # обработать ошибку: нельзя торговать шорт при переходе границы
                                 return Response({"detail": "incorrect data"}, status=status.HTTP_400_BAD_REQUEST)
                         else:
-                            # торговать в шорт не возможно
+                            # торговать в шорт невозможно
                             return Response({"detail": "incorrect data"}, status=status.HTTP_400_BAD_REQUEST)
                     elif type == 1 and portfolio.count < order.amount and portfolio.count != 0 and not portfolio.is_debt:
                         if setting.data['is_active']:
@@ -177,7 +177,7 @@ class AddOrderView(APIView):
                             portfolio.short_balance += order.amount * order.price
                             portfolio.count -= order.amount
                         else:
-                            # обработать ошибку нельзя торговать шорт при захождении заграницу
+                            # обработать ошибку нельзя торговать шорт при переходе границы
                             return Response({"detail": "incorrect data"}, status=status.HTTP_400_BAD_REQUEST)
 
                     elif type == 0 and portfolio.is_debt and portfolio.count < -order.amount:

@@ -178,6 +178,11 @@ class BalanceAddTest(TestCase):
         resp = self.client.post(self.url, data={'money': '1.2'})
         self.assertEqual(resp.status_code, 200)
 
+    def test_add(self) -> None:
+        self.client.post(self.url, data={'format': 'json', 'money': 1})
+        self.setUp()
+        self.assertAlmostEqual(self.user.balance, 90001)
+
 
 class OrderTest(APITestCase):
     fixtures = ['order_test_database.json']

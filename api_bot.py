@@ -82,7 +82,7 @@ def readable_orders_print(orders, style):
         print('---ID----NAME----COUNT---PRICE--------TYPE--------STATE----USER_ID----DESCRIPTION')
         for order in orders:
             print(f"   {order['stock']['id']}     {order['stock']['name']}      {order['count']}     "
-                  f"{format(order['price'], '.2f') if (10000 > int(order['price']) >= 1000)  else format(order['price'], '.3f') if int(order['price']) < 1000 else format(order['price'], '.1f') if int(order['price']) >= 10000 else format(order['price'], '.0f')}      "
+                  f"{format(order['price'], '.5f') if (10 > int(order['price'])) else format(order['price'], '.2f') if (10000 > int(order['price']) >= 1000) else format(order['price'], '.3f') if int(order['price']) < 1000 else format(order['price'], '.1f') if int(order['price']) >= 10000 else format(order['price'], '.0f')}      "
                   f"{'buying'.ljust(7) if not order['type'] else 'selling'}     "
                   f"{'closed' if order['is_closed'] else 'open'}     {order['user']}       {order['stock']['description']}")
         print('---ID----NAME----COUNT---PRICE--------TYPE--------STATE----USER_ID----DESCRIPTION')
@@ -98,7 +98,7 @@ def main():
     """
     Пример клиентского API бота для создания ордеров
     """
-    host = 'http://shp-exchange.tk'  # сюда надо ввести правильный адрес хоста
+    host = 'http://127.0.0.1:8000'  # сюда надо ввести правильный адрес хоста
 
     # авторизация
     access_token = login(host)

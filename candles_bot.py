@@ -49,7 +49,6 @@ def get_acceleration(stock_id):
         return 1
 
 
-
 def generate(prices: List[Quotes], prices_amount: int, stock: Stocks, timeframe_duration: int,
              timeframe_index: int, last_candle_data: List[int]) -> Optional[List[int]]:
     """

@@ -371,8 +371,27 @@ class ShortTest(APITestCase):
             'type': 1,
         })
         self.portfolio = Portfolio.objects.get(user=self.user.pk)
-        self.setUp()
         self.assertAlmostEqual(self.portfolio.short_balance, -99995)
+
+    def test_short_count(self) -> None:
+        self.client.post(self.url, data={
+            'stock': self.ticker,
+            'price': 0,
+            'amount': 1,
+            'type': 1,
+        })
+        self.portfolio = Portfolio.objects.get(user=self.user.pk)
+        self.assertAlmostEqual(self.portfolio.count, -1)
+
+    def test_short_balance_changes(self) -> None:
+        self.client.post(self.url, data={
+            'stock': self.ticker,
+            'price': 0,
+            'amount': 1,
+            'type': 1,
+        })
+        self.portfolio = Portfolio.objects.get(user=self.user.pk)
+        self.assertAlmostEqual(self.user.balance, 100000)
 
 
 class LeverageTradingTest(APITestCase):

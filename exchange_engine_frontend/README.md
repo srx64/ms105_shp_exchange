@@ -1,4 +1,4 @@
-# exchange_engine_frontend
+# SHP.EXchange
 
 ## Build Setup
 

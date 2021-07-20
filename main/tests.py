@@ -207,7 +207,7 @@ class OrderTest(APITestCase):
             'stock': 'OZON',
             'price': 2,
             'amount': 4,
-            'type': True,
+            'type': 1,
         })
         self.assertEqual(len(Order.objects.all()), 1)
 
@@ -219,7 +219,7 @@ class OrderTest(APITestCase):
             'stock': 'TWTR',
             'price': 2,
             'amount': 4,
-            'type': True,
+            'type': 1,
         })
         self.assertEqual(len(Portfolio.objects.all()), 1)
 
@@ -231,14 +231,14 @@ class OrderTest(APITestCase):
             'stock': 'OZON',
             'price': 2,
             'amount': 4,
-            'type': True,
+            'type': 1,
         })
         resp = self.client.post(url, data={
             'format': 'json',
             'stock': 'AAPL',
             'price': 2,
             'amount': 6,
-            'type': True,
+            'type': 0,
         })
         self.assertEqual(Portfolio.objects.get(pk=1).count, 0)
 
@@ -250,7 +250,7 @@ class OrderTest(APITestCase):
             'stock': 'OZON',
             'price': 2,
             'amount': 4,
-            'type': False,
+            'type': 0,
         })
 
         self.client = APIClient()
@@ -266,7 +266,7 @@ class OrderTest(APITestCase):
             'stock': 'OZON',
             'price': 2,
             'amount': 4,
-            'type': True,
+            'type': 1,
         })
         self.assertEqual(len(Order.objects.all()), 2)
 
@@ -285,7 +285,7 @@ class OrderTest(APITestCase):
             'stock': 'OZON',
             'price': 2,
             'amount': 4,
-            'type': True,
+            'type': 1,
         })
 
         self.client = APIClient()
@@ -301,7 +301,7 @@ class OrderTest(APITestCase):
             'stock': 'OZON',
             'price': 2,
             'amount': 4,
-            'type': True,
+            'type': 1,
         })
         self.assertEqual(len(Order.objects.all()), 2)
 
@@ -320,7 +320,7 @@ class OrderTest(APITestCase):
             'stock': 'OZON',
             'price': 2,
             'amount': 4,
-            'type': True,
+            'type': 1,
         })
 
         self.client = APIClient()
@@ -336,10 +336,43 @@ class OrderTest(APITestCase):
             'stock': 'OZON',
             'price': 2,
             'amount': 4,
-            'type': True,
+            'type': 1,
         })
         self.assertEqual(self.user1.balance, 8)
         self.assertEqual(self.user2.balance, 0)
+
+
+class ShortTest(APITestCase):
+    fixtures = ['short_test_database.json']
+
+    def setUp(self) -> None:
+        self.client = APIClient()
+        self.user = User.objects.get(username='vasya')
+        self.client.force_login(user=self.user)
+        self.verification_url = reverse('api_token')
+        self.response = self.client.post(
+            self.verification_url, {'username': 'vasya', 'password': 'promprog'},
+            format='json'
+        )
+        self.token = self.response.data['access']
+        self.url = reverse('add_order')
+        self.client.credentials(HTTP_AUTHORIZATION='Bearer ' + self.token)
+        self.ticker = 'SMRV'
+        Order.objects.create(user=User.objects.get(username='admin'), stock=Stocks.objects.get(name=self.ticker),
+                             type=False, price=5, is_closed=False, amount=10, count=10, is_limit=False)
+        Order.objects.create(user=User.objects.get(username='admin'), stock=Stocks.objects.get(name=self.ticker),
+                             type=True, price=5, is_closed=False, amount=10, count=10, is_limit=False)
+
+    def test_short_balance(self) -> None:
+        self.client.post(self.url, data={
+            'stock': self.ticker,
+            'price': 0,
+            'amount': 1,
+            'type': 1,
+        })
+        self.portfolio = Portfolio.objects.get(user=self.user.pk)
+        self.setUp()
+        self.assertAlmostEqual(self.portfolio.short_balance, -99995)
 
 
 class LeverageTradingTest(APITestCase):

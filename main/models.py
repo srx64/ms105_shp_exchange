@@ -144,7 +144,8 @@ class Order(models.Model):
     is_limit = models.BooleanField(default=False)
 
     def __str__(self) -> str:
-        return f"{self.user} -> {self.stock} ({'BUY' if self.type else 'SELL'}). Price: {self.price:.2f}, execution: {self.count} / {self.amount}"
+        return f"{self.user} -> {self.stock} ({'SELL' if self.type else 'BUY'}). Price: {self.price:.2f}, " \
+               f"execution: {self.count} / {self.amount}, is_closed: {self.is_closed}"
 
     @staticmethod
     def get_non_admin_orders() -> QuerySet:
@@ -243,7 +244,7 @@ class Quotes(models.Model):
         """
         Корректное отображение котировки в админ-панели и логах
         """
-        return f'Quote(STOCK:{self.stock}; DT:{self.date}; PR:{self.price}'
+        return f'Quote(STOCK:{self.stock}; DT:{self.date}; PR:{self.price})'
 
 
 class LeverageData(models.Model):

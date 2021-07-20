@@ -103,7 +103,7 @@ class AddOrderView(APIView):
         user = User.objects.get(id=request.user.pk)
         name = data['stock']
         stock = Stocks.objects.get(name=name)
-        type = data['type']
+        order_type = bool(int(data['type']))
         price = float(data['price'])
         amount = int(data['amount'])
         is_limit = False
@@ -124,17 +124,17 @@ class AddOrderView(APIView):
         if Portfolio.objects.filter(user=user, stock=stock).exists() and \
             Portfolio.objects.get(user=user, stock=stock).count > 0:
             flag = True
-        if (setting is None or setting.data['is_active']) or (not setting.data['is_active'] and type == 0) or \
-            (not setting.data['is_active'] and type == 1 and flag):
+        if (setting is None or setting.data['is_active']) or (not setting.data['is_active'] and order_type == 0) or \
+            (not setting.data['is_active'] and order_type == 1 and flag):
             portfolio, created = Portfolio.objects.get_or_create(user=user, stock=stock)
 
-            order = Order(user=user, stock=stock, type=type, price=price, is_closed=False, amount=amount, count=amount, is_limit=is_limit)
+            order = Order(user=user, stock=stock, type=order_type, price=price, is_closed=False, amount=amount, count=amount, is_limit=is_limit)
 
             if order.amount != 0:
                 if order.is_limit:
                     order.save()
                 if not order.is_limit:
-                    if type == 0 and not portfolio.is_debt:
+                    if order_type == 0 and not portfolio.is_debt:
                         if user.balance >= order.amount * order.price:
                             portfolio.count += order.amount
                             user.balance -= order.amount * order.price
@@ -142,11 +142,11 @@ class AddOrderView(APIView):
                             # обработать ошибку нехватки денег
                             return Response({"detail": "incorrect data"}, status=status.HTTP_400_BAD_REQUEST)
 
-                    elif type == 1 and portfolio.count >= order.amount and not portfolio.is_debt:
+                    elif order_type == 1 and portfolio.count >= order.amount and not portfolio.is_debt:
                         portfolio.count -= order.amount
                         user.balance += order.amount * stock.price
 
-                    elif type == 1 and portfolio.count == 0 and not portfolio.is_debt:
+                    elif order_type == 1 and portfolio.count == 0 and not portfolio.is_debt:
                         if (setting is None or setting.data['is_active']) or not setting.data['is_active']:
                             if order.amount * order.price <= 100000 and portfolio.short_balance <= 0:
                                 portfolio.short_balance += order.amount * order.price
@@ -158,7 +158,7 @@ class AddOrderView(APIView):
                         else:
                             # торговать в шорт невозможно
                             return Response({"detail": "incorrect data"}, status=status.HTTP_400_BAD_REQUEST)
-                    elif type == 1 and portfolio.count < order.amount and portfolio.count != 0 and not portfolio.is_debt:
+                    elif order_type == 1 and portfolio.count < order.amount and portfolio.count != 0 and not portfolio.is_debt:
                         if setting.data['is_active']:
                             if (order.amount - portfolio.count) * order.price <= 100000 and order.amount * order.price - abs(portfolio.short_balance) <= 0:
                                 user.balance += portfolio.count * stock.price  # цена на данный момент
@@ -172,7 +172,7 @@ class AddOrderView(APIView):
                             # торговать в шорт невозможно
                             return Response({"detail": "incorrect data"}, status=status.HTTP_400_BAD_REQUEST)
 
-                    elif type == 1 and portfolio.is_debt:
+                    elif order_type == 1 and portfolio.is_debt:
                         if order.amount * order.price <= 100000 and order.amount * order.price - abs(portfolio.short_balance) <= 0:
                             portfolio.short_balance += order.amount * order.price
                             portfolio.count -= order.amount
@@ -180,17 +180,17 @@ class AddOrderView(APIView):
                             # обработать ошибку нельзя торговать шорт при переходе границы
                             return Response({"detail": "incorrect data"}, status=status.HTTP_400_BAD_REQUEST)
 
-                    elif type == 0 and portfolio.is_debt and portfolio.count < -order.amount:
+                    elif order_type == 0 and portfolio.is_debt and portfolio.count < -order.amount:
                         user.balance += (100000 - abs(portfolio.short_balance)) - order.amount * stock.price
                         portfolio.count += order.amount
 
-                    elif type == 0 and portfolio.is_debt and portfolio.count == -order.amount:
+                    elif order_type == 0 and portfolio.is_debt and portfolio.count == -order.amount:
                         user.balance += (100000 - abs(portfolio.short_balance)) - order.amount * stock.price
                         portfolio.count = 0
                         portfolio.is_debt = False
                         portfolio.short_balance = -100000
 
-                    elif type == 0 and portfolio.is_debt and portfolio.count > -order.amount:
+                    elif order_type == 0 and portfolio.is_debt and portfolio.count > -order.amount:
                         if (order.amount + portfolio.count) * order.price <= user.balance:
                             user.balance += (100000 - abs(portfolio.short_balance)) - abs(portfolio.count) * stock.price
                             portfolio.count += order.amount

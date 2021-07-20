@@ -1,0 +1,228 @@
+[
+{
+    "model": "main.user",
+    "pk": 1,
+    "fields": {
+        "password": "pbkdf2_sha256$216000$sqO6YnOANyYQ$9KhuE1+DLCeOat2qvccsKGscxMeByi1RUpBZgA9j01E=",
+        "last_login": "2021-06-28T01:01:35.725Z",
+        "is_superuser": true,
+        "username": "admin",
+        "first_name": "",
+        "last_name": "",
+        "email": "1@abc.net",
+        "is_staff": true,
+        "is_active": true,
+        "date_joined": "2021-06-15T17:01:00.450Z",
+        "status": "",
+        "balance": 100000.0,
+        "avatar": "avatars/preset.jpg",
+        "groups": [],
+        "user_permissions": []
+    }
+},
+{
+    "model": "main.user",
+    "pk": 15,
+    "fields": {
+        "password": "pbkdf2_sha256$260000$P8gvlC0sCCMfEncFICuzV1$PbP4Wn+ZPcYzoEDx7owkO9PBMY/zYywaF28FILh6eEE=",
+        "last_login": "2021-07-18T00:37:42.150Z",
+        "is_superuser": true,
+        "username": "vasya",
+        "first_name": "",
+        "last_name": "",
+        "email": "1@abc.net",
+        "is_staff": true,
+        "is_active": true,
+        "date_joined": "2021-07-18T00:37:33.080Z",
+        "status": "",
+        "balance": 100000.0,
+        "avatar": "avatars/preset.jpg",
+        "groups": [],
+        "user_permissions": []
+    }
+},
+{
+    "model": "main.stocks",
+    "pk": 1,
+    "fields": {
+        "name": "TNXS",
+        "description": "Proms",
+        "is_active": true,
+        "price": 20500.0
+    }
+},
+{
+    "model": "main.stocks",
+    "pk": 2,
+    "fields": {
+        "name": "QGDO",
+        "description": "Quadraginta duo",
+        "is_active": true,
+        "price": 2974.0
+    }
+},
+{
+    "model": "main.stocks",
+    "pk": 3,
+    "fields": {
+        "name": "NDMS",
+        "description": "Nightmare",
+        "is_active": true,
+        "price": 9196.0
+    }
+},
+{
+    "model": "main.stocks",
+    "pk": 4,
+    "fields": {
+        "name": "ARSF",
+        "description": "Symphony of fire",
+        "is_active": true,
+        "price": 15940.0
+    }
+},
+{
+    "model": "main.stocks",
+    "pk": 5,
+    "fields": {
+        "name": "CZC",
+        "description": "Nets",
+        "is_active": true,
+        "price": 3029.0
+    }
+},
+{
+    "model": "main.stocks",
+    "pk": 6,
+    "fields": {
+        "name": "OPSM",
+        "description": "Opossum",
+        "is_active": true,
+        "price": 3655.0
+    }
+},
+{
+    "model": "main.stocks",
+    "pk": 7,
+    "fields": {
+        "name": "SMRV",
+        "description": "Ag fulaingt",
+        "is_active": true,
+        "price": 5.0
+    }
+},
+{
+    "model": "main.stocks",
+    "pk": 8,
+    "fields": {
+        "name": "EDCT",
+        "description": "Lostpro",
+        "is_active": true,
+        "price": 31255.0
+    }
+},
+{
+    "model": "main.portfolio",
+    "pk": 112,
+    "fields": {
+        "user": 1,
+        "stock": 4,
+        "count": 100000,
+        "aver_price": 0.0,
+        "percentage": 0.0,
+        "short_balance": -100000.0,
+        "is_debt": false
+    }
+},
+{
+    "model": "main.portfolio",
+    "pk": 113,
+    "fields": {
+        "user": 1,
+        "stock": 5,
+        "count": 100000,
+        "aver_price": 0.0,
+        "percentage": 0.0,
+        "short_balance": -100000.0,
+        "is_debt": false
+    }
+},
+{
+    "model": "main.portfolio",
+    "pk": 114,
+    "fields": {
+        "user": 1,
+        "stock": 8,
+        "count": 100000,
+        "aver_price": 0.0,
+        "percentage": 0.0,
+        "short_balance": -100000.0,
+        "is_debt": false
+    }
+},
+{
+    "model": "main.portfolio",
+    "pk": 115,
+    "fields": {
+        "user": 1,
+        "stock": 3,
+        "count": 100000,
+        "aver_price": 0.0,
+        "percentage": 0.0,
+        "short_balance": -100000.0,
+        "is_debt": false
+    }
+},
+{
+    "model": "main.portfolio",
+    "pk": 116,
+    "fields": {
+        "user": 1,
+        "stock": 6,
+        "count": 100000,
+        "aver_price": 0.0,
+        "percentage": 0.0,
+        "short_balance": -100000.0,
+        "is_debt": false
+    }
+},
+{
+    "model": "main.portfolio",
+    "pk": 117,
+    "fields": {
+        "user": 1,
+        "stock": 2,
+        "count": 100000,
+        "aver_price": 0.0,
+        "percentage": 0.0,
+        "short_balance": -100000.0,
+        "is_debt": false
+    }
+},
+{
+    "model": "main.portfolio",
+    "pk": 118,
+    "fields": {
+        "user": 1,
+        "stock": 7,
+        "count": 100000,
+        "aver_price": 0.0,
+        "percentage": 0.0,
+        "short_balance": -100000.0,
+        "is_debt": false
+    }
+},
+{
+    "model": "main.portfolio",
+    "pk": 119,
+    "fields": {
+        "user": 1,
+        "stock": 1,
+        "count": 100000,
+        "aver_price": 0.0,
+        "percentage": 0.0,
+        "short_balance": -100000.0,
+        "is_debt": false
+    }
+}
+]

@@ -17,8 +17,12 @@ export default {
     SectionPreviewStock: () => import('@/components/exchange/SectionPreviewStock')
   },
   data: () => ({
-    stocksInterval: undefined
-  })
+  }),
+  created () {
+    if (!this.$store.state.list_update) {
+      this.$store.dispatch('FETCH_LIST_STOCKS')
+    }
+  }
 }
 
 </script>

@@ -1,7 +1,10 @@
 <template>
   <v-row class="flex-column-reverse flex-md-row">
     <v-col cols="12" md="8">
-      <v-list two-line class="transparent">
+      <div v-if="listStockPortfolio.length == 0" style="display: flex;justify-content: center;margin-top:25px;height: 170px;align-items: center;">
+        <v-progress-circular indeterminate color="primary" />
+      </div>
+      <v-list v-else two-line class="transparent">
         <ListGroupStocks :stocks="listStockPortfolio" />
       </v-list>
     </v-col>
@@ -13,7 +16,7 @@
         <v-card-text class="pt-2 pb-0">
           <v-row class="justify-space-between align-center">
             <v-col cols="auto">
-              <h1>{{ 151515.56 }}₮</h1>
+              <h1>{{ $store.getters.GET_PORTFOLIO_SUMM }} ₮</h1>
             </v-col>
             <v-col>
               <p class="text-right text-subtitle-1 ma-0 green--text darken-1" style="white-space: nowrap;">
@@ -64,16 +67,23 @@
 </template>
 
 <script>
-import { listStockPortfolio } from '@/store/data'
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'Portfolio',
   components: {
     ListGroupStocks: () => import('@/components/exchange/portfolio/ListGroupStocks')
   },
-  data: () => ({
-    listStockPortfolio
-  })
+  computed: {
+    ...mapGetters({
+      listStockPortfolio: 'GET_PORTFOLIO'
+    })
+  },
+  created () {
+    if (!this.$store.state.list_update) {
+      this.$store.dispatch('FETCH_PORTFOLIO')
+    }
+  }
 }
 
 </script>

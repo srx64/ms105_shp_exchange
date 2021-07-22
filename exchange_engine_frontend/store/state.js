@@ -1,8 +1,7 @@
 export default () => ({
-  user: {
-  },
-  portfolio: {
-  },
-  list_stoks: [
-  ]
+  list_update: false,
+  portfolio_update: false,
+  user: {},
+  portfolio: [],
+  list_stoks: []
 })

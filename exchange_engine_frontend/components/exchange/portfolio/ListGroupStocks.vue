@@ -6,7 +6,7 @@
     <v-list-item
       v-for="(security) in stocks"
       :key="security.stock.id"
-      @click="$router.push({ name: 'exchange-stocks-id', params:{id:security.stock.id }})"
+      @click="$router.push({ name: 'exchange-сatalog-stocks-id', params:{id:security.stock.id }})"
     >
       <v-list-item-avatar>
         <v-icon class="grey lighten-1" dark />

@@ -1,5 +1,5 @@
 <template>
-  <nuxt-link tag="div" :to="'/exchange/stocks/'+stock.id" class="stock">
+  <nuxt-link tag="div" :to="'/exchange/сatalog/stocks/'+stock.id" class="stock">
     <div class="stock-item">
       <h4>{{ stock.name }}</h4>
       <v-badge bordered color="error" icon="mdi-lock" overlap>

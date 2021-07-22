@@ -17,7 +17,7 @@
     />
     <v-row>
       <v-col cols="auto">
-        <v-btn elevation="0" to="/exchange/сatalog_stocks">
+        <v-btn elevation="0" to="/exchange/сatalog/stocks">
           Акции
         </v-btn>
       </v-col>

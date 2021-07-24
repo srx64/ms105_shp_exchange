@@ -74,6 +74,7 @@ export default {
   components: {
     ListGroupStocks: () => import('@/components/exchange/portfolio/ListGroupStocks')
   },
+  layout: 'app',
   computed: {
     ...mapGetters({
       listStockPortfolio: 'GET_PORTFOLIO'

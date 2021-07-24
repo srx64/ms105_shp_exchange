@@ -16,6 +16,7 @@ export default {
     Search: () => import('@/components/exchange/Search'),
     SectionPreviewStock: () => import('@/components/exchange/SectionPreviewStock')
   },
+  layout: 'app',
   data: () => ({
   }),
   created () {

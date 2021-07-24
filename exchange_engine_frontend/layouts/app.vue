@@ -1,5 +1,6 @@
 <template>
   <v-app style="background: ;">
+    <AppBar />
     <v-main>
       <v-container>
         <v-fade-transition mode="out-in">
@@ -12,7 +13,11 @@
 
 <script>
 export default {
-  name: 'View'
+  name: 'AppView',
+  components: {
+    AppBar: () => import('@/components/main/AppBar')
+  },
+  middleware: 'auth'
 }
 </script>
 

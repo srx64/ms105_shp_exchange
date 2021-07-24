@@ -58,6 +58,7 @@ export default {
   components: {
     Search: () => import('@/components/exchange/Search')
   },
+  layout: 'app',
   data: () => ({
     page: 1,
     pageCount: 0,

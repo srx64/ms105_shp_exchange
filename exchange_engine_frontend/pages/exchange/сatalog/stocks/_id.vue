@@ -62,6 +62,7 @@ export default {
     buyStock: () => import('@/components/exchange/stocks/buy.vue'),
     chart: () => import('@/components/exchange/stocks/chart.vue')
   },
+  layout: 'app',
   data: () => ({
     selectedCandlesType: 0,
     stock: {

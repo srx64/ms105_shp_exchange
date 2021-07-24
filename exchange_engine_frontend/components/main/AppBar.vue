@@ -45,7 +45,9 @@
                 <v-list-item-title>Настройки</v-list-item-title>
               </v-list-item>
               <v-list-item>
-                <v-list-item-title>Выйти</v-list-item-title>
+                <v-list-item-title @click="$auth.logout()">
+                  Выйти
+                </v-list-item-title>
               </v-list-item>
             </v-list-item-group>
           </v-list>

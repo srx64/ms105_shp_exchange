@@ -72,7 +72,8 @@ export default {
           login: { url: '/api-token/', method: 'post' },
           refresh: { url: '/api-token-refresh', method: 'post' },
           user: { url: '/api/v1/profile', method: 'get' },
-          register: { url: '/api/v1/register', method: 'post' }
+          register: { url: '/api/v1/register', method: 'post' },
+          logout: { url: '/' }
         }
         // autoLogout: false
       }

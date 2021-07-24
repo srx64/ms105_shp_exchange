@@ -45,11 +45,44 @@ export default {
   // Modules: https://go.nuxtjs.dev/config-modules
   modules: [
     // https://go.nuxtjs.dev/axios
-    '@nuxtjs/axios'
+    '@nuxtjs/axios',
+    '@nuxtjs/auth-next'
   ],
 
+  auth: {
+    strategies: {
+      local: {
+        scheme: 'refresh',
+        token: {
+          property: 'access',
+          maxAge: 1800,
+          global: true
+          // type: 'Bearer'
+        },
+        refreshToken: {
+          property: 'refresh',
+          data: 'refresh',
+          maxAge: 60 * 60 * 24 * 30
+        },
+        user: {
+          property: ''
+          // autoFetch: true
+        },
+        endpoints: {
+          login: { url: '/api-token/', method: 'post' },
+          refresh: { url: '/api-token-refresh', method: 'post' },
+          user: { url: '/api/v1/profile', method: 'get' },
+          register: { url: '/api/v1/register', method: 'post' }
+        }
+        // autoLogout: false
+      }
+    }
+  },
+
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
-  axios: {},
+  axios: {
+    baseURL: 'http://localhost:8000'
+  },
 
   // Vuetify module configuration: https://go.nuxtjs.dev/config-vuetify
   vuetify: {

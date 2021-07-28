@@ -180,6 +180,34 @@ class HandlingFunctions:
         portfolio.save()
 
     @staticmethod
+    def limits_check(stock_id, min_price, max_price):
+        quotes = list(Quotes.objects.filter(stock_id=stock_id))
+        if len(quotes) > 1:
+            shift = 0
+            edited = list(reversed(quotes))
+            for i in range(len(edited)):
+                if i + 1 < len(edited):
+                    if edited[i].price > max_price:
+                        shift += (edited[i].date - edited[i+1].date).total_seconds()
+                        if shift >= 15:
+                            # need_restart = True
+                            shift = 0
+                    elif edited[i].price < min_price:
+                        shift += (edited[i].date - edited[i+1].date).total_seconds()
+                        if shift >= 15:
+                            # need_restart = True
+                            shift = 0
+        # return need_restart
+
+    @staticmethod
+    def get_coefficient(stock_id):
+        setting = HandlingFunctions.get_settings(stock_id)
+        if setting is not None and setting.data['coefficient'] is not None:
+            return setting.data['coefficient']
+        else:
+            return 1
+
+    @staticmethod
     def check_price(_price, stock_id):
         setting = HandlingFunctions.get_settings(stock_id)
         max_price = 15000
@@ -229,6 +257,32 @@ class HandlingFunctions:
         limit = info[2]
         duration = info[3]
         return start, cur, limit, duration
+
+    @staticmethod
+    def get_stock_price(stock, data, files, current_line):
+        start, cur, limit, duration = HandlingFunctions.get_table_data(stock, data)
+        line_found = False
+        price = None
+        for file in files:
+            if not line_found:
+                if current_line == -1:
+                    df = pandas.read_csv(f'data/{file}', nrows=1, skiprows=cur, sep=';')
+                else:
+                    df = pandas.read_csv(f'data/{file}', nrows=1, skiprows=current_line, sep=';')
+                name = df.iloc[0][0]
+                if name[:4] == 'MOEX':
+                    name = name.split('.')[1].split(':')[0]
+                elif name[len(name) - 3:] == '-RM':
+                    name = name[:-3]
+                if name == stock.name:
+                    price = df.iloc[:, [7]][df.iloc[:, [7]].columns[0]][0]
+                    return price
+        if price is None:
+            logging.warning(
+                f'Не найдена таблица для инструмента с названием {stock.name},'
+                f' тип генерации изменен на формулы'
+            )
+            return None
 
 
 class Tendencies:
@@ -362,6 +416,7 @@ class PriceBot:
         self.formulas_data = [['none', 0, []] for _ in range(len(Stocks.objects.all()))]
         self.general_data = HandlingFunctions.update_generation_type(self.general_data, self.current_line)
         self.files = next(os.walk('data/'))[2]
+        self.figures = Figures()
 
     def main_loop(self):
         while True:
@@ -372,6 +427,7 @@ class PriceBot:
                     self.table_method(stock)
                 elif generation_type == 'formula':
                     print('Генерируем по формулам для', stock.name)
+                    self.formula_method(stock)
                 elif generation_type == 'default':
                     print('Генерируем стандартным методом для', stock.name)
                     self.default_method(stock)
@@ -383,50 +439,63 @@ class PriceBot:
             time.sleep(HandlingFunctions.get_timer())
             self.current_line += 1
 
+    def formula_method(self, stock):
+        if HandlingFunctions.generation_available(stock, self.user, self.amount):
+            tendency, duration, figures, index = self.formulas_get_data(stock)
+            last_price = HandlingFunctions.get_last_price(stock)
+            if index is not None:
+                duration[index] -= 1
+                coefficient = HandlingFunctions.get_coefficient(stock.pk)
+                price = figures[index](last_price, stock.pk) * coefficient
+                HandlingFunctions.generate_orders(self.user, stock, price, self.amount, self.current_line)
+                
+
+    def formulas_get_data(self, stock):
+        info = self.formulas_data[stock.pk - 1]
+        tendency = info[0]
+        duration = info[1]
+        if duration == 0:
+            info = Tendencies.choose_tendency()
+            self.formulas_data[stock.pk - 1] = info
+        tendency = info[0]
+        duration = info[1]
+        if info[2] == []:
+            info[2] = Figures.set_figures(self.figures, duration, tendency)
+        figures = info[2][0]
+        duration = info[2][1]
+        index = next((x for x in range(len(duration)) if duration[x] > 0), None)
+        if index is None:
+            info[1] = 0
+        info[1] = duration
+        return tendency, duration, figures, index
+
     def default_method(self, stock):
         if HandlingFunctions.generation_available(stock, self.user, self.amount):
-            line_found = False
-            for file in self.files:
-                if not line_found:
-                    df = pandas.read_csv(f'data/{file}', nrows=1, skiprows=self.current_line, sep=';')
-                    name = df.iloc[0][0]
-                    if name[:4] == 'MOEX':
-                        name = name.split('.')[1].split(':')[0]
-                    elif name[len(name) - 3:] == '-RM':
-                        name = name[:-3]
-                    if name == stock.name:
-                        price = df.iloc[:, [7]][df.iloc[:, [7]].columns[0]][0]
-                        HandlingFunctions.generate_orders(self.user, stock, price, self.amount, self.current_line)
-                        line_found = True
-                        logging.info('Добавлена новая котировка по таблице')
+            price = HandlingFunctions.get_stock_price(stock, self.table_data, self.files, self.current_line)
+            if price is not None:
+                HandlingFunctions.generate_orders(self.user, stock, price, self.amount, self.current_line)
+                logging.info('Добавлена новая котировка по таблице')
+            else:
+                self.general_data[stock.pk - 1][0] = 'formula'
 
     def table_method(self, stock):
         if HandlingFunctions.generation_available(stock, self.user, self.amount):
             start, cur, limit, duration = HandlingFunctions.get_table_data(stock, self.table_data)
-            line_found = False
             if duration == limit or duration == 0:
                 self.table_data_refresh(stock)
             start, cur, limit, duration = HandlingFunctions.get_table_data(stock, self.table_data)
-            for file in self.files:
-                if not line_found:
-                    df = pandas.read_csv(f'data/{file}', nrows=1, skiprows=cur, sep=';')
-                    name = df.iloc[0][0]
-                    if name[:4] == 'MOEX':
-                        name = name.split('.')[1].split(':')[0]
-                    elif name[len(name) - 3:] == '-RM':
-                        name = name[:-3]
-                    if name == stock.name:
-                        price = df.iloc[:, [7]][df.iloc[:, [7]].columns[0]][0]
-                        start, cur, limit, duration = HandlingFunctions.get_table_data(stock, self.table_data)
-                        HandlingFunctions.generate_orders(
-                            self.user, stock, price, self.amount, HandlingFunctions.get_timer()
-                        )
-                        duration -= 1
-                        cur += 1
-                        info = self.table_data[stock.pk - 1]
-                        info[1] = cur
-                        info[3] = duration
-
+            price = HandlingFunctions.get_stock_price(stock, self.table_data, self.files, -1)
+            if price is not None:
+                HandlingFunctions.generate_orders(
+                    self.user, stock, price, self.amount, HandlingFunctions.get_timer()
+                )
+                duration -= 1
+                cur += 1
+                info = self.table_data[stock.pk - 1]
+                info[1] = cur
+                info[3] = duration
+            else:
+                self.general_data[stock.pk - 1][0] = 'formula'
 
     def table_data_refresh(self, stock):
         start, cur, limit, duration = HandlingFunctions.get_table_data(stock, self.table_data)

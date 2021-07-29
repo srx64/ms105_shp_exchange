@@ -17,6 +17,7 @@
     "hooper": "^0.3.4",
     "nuxt": "^2.15.7",
     "vue-apexcharts": "^1.6.1",
+    "vuelidate": "^0.7.6",
     "vuetify": "^2.5.5"
   },
   "devDependencies": {

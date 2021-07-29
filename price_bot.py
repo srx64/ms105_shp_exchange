@@ -168,36 +168,33 @@ class HandlingFunctions:
 
     @staticmethod
     def generate_orders(user, stock, price, AMOUNT, line=-1):
-        Order.objects.create(user=user, stock=stock, type=True, price=price, amount=AMOUNT, is_closed=True)
-        Order.objects.create(user=user, stock=stock, type=False, price=price, amount=AMOUNT, is_closed=True)
-        Order.objects.create(user=user, stock=stock, type=True, price=price, amount=AMOUNT * 10, is_closed=False)
-        Order.objects.create(user=user, stock=stock, type=False, price=price, amount=AMOUNT * 10, is_closed=False)
-        Quotes.objects.create(stock=stock, price=price, line=line)
-        stock.price = price
-        stock.save()
-        portfolio, created = Portfolio.objects.get_or_create(user=user, stock=stock)
-        portfolio.count = 100000
-        portfolio.save()
+        # Order.objects.create(user=user, stock=stock, type=True, price=price, amount=AMOUNT, is_closed=True)
+        # Order.objects.create(user=user, stock=stock, type=False, price=price, amount=AMOUNT, is_closed=True)
+        # Order.objects.create(user=user, stock=stock, type=True, price=price, amount=AMOUNT * 10, is_closed=False)
+        # Order.objects.create(user=user, stock=stock, type=False, price=price, amount=AMOUNT * 10, is_closed=False)
+        # Quotes.objects.create(stock=stock, price=price, line=line)
+        # stock.price = price
+        # stock.save()
+        # portfolio, created = Portfolio.objects.get_or_create(user=user, stock=stock)
+        # portfolio.count = 100000
+        # portfolio.save()
+        print('Something was made')
 
     @staticmethod
-    def limits_check(stock_id, min_price, max_price):
+    def limits_check(stock_id, min_price, max_price, price):
+        need_restart = False
         quotes = list(Quotes.objects.filter(stock_id=stock_id))
         if len(quotes) > 1:
             shift = 0
             edited = list(reversed(quotes))
             for i in range(len(edited)):
                 if i + 1 < len(edited):
-                    if edited[i].price > max_price:
+                    if edited[i].price > max_price or edited[i].price < min_price:
                         shift += (edited[i].date - edited[i+1].date).total_seconds()
                         if shift >= 15:
-                            # need_restart = True
-                            shift = 0
-                    elif edited[i].price < min_price:
-                        shift += (edited[i].date - edited[i+1].date).total_seconds()
-                        if shift >= 15:
-                            # need_restart = True
-                            shift = 0
-        # return need_restart
+                            return -1
+        return price
+
 
     @staticmethod
     def get_coefficient(stock_id):
@@ -215,16 +212,11 @@ class HandlingFunctions:
         if setting is not None and setting.data['max_price'] is not None and setting.data['min_price'] is not None:
             max_price = setting.data['max_price']
             min_price = setting.data['min_price']
-            if _price > max_price:
-                _price = max_price - max_price * uniform(0.03, 0.1)
-            elif _price < min_price:
-                _price = min_price + min_price * uniform(0.03, 0.1)
-        else:
-            if _price > max_price:
-                _price = max_price - max_price * uniform(0.03, 0.1)
-            elif _price < min_price:
-                _price = min_price + min_price * uniform(0.03, 0.1)
-        HandlingFunctions.limits_check(stock_id, min_price, max_price)
+        if _price > max_price:
+            _price = max_price - max_price * uniform(0.03, 0.1)
+        elif _price < min_price:
+            _price = min_price + min_price * uniform(0.03, 0.1)
+        _price = HandlingFunctions.limits_check(stock_id, min_price, max_price, _price)
         return _price
 
     @staticmethod
@@ -240,13 +232,14 @@ class HandlingFunctions:
         return data
 
     @staticmethod
-    def generation_available(stock, user, amount):
+    def generation_available(stock, user, amount, figure):
         return not HandlingFunctions.get_pause(stock.pk) and not Tendencies.settings_check(
             stock,
             user,
             amount,
             HandlingFunctions.get_last_price(stock),
-            HandlingFunctions.get_timer()
+            HandlingFunctions.get_timer(),
+            figure
         )
 
     @staticmethod
@@ -305,7 +298,7 @@ class Tendencies:
         return tendency
 
     @staticmethod
-    def settings_check(stock, user, AMOUNT, last_price, t):
+    def settings_check(stock, user, AMOUNT, last_price, t, figures):
         if HandlingFunctions.get_settings(stock.id) is not None:
             setting = HandlingFunctions.get_settings(stock.id)
             if setting.data['start_after_time'] is not None:
@@ -317,8 +310,8 @@ class Tendencies:
                         if setting.data['type'] is not None:
                             coefficient = setting.data['coefficient']
                             f_type = setting.data['type']
-                            figure = Figures.get_figure(f_type)
-                            price = figure.generate(last_price, stock.id) * coefficient
+                            figure = Figures.get_figure(f_type, figures)
+                            price = figure(last_price, stock.id) * coefficient
                             HandlingFunctions.generate_orders(user, stock, price, AMOUNT, t)
                     elif setting.data['duration'] <= 0:
                         return False
@@ -330,8 +323,8 @@ class Tendencies:
                     if setting.data['type'] is not None:
                         coefficient = setting.data['coefficient']
                         f_type = setting.data['type']
-                        figure = Figures.get_figure(f_type)
-                        price = figure.generate(last_price, stock.id) * coefficient
+                        figure = Figures.get_figure(f_type, figures)
+                        price = figure(last_price, stock.id) * coefficient
                         HandlingFunctions.generate_orders(user, stock, price, AMOUNT, t)
                 elif setting.data['duration'] <= 0:
                     return False
@@ -366,7 +359,6 @@ class Figures:
         ]
 
     def set_figures(self, figures_amount, tendency):
-
         data = []
         figures = []
         duration = []
@@ -390,16 +382,16 @@ class Figures:
         data.append(duration)
         return data
 
-    def get_figure(self, f_t):
+    def get_figure(self, figure_type):
         randomized = 0
         num = randint(1, 13)
-        if f_t == 'raising':
+        if figure_type == 'raising':
             if 13 >= num >= 9:
                 randomized = choice(self.raising_figures)
-        elif f_t == 'downgrading':
+        elif figure_type == 'downgrading':
             if 13 >= num >= 9:
                 randomized = choice(self.downgrading_figures)
-        elif f_t == 'crisis':
+        elif figure_type == 'crisis':
             randomized = choice(self.crisis_figures)
         return randomized
 
@@ -440,19 +432,24 @@ class PriceBot:
             self.current_line += 1
 
     def formula_method(self, stock):
-        if HandlingFunctions.generation_available(stock, self.user, self.amount):
+        if HandlingFunctions.generation_available(stock, self.user, self.amount, self.figures):
             tendency, duration, figures, index = self.formulas_get_data(stock)
             last_price = HandlingFunctions.get_last_price(stock)
-            if index is not None:
-                duration[index] -= 1
-                coefficient = HandlingFunctions.get_coefficient(stock.pk)
-                price = figures[index](last_price, stock.pk) * coefficient
-                HandlingFunctions.generate_orders(self.user, stock, price, self.amount, self.current_line)
-                
+            duration[index] -= 1
+            coefficient = HandlingFunctions.get_coefficient(stock.pk)
+            price = figures[index](last_price, stock.pk) * coefficient
+            price = HandlingFunctions.check_price(price, stock.pk)
+            if price == -1:
+                info = Tendencies.choose_tendency()
+                self.formulas_data[stock.pk - 1] = info
+                info[0] = Tendencies.opposite_tendency(tendency)
+                info[2] = Figures.set_figures(self.figures, info[1], tendency)
+            HandlingFunctions.generate_orders(self.user, stock, price, self.amount, self.current_line)
+
+            print(price, stock.name, duration)
 
     def formulas_get_data(self, stock):
         info = self.formulas_data[stock.pk - 1]
-        tendency = info[0]
         duration = info[1]
         if duration == 0:
             info = Tendencies.choose_tendency()
@@ -465,12 +462,19 @@ class PriceBot:
         duration = info[2][1]
         index = next((x for x in range(len(duration)) if duration[x] > 0), None)
         if index is None:
-            info[1] = 0
+            info = Tendencies.choose_tendency()
+            self.formulas_data[stock.pk - 1] = info
+            tendency = info[0]
+            duration = info[1]
+            info[2] = Figures.set_figures(self.figures, duration, tendency)
+            figures = info[2][0]
+            duration = info[2][1]
+            index = next((x for x in range(len(duration)) if duration[x] > 0), None)
         info[1] = duration
         return tendency, duration, figures, index
 
     def default_method(self, stock):
-        if HandlingFunctions.generation_available(stock, self.user, self.amount):
+        if HandlingFunctions.generation_available(stock, self.user, self.amount, self.figures):
             price = HandlingFunctions.get_stock_price(stock, self.table_data, self.files, self.current_line)
             if price is not None:
                 HandlingFunctions.generate_orders(self.user, stock, price, self.amount, self.current_line)
@@ -479,7 +483,7 @@ class PriceBot:
                 self.general_data[stock.pk - 1][0] = 'formula'
 
     def table_method(self, stock):
-        if HandlingFunctions.generation_available(stock, self.user, self.amount):
+        if HandlingFunctions.generation_available(stock, self.user, self.amount, self.figures):
             start, cur, limit, duration = HandlingFunctions.get_table_data(stock, self.table_data)
             if duration == limit or duration == 0:
                 self.table_data_refresh(stock)

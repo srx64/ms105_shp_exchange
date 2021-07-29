@@ -1,0 +1,165 @@
+<template>
+  <form>
+    <v-text-field
+      v-model="userInfo.login"
+      :error-messages="loginErrors"
+      label="Логин"
+      required
+      @input="$v.userInfo.login.$touch()"
+      @blur="$v.userInfo.login.$touch()"
+    />
+    <v-text-field
+      v-model="userInfo.email"
+      :error-messages="emailErrors"
+      label="E-mail"
+      required
+      @input="$v.userInfo.email.$touch()"
+      @blur="$v.userInfo.email.$touch()"
+    />
+    <v-row>
+      <v-col>
+        <v-text-field
+          v-model="userInfo.lastName"
+          :error-messages="lastNameErrors"
+          label="Фамилия"
+          required
+          @input="$v.userInfo.lastName.$touch()"
+          @blur="$v.userInfo.lastName.$touch()"
+        />
+      </v-col>
+      <v-col>
+        <v-text-field
+          v-model="userInfo.firstName"
+          :error-messages="firstNameErrors"
+          label="Имя"
+          required
+          @input="$v.userInfo.firstName.$touch()"
+          @blur="$v.userInfo.firstName.$touch()"
+        />
+      </v-col>
+    </v-row>
+    <v-text-field
+      v-model="userInfo.password"
+      :error-messages="passwordErrors"
+      label="Пароль"
+      required
+      :type="showPassword ? 'text' : 'password'"
+      :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
+      @click:append="showPassword = !showPassword"
+      @input="$v.userInfo.password.$touch()"
+      @blur="$v.userInfo.password.$touch()"
+    />
+    <v-text-field
+      v-model="userInfo.repeatPassword"
+      :error-messages="repeatPasswordErrors"
+      label="Повторите пароль"
+      required
+      :type="showPassword ? 'text' : 'password'"
+      :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
+      @click:append="showPassword = !showPassword"
+      @input="$v.userInfo.repeatPassword.$touch()"
+      @blur="$v.userInfo.repeatPassword.$touch()"
+    />
+    <v-btn
+      class="mr-4"
+      block
+      @click="submit"
+    >
+      Зарегистрироваться
+    </v-btn>
+  </form>
+</template>
+
+<script>
+import { validationMixin } from 'vuelidate'
+import { required, email } from 'vuelidate/lib/validators'
+
+export default {
+  mixins: [validationMixin],
+
+  validations: {
+    userInfo: {
+      login: { required },
+      email: { required, email },
+      lastName: { required },
+      firstName: { required },
+      password: { required },
+      repeatPassword: { required }
+    }
+
+  },
+
+  props: {
+    submitForm: {
+      type: Function,
+      required: true
+    }
+  },
+
+  data: () => ({
+    userInfo: {
+      login: '',
+      email: '',
+      lastName: '',
+      firstName: '',
+      password: '',
+      repeatPassword: ''
+    },
+    showPassword: false
+  }),
+
+  computed: {
+    loginErrors () {
+      const errors = []
+      if (!this.$v.userInfo.login.$dirty) { return errors }
+      !this.$v.userInfo.login.required && errors.push('Введите логин')
+      return errors
+    },
+    emailErrors () {
+      const errors = []
+      if (!this.$v.userInfo.email.$dirty) { return errors }
+      !this.$v.userInfo.email.email && errors.push('Введите корректный e-mail')
+      !this.$v.userInfo.email.required && errors.push('Введите e-mail')
+      return errors
+    },
+    lastNameErrors () {
+      const errors = []
+      if (!this.$v.userInfo.lastName.$dirty) { return errors }
+      !(/^([a-zа-яё]+)$/i.test(this.userInfo.lastName)) && errors.push('Фамилия может содержать только буквы алфавита')
+      !this.$v.userInfo.lastName.required && errors.push('Введите фамилию')
+      return errors
+    },
+    firstNameErrors () {
+      const errors = []
+      if (!this.$v.userInfo.firstName.$dirty) { return errors }
+      !(/^([a-zа-яё]+)$/i.test(this.userInfo.firstName)) && errors.push('Имя может содержать только буквы алфавита')
+      !this.$v.userInfo.firstName.required && errors.push('Введите имя')
+      return errors
+    },
+    passwordErrors () {
+      const errors = []
+      if (!this.$v.userInfo.password.$dirty) { return errors }
+      !this.$v.userInfo.password.required && errors.push('Введите пароль')
+      return errors
+    },
+    repeatPasswordErrors () {
+      const errors = []
+      if (!this.$v.userInfo.repeatPassword.$dirty) { return errors }
+      !this.$v.userInfo.repeatPassword.required && errors.push('Введите пароль еще раз')
+      !(this.userInfo.password === this.userInfo.repeatPassword) && errors.push('Пароли должны совпадать')
+      return errors
+    }
+  },
+
+  methods: {
+    submit () {
+      this.$v.$touch()
+      if (this.$v.$invalid) {
+        console.log('ERROR')
+      } else {
+        this.submitForm(this.userInfo)
+      }
+    }
+  }
+}
+</script>

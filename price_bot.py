@@ -1,7 +1,6 @@
 import os
 import time
 from math import sin, pi
-from typing import List
 
 from django.utils import timezone
 from random import randint, choice, random, uniform
@@ -106,7 +105,6 @@ class RaisingFigures:
 
 
 class HandlingFunctions:
-
     @staticmethod
     def get_settings(stock_id):
         if Settings.objects.filter(stock_id=-1, name='algo_quotes'):
@@ -151,12 +149,9 @@ class HandlingFunctions:
             setting = Settings.objects.filter(stock_id=-1, name='quotes_generation_switch').last()
         elif Settings.objects.filter(stock_id=stock_id, name='quotes_generation_switch'):
             setting = Settings.objects.filter(stock_id=stock_id, name='quotes_generation_switch').last()
-        if setting is None:
-            return False
-        elif setting.data['is_stop']:
+        if setting.data['is_stop']:
             return True
-        else:
-            return False
+        return False
 
     @staticmethod
     def get_last_price(stock):
@@ -199,23 +194,21 @@ class HandlingFunctions:
                     return False
         return False
 
-
     @staticmethod
     def get_coefficient(stock_id):
         setting = HandlingFunctions.get_settings(stock_id)
         if setting is not None and setting.data['coefficient'] is not None:
             return setting.data['coefficient']
-        else:
-            return 1
+        return 1
 
     @staticmethod
-    def check_price(_price, stock_id):
+    def check_price(price, stock_id):
         min_price, max_price = HandlingFunctions.get_price_limits(stock_id)
-        if _price > max_price:
-            _price = max_price - max_price * uniform(0.03, 0.1)
-        elif _price < min_price:
-            _price = min_price + min_price * uniform(0.03, 0.1)
-        return _price
+        if price > max_price:
+            price = max_price - max_price * uniform(0.03, 0.1)
+        elif price < min_price:
+            price = min_price + min_price * uniform(0.03, 0.1)
+        return price
 
     @staticmethod
     def get_price_limits(stock_id):
@@ -287,7 +280,6 @@ class HandlingFunctions:
 
 
 class Tendencies:
-
     @staticmethod
     def choose_tendency():
         data = []
@@ -318,7 +310,7 @@ class Tendencies:
                         if setting.data['type'] is not None:
                             coefficient = setting.data['coefficient']
                             f_type = setting.data['type']
-                            figure = Figures.get_figure(f_type, figures)
+                            figure = Figures.get_figure(figures, f_type)
                             price = figure(last_price, stock.id) * coefficient
                             HandlingFunctions.generate_orders(user, stock, price, AMOUNT, t)
                     elif setting.data['duration'] <= 0:
@@ -331,7 +323,7 @@ class Tendencies:
                     if setting.data['type'] is not None:
                         coefficient = setting.data['coefficient']
                         f_type = setting.data['type']
-                        figure = Figures.get_figure(f_type, figures)
+                        figure = Figures.get_figure(figures, f_type)
                         price = figure(last_price, stock.id) * coefficient
                         HandlingFunctions.generate_orders(user, stock, price, AMOUNT, t)
                 elif setting.data['duration'] <= 0:
@@ -341,12 +333,10 @@ class Tendencies:
 
             setting.save()
             return True
-        else:
-            return False
+        return False
 
 
 class Figures:
-
     def __init__(self):
         self.raising_figures = [
             RaisingFigures.figure_one,
@@ -393,6 +383,7 @@ class Figures:
     def get_figure(self, figure_type):
         randomized = 0
         num = randint(1, 13)
+        print(figure_type)
         if figure_type == 'raising':
             if 13 >= num >= 9:
                 randomized = choice(self.raising_figures)
@@ -405,12 +396,11 @@ class Figures:
 
 
 class PriceBot:
-
     def __init__(self) -> None:
         global STOCKS_LIST
         self.amount = 10000
         self.user = User.objects.get(username='admin')
-        self.current_line = 1
+        self.current_line = 0
         self.general_data = [['default', 600] for _ in range(len(Stocks.objects.all()))]
         self.table_data = [[0, 0, 0, 0] for _ in range(len(Stocks.objects.all()))]
         self.formulas_data = [['none', 0, []] for _ in range(len(Stocks.objects.all()))]
@@ -511,7 +501,6 @@ class PriceBot:
                 self.general_data[stock.pk - 1][0] = 'formula'
 
     def table_data_refresh(self, stock):
-        start, cur, limit, duration = HandlingFunctions.get_table_data(stock, self.table_data)
         duration = randint(randint(5, 10), randint(10, 15))
         start = randint(0, self.general_data[stock.pk - 1][1] - duration)
         cur = start

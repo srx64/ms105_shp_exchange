@@ -303,6 +303,8 @@ class Tendencies:
 
     @staticmethod
     def settings_check(stock, user, AMOUNT, last_price, t, figures):
+        global STOCKS_LIST
+        stocks = list(STOCKS_LIST)
         if HandlingFunctions.get_settings(stock.id) is not None:
             setting = HandlingFunctions.get_settings(stock.id)
             if setting.data['start_after_time'] is not None:
@@ -310,26 +312,28 @@ class Tendencies:
                     setting.data['start_after_time'] -= t
                 elif setting.data['duration'] is not None:
                     if setting.data['duration'] > 0:
-                        setting.data['duration'] -= t
                         if setting.data['type'] is not None:
                             coefficient = setting.data['coefficient']
                             f_type = setting.data['type']
                             figure = Figures.get_figure(figures, f_type)
                             price = figure(last_price, stock.id) * coefficient
                             HandlingFunctions.generate_orders(user, stock, price, AMOUNT, t)
+                            if setting.stock_id > 0 or stock == stocks[-1]:
+                                setting.data['duration'] -= t
                     elif setting.data['duration'] <= 0:
                         return False
             elif setting.data['coefficient'] is not None and setting.data['type'] is None:
                 return False
             elif setting.data['duration'] is not None:
                 if setting.data['duration'] > 0:
-                    setting.data['duration'] -= t
                     if setting.data['type'] is not None:
                         coefficient = setting.data['coefficient']
                         f_type = setting.data['type']
                         figure = Figures.get_figure(figures, f_type)
                         price = figure(last_price, stock.id) * coefficient
                         HandlingFunctions.generate_orders(user, stock, price, AMOUNT, t)
+                        if setting.stock_id > 0 or stock == stocks[-1]:
+                            setting.data['duration'] -= t
                 elif setting.data['duration'] <= 0:
                     return False
             elif setting.data['coefficient'] is not None and setting.data['type'] is None:

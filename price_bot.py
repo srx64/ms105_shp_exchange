@@ -224,10 +224,14 @@ class HandlingFunctions:
     def update_generation_type(data, current_line):
         for stock in Stocks.objects.all():
             settings_type = HandlingFunctions.get_generation_type(stock.pk)
-            if settings_type is not None:
-                data[stock.pk - 1][0] = settings_type
+            if current_line < data[stock.pk - 1][1] and settings_type == 'table':
+                data[stock.pk - 1][0] = 'default'
+            elif settings_type == 'table':
+                data[stock.pk - 1][0] = 'table'
             elif current_line >= data[stock.pk - 1][1]:
                 data[stock.pk - 1][0] = 'formula'
+            elif settings_type is not None:
+                data[stock.pk - 1][0] = settings_type
             else:
                 data[stock.pk - 1][0] = 'default'
         return data
@@ -400,7 +404,7 @@ class PriceBot:
         global STOCKS_LIST
         self.amount = 10000
         self.user = User.objects.get(username='admin')
-        self.current_line = 0
+        self.current_line = 597
         self.general_data = [['default', 600] for _ in range(len(Stocks.objects.all()))]
         self.table_data = [[0, 0, 0, 0] for _ in range(len(Stocks.objects.all()))]
         self.formulas_data = [['none', 0, []] for _ in range(len(Stocks.objects.all()))]
@@ -428,6 +432,7 @@ class PriceBot:
                     )
             time.sleep(HandlingFunctions.get_timer())
             self.current_line += 1
+            self.general_data = HandlingFunctions.update_generation_type(self.general_data, self.current_line)
 
     def formula_method(self, stock):
         if HandlingFunctions.generation_available(stock, self.user, self.amount, self.figures):

@@ -50,6 +50,13 @@ export default {
   ],
 
   auth: {
+    redirect: {
+      login: '/login',
+      logout: '/',
+      callback: '/login',
+      home: '/exchange'
+    },
+
     strategies: {
       local: {
         scheme: 'refresh',
@@ -65,14 +72,13 @@ export default {
           maxAge: 60 * 60 * 24 * 30
         },
         user: {
-          property: ''
-          // autoFetch: true
+          property: '',
+          autoFetch: false
         },
         endpoints: {
           login: { url: '/api-token/', method: 'post' },
           refresh: { url: '/api-token-refresh', method: 'post' },
           user: { url: '/api/v1/profile', method: 'get' },
-          register: { url: '/api/v1/register', method: 'post' },
           logout: { url: '/' }
         }
         // autoLogout: false

@@ -11,8 +11,18 @@ export default {
     Form: () => import('@/components/form/register.vue')
   },
   methods: {
-    registerUser (registrationinfo) {
-      console.log(registrationinfo)
+    async registerUser (registrationinfo) {
+      try {
+        const resp = await this.$axios.post('/api/v1/register', {
+          email: registrationinfo.email,
+          username: registrationinfo.username,
+          password: registrationinfo.password,
+          password2: registrationinfo.repeatPassword
+        })
+        console.log(resp)
+      } catch {
+        console.log('error')
+      }
     }
   }
 }

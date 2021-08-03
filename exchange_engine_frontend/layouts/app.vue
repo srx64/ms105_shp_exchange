@@ -17,7 +17,7 @@ export default {
   components: {
     AppBar: () => import('@/components/main/AppBar')
   },
-  middleware: 'auth'
+  middleware: ['auth']
 }
 </script>
 

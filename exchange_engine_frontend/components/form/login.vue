@@ -1,8 +1,8 @@
 <template>
   <form>
     <v-text-field
-      v-model="userInfo.login"
-      :error-messages="loginErrors"
+      v-model="userInfo.username"
+      :error-messages="usernameErrors"
       label="Логин"
       required
     />
@@ -40,23 +40,23 @@ export default {
   },
   validations: {
     userInfo: {
-      login: { required },
+      username: { required },
       password: { required }
     }
   },
   data: () => ({
     userInfo: {
-      login: '',
+      username: '',
       password: ''
     },
     showPassword: false
   }),
 
   computed: {
-    loginErrors () {
+    usernameErrors () {
       const errors = []
-      if (!this.$v.userInfo.login.$dirty) { return errors }
-      !this.$v.userInfo.login.required && errors.push('Login is required.')
+      if (!this.$v.userInfo.username.$dirty) { return errors }
+      !this.$v.userInfo.username.required && errors.push('Login is required.')
       return errors
     },
     passwordErrors () {

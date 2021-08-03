@@ -1,12 +1,12 @@
 <template>
   <form>
     <v-text-field
-      v-model="userInfo.login"
-      :error-messages="loginErrors"
+      v-model="userInfo.username"
+      :error-messages="usernameErrors"
       label="Логин"
       required
-      @input="$v.userInfo.login.$touch()"
-      @blur="$v.userInfo.login.$touch()"
+      @input="$v.userInfo.username.$touch()"
+      @blur="$v.userInfo.username.$touch()"
     />
     <v-text-field
       v-model="userInfo.email"
@@ -79,7 +79,7 @@ export default {
 
   validations: {
     userInfo: {
-      login: { required },
+      username: { required },
       email: { required, email },
       lastName: { required },
       firstName: { required },
@@ -98,7 +98,7 @@ export default {
 
   data: () => ({
     userInfo: {
-      login: '',
+      username: '',
       email: '',
       lastName: '',
       firstName: '',
@@ -109,10 +109,10 @@ export default {
   }),
 
   computed: {
-    loginErrors () {
+    usernameErrors () {
       const errors = []
-      if (!this.$v.userInfo.login.$dirty) { return errors }
-      !this.$v.userInfo.login.required && errors.push('Введите логин')
+      if (!this.$v.userInfo.username.$dirty) { return errors }
+      !this.$v.userInfo.username.required && errors.push('Введите логин')
       return errors
     },
     emailErrors () {

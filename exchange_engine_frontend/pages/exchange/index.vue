@@ -1,12 +1,16 @@
 <template>
-  <v-row>
-    <v-col cols="12">
-      <Search />
-    </v-col>
-    <v-col cols="12">
-      <SectionPreviewStock />
-    </v-col>
-  </v-row>
+  <v-main>
+    <v-container>
+      <v-row>
+        <v-col cols="12">
+          <Search />
+        </v-col>
+        <v-col cols="12">
+          <SectionPreviewStock />
+        </v-col>
+      </v-row>
+    </v-container>
+  </v-main>
 </template>
 
 <script>

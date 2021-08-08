@@ -16,8 +16,10 @@
     "apexcharts": "^3.27.2",
     "core-js": "^3.15.1",
     "hooper": "^0.3.4",
+    "numeral": "^2.0.6",
     "nuxt": "^2.15.7",
     "vue-apexcharts": "^1.6.1",
+    "vue-numeral-filter": "^2.0.0",
     "vuelidate": "^0.7.6",
     "vuetify": "^2.5.5"
   },

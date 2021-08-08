@@ -12,7 +12,7 @@
       item-value="API"
       label="Public APIs"
       placeholder="Start typing to Search"
-      prepend-icon="mdi-database-search"
+      prepend-icon="mdi-magnify"
       return-object
     />
     <v-row>

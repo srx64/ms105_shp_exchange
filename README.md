@@ -58,7 +58,8 @@ sudo apt-get install -y nodejs
    * Скачать из [необходимых файлов](https://gitlab.informatics.ru/2020-2021/mytischi/s105/exchange_engine/-/wikis/%D0%9D%D0%B5%D0%BE%D0%B1%D1%85%D0%BE%D0%B4%D0%B8%D0%BC%D1%8B%D0%B5-%D1%84%D0%B0%D0%B9%D0%BB%D1%8B) 
      файл `exchange.sql`, поместить его в корень проекта и загрузить его в БД командой
      ```bash
-     sudo -u postgres psql exchange < exchange.sql
+     sudo -u postgres psql exchange < exchange.sql  # если у вас есть файл .sql
+     ./manage.py loaddata exchange.json  # если у вас есть файл .json
      ```
    * Актуализировать схему
      ```bash

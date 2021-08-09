@@ -4,66 +4,48 @@
       Сменить тип графика
     </v-btn>
     <div v-if="select_chart === 1">
-      <v-btn-toggle v-model="text" style="width: 100%;" mandatory>
-        <v-row>
-          <v-col>
-            <v-btn outlined block elevation="0">
-              1m
-            </v-btn>
-          </v-col>
-          <v-col>
-            <v-btn outlined block elevation="0">
-              5m
-            </v-btn>
-          </v-col>
-          <v-col>
-            <v-btn outlined block elevation="0">
-              15m
-            </v-btn>
-          </v-col>
-          <v-col>
-            <v-btn outlined block elevation="0">
-              30m
-            </v-btn>
-          </v-col>
-          <v-col>
-            <v-btn outlined block elevation="0">
-              60m
-            </v-btn>
-          </v-col>
-        </v-row>
+      <v-btn-toggle v-model="text">
+        <v-btn value="left" outlined>
+          <span class="hidden-sm-and-down">1m</span>
+        </v-btn>
+
+        <v-btn value="center" outlined>
+          <span class="hidden-sm-and-down">5m</span>
+        </v-btn>
+
+        <v-btn value="right" outlined>
+          <span class="hidden-sm-and-down">15m</span>
+        </v-btn>
+
+        <v-btn value="justify" outlined>
+          <span class="hidden-sm-and-down">30m</span>
+        </v-btn>
+        <v-btn value="justify" outlined>
+          <span class="hidden-sm-and-down">60м</span>
+        </v-btn>
       </v-btn-toggle>
       <apexchart height="450" type="candlestick" :options="options" :series="series" />
     </div>
     <div v-else>
-      <v-btn-toggle v-model="selection" style="width: 100%;" mandatory>
-        <v-row>
-          <v-col>
-            <v-btn outlined block elevation="0" @click="updateData('one_month')">
-              1M
-            </v-btn>
-          </v-col>
-          <v-col>
-            <v-btn outlined block elevation="0" @click="updateData('six_months')">
-              6M
-            </v-btn>
-          </v-col>
-          <v-col>
-            <v-btn outlined block elevation="0" @click="updateData('one_year')">
-              1Y
-            </v-btn>
-          </v-col>
-          <v-col>
-            <v-btn outlined block elevation="0" @click="updateData('ytd')">
-              YTD
-            </v-btn>
-          </v-col>
-          <v-col>
-            <v-btn outlined block elevation="0" @click="updateData('all')">
-              ALL
-            </v-btn>
-          </v-col>
-        </v-row>
+      <v-btn-toggle v-model="selection">
+        <v-btn value="left" outlined @click="updateData('one_month')">
+          <span class="hidden-sm-and-down">1m</span>
+        </v-btn>
+
+        <v-btn value="center" outlined @click="updateData('six_months')">
+          <span class="hidden-sm-and-down">6M</span>
+        </v-btn>
+
+        <v-btn value="right" outlined @click="updateData('one_year')">
+          <span class="hidden-sm-and-down">1Y</span>
+        </v-btn>
+
+        <v-btn value="justify" outlined @click="updateData('ytd')">
+          <span class="hidden-sm-and-down">YTD</span>
+        </v-btn>
+        <v-btn value="justify" outlined @click="updateData('all')">
+          <span class="hidden-sm-and-down">all</span>
+        </v-btn>
       </v-btn-toggle>
       <div id="chart-timeline">
         <apexchart ref="chart" type="area" height="450" :options="chartOptions" :series="series2" />

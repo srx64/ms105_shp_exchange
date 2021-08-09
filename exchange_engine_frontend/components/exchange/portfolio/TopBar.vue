@@ -6,14 +6,12 @@
           <div class="col-auto">
             <div class="ex-info-balance">
               <div class="ex-info-balance-deposit">
-                <h6 class="text-h6">
+                <div class="sub-title">
                   Стоимость портфеля
-                </h6>
+                </div>
                 <div style="display: flex; flex-wrap: wrap;justify-content: space-between;align-items: center;">
                   <div>
-                    <h1 class="text-h3">
-                      {{ 2000000.6663 | numeral('0,0.00') }} ₮
-                    </h1>
+                    {{ 2000000.6663 | numeral('0,0.00') }} ₮
                   </div>
                   <div class="pl-8 text-h6">
                     ↑ 1084,12 ₮ (6.42 %)
@@ -22,9 +20,9 @@
               </div>
               <div class="ex-info-balance-profile mt-5">
                 <div>
-                  <h6 class="text-h6">
+                  <div class="sub-title">
                     Баланс
-                  </h6>
+                  </div>
                   <div style="display: flex; flex-wrap: wrap;justify-content: space-between;align-items: center;">
                     <div class="balance">
                       <h3 class="text-h4">
@@ -105,5 +103,13 @@ export default {
     height: 100%;
     justify-content: space-between;
   }
-
+  .sub-title{
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-style: normal;
+    font-weight: 600;
+    font-size: 18px;
+    line-height: 32px;
+    /* identical to box height, or 178% */
+    color: #B5B5B5;
+  }
 </style>

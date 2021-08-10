@@ -1,12 +1,8 @@
 <template>
   <v-app style="background: ;">
-    <v-main>
-      <v-container>
-        <v-fade-transition mode="out-in">
-          <Nuxt keep-alive :keep-alive-props="{ max: 10 }" />
-        </v-fade-transition>
-      </v-container>
-    </v-main>
+    <v-fade-transition mode="out-in">
+      <Nuxt keep-alive :keep-alive-props="{ max: 10 }" />
+    </v-fade-transition>
   </v-app>
 </template>
 

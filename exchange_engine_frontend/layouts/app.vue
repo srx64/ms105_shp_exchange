@@ -18,7 +18,7 @@ export default {
 
 </script>
 
-<style>
+<style scoped>
   @import url('https://fonts.googleapis.com/css2?family=Quantico&display=swap');
   @import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
 

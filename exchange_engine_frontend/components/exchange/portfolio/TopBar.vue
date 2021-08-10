@@ -11,10 +11,10 @@
                 </div>
                 <div style="display: flex; flex-wrap: wrap;justify-content: space-between;align-items: center;">
                   <div style="font-style: normal;font-weight: bold;font-size: 44px;line-height: 48px;">
-                    {{ 2000000.6663 | numeral('0,0.00') }} ₮
+                    {{ $store.getters.GET_PORTFOLIO_SUMM | numeral('0,0.00') }} ₮
                   </div>
                   <div class="pl-8 text-h6">
-                    ↑ {{ 1084.12 | numeral('0,0.00') }} ₮ (6.42 %)
+                    ↑ {{ $auth.user.balance | numeral('0,0.00') }} ₮ (6.42 %)
                   </div>
                 </div>
               </div>
@@ -26,7 +26,7 @@
                   <div style="display: flex; flex-wrap: wrap;justify-content: space-between;align-items: center;">
                     <div class="balance">
                       <h3 class="text-h4">
-                        10,000.00 ₮
+                        {{ $auth.user.balance | numeral('0,0.00') }} ₮
                       </h3>
                     </div>
                     <v-btn color="primary" elevation="0">

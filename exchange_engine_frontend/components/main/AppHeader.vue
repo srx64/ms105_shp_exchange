@@ -7,12 +7,12 @@
             SHP.EXchange
           </v-col>
           <v-col class="ex-nav">
-            <a href="/exchange/portfolio" class="ex-nav-item">
+            <nuxt-link to="/exchange/portfolio" class="ex-nav-item">
               Портфель
-            </a>
-            <a href="/exchange" class="ex-nav-item">
+            </nuxt-link>
+            <nuxt-link to="/exchange" class="ex-nav-item">
               Биржа
-            </a>
+            </nuxt-link>
           </v-col>
           <v-col cols="auto" class="ex-nav-other">
             <div class="ex-nav-other-item">
@@ -20,11 +20,11 @@
                 mdi-bell-outline
               </v-icon>
             </div>
-            <a class="ex-nav-other-item" href="/user/setting" style="text-decoration: none;">
+            <nuxt-link class="ex-nav-other-item" to="/user/setting" style="text-decoration: none;">
               <v-icon>
                 mdi-cog-outline
               </v-icon>
-            </a>
+            </nuxt-link>
             <v-menu offset-y>
               <template #activator="{ on, attrs }">
                 <div v-bind="attrs" class="ex-avatar" v-on="on">

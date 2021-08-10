@@ -23,9 +23,13 @@ export default {
   layout: 'app',
   data: () => ({
   }),
-  created () {
-    if (!this.$store.state.list_update) {
-      this.$store.dispatch('FETCH_LIST_STOCKS')
+  // https://nuxtjs.org/docs/2.x/features/data-fetching#using-activated-hook
+  async fetch () {
+    await this.$store.dispatch('FETCH_LIST_STOCKS')
+  },
+  activated () {
+    if (this.$fetchState.timestamp <= Date.now() - 60000) {
+      this.$fetch()
     }
   }
 }

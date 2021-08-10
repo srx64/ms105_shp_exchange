@@ -4,7 +4,7 @@
       <v-row class="pt-5 justify-center">
         <v-col cols="12">
           <h1>Настройки</h1>
-          <FormDefSetting />
+          <FormDefSetting :submit-form="submit" />
         </v-col>
       </v-row>
     </v-container>
@@ -16,7 +16,16 @@ export default {
   components: {
     FormDefSetting: () => import('@/components/form/setting.vue')
   },
-  layout: 'app'
+  layout: 'app',
+  methods: {
+    submit (info) {
+      try {
+        console.log(info)
+      } catch {
+        console.log('error')
+      }
+    }
+  }
 }
 </script>
 

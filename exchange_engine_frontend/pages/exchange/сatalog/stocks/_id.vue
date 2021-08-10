@@ -67,10 +67,6 @@ export default {
   layout: 'app',
   data: () => ({
     selectedCandlesType: 0,
-    stock: {
-      name: 'JSi',
-      price: 121212.121212
-    },
     candlesInterval: undefined,
     model: '',
     dialog2: false,
@@ -84,7 +80,31 @@ export default {
       }
     }
   }),
+  async fetch () {
+    await this.$store.dispatch('FETCH_STOCK', this.$route.params.id)
+  },
   computed: {
+    stock () {
+      return this.$store.state.stock
+    }
+  },
+  activated () {
+    this.update()
+  },
+  deactivated () {
+    console.log('clear')
+    clearTimeout(this.updateTimer)
+  },
+  methods: {
+    update () {
+      this.updateTimer = setTimeout(() => {
+        this.$fetch()
+        console.log('Start')
+        this.updateTimer = setTimeout(() => {
+          this.update()
+        }, 30000)
+      }, 30000)
+    }
   }
 }
 

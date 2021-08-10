@@ -22,7 +22,7 @@
                   </v-col>
                   <v-col class="d-flex align-center justify-end">
                     <p class="text-body-2 text-sm-subtitle-1 ma-0 text-no-wrap">
-                      {{ 19191919.182 | numeral('0,0.00') }}₮
+                      {{ $auth.user.balance | numeral('0,0.00') }} ₮
                     </p>
                   </v-col>
                 </v-row>
@@ -94,7 +94,8 @@ export default {
     {
       text: 'Торговля с плечом',
       value: 2
-    }],
+    }
+    ],
     select: 0,
     limit_order: false,
     price: 0,
@@ -103,10 +104,20 @@ export default {
   }),
   methods: {
     trade () {
-      this.$store.commit({
-        type: 'showSnackbar',
-        text: 'Вы создали заявку'
+      const urlTrade = this.select === 2 ? 'trading/leverage/' : 'orders/add'
+      this.$axios.post(urlTrade, {
+        stock: this.stock.name.toString(),
+        type: 0,
+        amount: this.amount,
+        ratio: this.ratio,
+        price: this.limit_order ? this.price : 0
       })
+        .then((response) => {
+          console.log(response)
+        })
+        .catch((err) => {
+          console.log(err)
+        })
       this.dialog = false
     }
   }

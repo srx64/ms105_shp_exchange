@@ -43,10 +43,8 @@ export default {
       listStockPortfolio: 'GET_PORTFOLIO'
     })
   },
-  created () {
-    if (!this.$store.state.list_update) {
-      this.$store.dispatch('FETCH_PORTFOLIO')
-    }
+  activated () {
+    this.$store.dispatch('FETCH_PORTFOLIO')
   }
 }
 

@@ -42,7 +42,7 @@ export default {
   }),
   computed: {
     ...mapGetters({
-      stocks: 'GET_EXchange_MAIN'
+      stocks: 'GET_STOCKS'
     })
   }
 }

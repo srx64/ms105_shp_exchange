@@ -1,7 +1,6 @@
 export default () => ({
-  list_update: false,
-  portfolio_update: false,
-  user: {},
+  candles: [],
+  stock: {},
   portfolio: [],
   list_stoks: []
 })

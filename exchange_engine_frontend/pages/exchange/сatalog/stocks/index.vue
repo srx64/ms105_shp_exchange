@@ -82,14 +82,17 @@ export default {
     }
     ]
   }),
+  async fetch () {
+    await this.$store.dispatch('FETCH_LIST_STOCKS')
+  },
   computed: {
     ...mapGetters({
-      listStoks: 'GET_EXchange_MAIN'
+      listStoks: 'GET_STOCKS'
     })
   },
-  created () {
-    if (!this.$store.state.list_update) {
-      this.$store.dispatch('FETCH_LIST_STOCKS')
+  activated () {
+    if (this.$fetchState.timestamp <= Date.now() - 60000) {
+      this.$fetch()
     }
   }
 }

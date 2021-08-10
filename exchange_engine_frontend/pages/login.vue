@@ -6,7 +6,11 @@
           <div class="d-flex flex-column" style="width:100%;">
             <h1>Вход</h1>
             <Form :submit-form="loginUser" />
-            <p class="subtitle-1 mt-5 text-center">В первый раз тут? <NuxtLink to="/register">Зарегистрируйтесь</NuxtLink> за пару минут</p>
+            <p class="subtitle-1 mt-5 text-center">
+              В первый раз тут? <NuxtLink to="/register">
+                Зарегистрируйтесь
+              </NuxtLink> за пару минут
+            </p>
           </div>
         </v-col>
       </v-row>

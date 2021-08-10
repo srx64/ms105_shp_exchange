@@ -41,8 +41,7 @@ export default {
   props: {
     submitForm: {
       type: Function,
-      required: true,
-      default: () => {}
+      required: true
     }
   },
 

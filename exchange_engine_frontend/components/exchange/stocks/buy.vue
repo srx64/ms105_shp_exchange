@@ -22,7 +22,7 @@
                   </v-col>
                   <v-col class="d-flex align-center justify-end">
                     <p class="text-body-2 text-sm-subtitle-1 ma-0 text-no-wrap">
-                      {{ 19191919.182 }}₮
+                      {{ 19191919.182 | numeral('0,0.00') }}₮
                     </p>
                   </v-col>
                 </v-row>
@@ -45,7 +45,7 @@
                   </v-col>
                   <v-col class="d-flex align-center justify-end text-center text-sm-end">
                     <p class="mt-5 mt-sm-0 text-caption text-sm-subtitle-1 ma-0 text-no-wrap">
-                      Стоимость сейчас {{ stock.price.toFixed(2) }}₮
+                      Стоимость сейчас {{ stock.price | numeral('0,0.00') }}₮
                     </p>
                   </v-col>
                 </v-row>

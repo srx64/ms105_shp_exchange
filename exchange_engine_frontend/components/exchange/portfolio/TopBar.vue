@@ -10,11 +10,11 @@
                   Стоимость портфеля
                 </div>
                 <div style="display: flex; flex-wrap: wrap;justify-content: space-between;align-items: center;">
-                  <div>
+                  <div style="font-style: normal;font-weight: bold;font-size: 44px;line-height: 48px;">
                     {{ 2000000.6663 | numeral('0,0.00') }} ₮
                   </div>
                   <div class="pl-8 text-h6">
-                    ↑ 1084,12 ₮ (6.42 %)
+                    ↑ {{ 1084.12 | numeral('0,0.00') }} ₮ (6.42 %)
                   </div>
                 </div>
               </div>

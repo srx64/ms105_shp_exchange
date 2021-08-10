@@ -35,11 +35,11 @@
                     </td>
                     <td>
                       <div style="display: flex;flex-direction: column;justify-content: center; margin:10px;margin-left:0;">
-                        <span> 1 084,12 ₮ </span>
+                        <span> {{ 1084.12 | numeral('0,0.00') }} ₮ </span>
                         <span class="green--text"> 1,42 %</span>
                       </div>
                     </td>
-                    <td> {{ item.price }} ₮ </td>
+                    <td> {{ item.price | numeral('0,0.00') }} ₮ </td>
                   </nuxt-link>
                 </tbody>
               </template>

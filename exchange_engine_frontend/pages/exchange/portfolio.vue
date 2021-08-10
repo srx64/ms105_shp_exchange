@@ -35,7 +35,7 @@ export default {
   name: 'Portfolio',
   components: {
     TopBar: () => import('@/components/exchange/portfolio/TopBar.vue'),
-    ListGroupStocks: () => import('@/components/exchange/portfolio/ListGroupStocks')
+    ListGroupStocks: () => import('@/components/exchange/portfolio/ListGroupStocks.v2.vue')
   },
   layout: 'app',
   computed: {

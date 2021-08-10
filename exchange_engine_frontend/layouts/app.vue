@@ -12,14 +12,15 @@ export default {
   name: 'AppView',
   components: {
     AppBar: () => import('@/components/main/AppHeader.vue')
-  }
-  // middleware: ['auth']
+  },
+  middleware: ['auth']
 }
 
 </script>
 
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Quantico&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
 
   html,
   body {

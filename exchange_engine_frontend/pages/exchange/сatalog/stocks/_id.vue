@@ -13,7 +13,7 @@
           </h1>
           <div class="d-flex flex-column text-right">
             <p class="text-body-1 ma-0 text-no-wrap">
-              {{ stock.price.toFixed(2) }}₮
+              {{ stock.price | numeral('0,0.00') }}₮
             </p>
             <!--<p class="text-body-1 ma-0 green--text darken-1 text-no-wrap">
                     <v-icon x-small color="green">mdi-arrow-up</v-icon> 1 084,12 ₮ (1,42 %)
@@ -37,7 +37,7 @@
                         {{ stocks_portfolio.count }} {{ stocks_portfolio.count == 1 ? 'акция' : 'акций' }}
                       </p>
                       <p class="text-subtitle-1 text-no-wrap">
-                        {{ stocks_portfolio.stock.price.toFixed(2) }}₮ → {{ stocks_portfolio.aver_price.toFixed(2) }}₮
+                        {{ stocks_portfolio.stock.price | numeral('0,0.00') }}₮ → {{ stocks_portfolio.aver_price | numeral('0,0.00') }}₮
                       </p>
                     </v-col>
                   </v-row>

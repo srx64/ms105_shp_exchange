@@ -29,7 +29,7 @@
                   </v-col>
                   <v-col class="d-flex align-center justify-end text-center text-sm-end">
                     <p class="mt-5 mt-sm-0 text-caption text-sm-subtitle-1 ma-0 text-no-wrap">
-                      {{ stocks_portfolio.stock.price.toFixed(2) }}₮ → {{ stocks_portfolio.aver_price.toFixed(2) }}₮
+                      {{ stocks_portfolio.stock.price | numeral('0,0.00') }}₮ → {{ stocks_portfolio.aver_price | numeral('0,0.00') }} ₮
                     </p>
                   </v-col>
                 </v-row>

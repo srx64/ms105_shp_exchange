@@ -416,31 +416,6 @@ export default {
         }
       },
       annotations: {
-        yaxis: [{
-          y: 30,
-          borderColor: '#999',
-          label: {
-            show: true,
-            text: 'Support',
-            style: {
-              color: '#fff',
-              background: '#00E396'
-            }
-          }
-        }],
-        xaxis: [{
-          x: new Date('14 Nov 2012').getTime(),
-          borderColor: '#999',
-          yAxisIndex: 0,
-          label: {
-            show: true,
-            text: 'Rally',
-            style: {
-              color: '#fff',
-              background: '#775DD0'
-            }
-          }
-        }]
       },
       dataLabels: {
         enabled: false
@@ -463,8 +438,8 @@ export default {
         type: 'gradient',
         gradient: {
           shadeIntensity: 1,
-          opacityFrom: 0.7,
-          opacityTo: 0.9,
+          opacityFrom: 0.0,
+          opacityTo: 0.0,
           stops: [0, 100]
         }
       }

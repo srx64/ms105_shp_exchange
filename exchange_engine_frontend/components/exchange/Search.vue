@@ -10,8 +10,8 @@
       hide-selected
       item-text="Description"
       item-value="API"
-      label="Public APIs"
-      placeholder="Start typing to Search"
+      label="Поиск"
+      placeholder="Начните вводить текст для поиска"
       prepend-icon="mdi-magnify"
       return-object
     />

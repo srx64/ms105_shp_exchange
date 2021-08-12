@@ -7,13 +7,13 @@
             SHP.EXchange
           </v-col>
           <v-col class="ex-nav">
-            <nuxt-link to="/exchange/portfolio" class="ex-nav-item">
+            <nuxt-link to="/user/portfolio" class="ex-nav-item">
               Портфель
             </nuxt-link>
             <nuxt-link to="/exchange" class="ex-nav-item">
               Биржа
             </nuxt-link>
-            <nuxt-link to="/exchange/ranking" class="ex-nav-item">
+            <nuxt-link to="/ranking" class="ex-nav-item">
               Рейтинг
             </nuxt-link>
           </v-col>

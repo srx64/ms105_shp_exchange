@@ -2,5 +2,6 @@ export default () => ({
   candles: [],
   stock: {},
   portfolio: [],
-  list_stoks: []
+  list_stoks: [],
+  rating: []
 })

@@ -21,34 +21,67 @@ export default {
     dispatch
   }, id) {
     return new Promise((resolve, reject) => {
-      this.$axios.get('/api/v1/stocks/' + id)
-        .then((response) => {
-          commit('SET_STOCK', response.data)
-        })
-      console.log('1')
-      dispatch('FETCH_CANDLES', id)
-      console.log('2')
-      resolve()
+      try {
+        this.$axios.get('/api/v1/stocks/' + id)
+          .then((response) => {
+            commit('SET_STOCK', response.data)
+          })
+        dispatch('FETCH_CANDLES', id)
+        resolve()
+      } catch (err) {
+        reject(err)
+      }
     })
   },
-  async FETCH_CANDLES ({
+  FETCH_CANDLES ({
     state,
     commit,
     dispatch
   }, id) {
-    const res = await this.$axios.get('/api/v1/candles/' + id + '/1')
-    console.log(new Date())
-    console.log(res)
-    commit('SET_CANDLES', res.data.data)
+    return new Promise((resolve, reject) => {
+      try {
+        this.$axios.get('/api/v1/candles/' + id + '/1')
+          .then((response) => {
+            commit('SET_CANDLES', response.data.data)
+          })
+        resolve()
+      } catch (err) {
+        reject(err)
+      }
+    })
   },
-  async FETCH_PORTFOLIO ({
+  FETCH_PORTFOLIO ({
     state,
     commit,
     dispatch
   }) {
-    const res = await this.$axios.get('/api/v1/portfolio/')
-    commit('SET_PORTFOLIO', res.data)
-    console.log(new Date())
-    console.log(res)
+    return new Promise((resolve, reject) => {
+      try {
+        this.$axios.get('/api/v1/portfolio/')
+          .then((response) => {
+            commit('SET_PORTFOLIO', response.data)
+          })
+        resolve()
+      } catch (err) {
+        reject(err)
+      }
+    })
+  },
+  FETCH_RATING ({
+    state,
+    commit,
+    dispatch
+  }) {
+    return new Promise((resolve, reject) => {
+      try {
+        this.$axios.get('api/v1/balance_statistics/')
+          .then((response) => {
+            commit('SET_RATING', response.data)
+          })
+        resolve()
+      } catch (err) {
+        reject(err)
+      }
+    })
   }
 }

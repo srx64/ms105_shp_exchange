@@ -5,15 +5,7 @@
       <v-container>
         <v-row class="flex-column-reverse flex-md-row">
           <v-col cols="12" md="8">
-            <div
-              v-if="listStockPortfolio.length == 0"
-              style="display: flex;justify-content: center;margin-top:25px;height: 170px;align-items: center;"
-            >
-              <v-progress-circular indeterminate color="primary" />
-            </div>
-            <v-list v-else two-line class="transparent">
-              <ListGroupStocks :stocks="listStockPortfolio" />
-            </v-list>
+            <ListGroupStocks :stocks="listStockPortfolio" />
           </v-col>
           <v-col cols="12" md="4">
             <div class="text-h6">

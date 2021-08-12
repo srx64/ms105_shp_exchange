@@ -10,5 +10,8 @@ export default {
   },
   SET_PORTFOLIO: (state, data) => {
     state.portfolio = data
+  },
+  SET_RATING: (state, data) => {
+    state.rating = data
   }
 }

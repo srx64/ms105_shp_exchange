@@ -1,23 +1,25 @@
 <template>
   <v-main>
     <v-container>
-      <v-row>
+      <v-row class="pt-5">
         <v-col cols="12">
-          <span @click="$router.push({ name: 'exchange-сatalog-stocks'})">
-            <v-icon>mdi-arrow-left</v-icon> Акции
-          </span>
+          <nuxt-link to="/exchange/сatalog/stocks">
+            <v-icon>mdi-chevron-left</v-icon>Акции
+          </nuxt-link>
         </v-col>
         <v-col cols="12">
-          <h1 class="text-h4 text-xl-h3 text-truncate">
-            {{ stock.name }}
-          </h1>
-          <div class="d-flex flex-column text-right">
-            <p class="text-body-1 ma-0 text-no-wrap">
-              {{ stock.price | numeral('0,0.00') }}₮
-            </p>
-            <!--<p class="text-body-1 ma-0 green--text darken-1 text-no-wrap">
-                    <v-icon x-small color="green">mdi-arrow-up</v-icon> 1 084,12 ₮ (1,42 %)
-                </p>-->
+          <div style="display: flex;justify-content: space-between;">
+            <h1 class="text-h4 text-xl-h3 text-truncate">
+              {{ stock.name }}
+            </h1>
+            <div class="d-flex flex-column text-right">
+              <div class="text-h5 ma-0 text-no-wrap">
+                {{ stock.price | numeral('0,0.00') }}₮
+              </div>
+              <div class="text-body-1 ma-0 green--text darken-1 text-no-wrap">
+                <v-icon x-small color="green">mdi-arrow-up</v-icon> 1 084,12 ₮ (1,42 %)
+              </div>
+            </div>
           </div>
         </v-col>
         <v-col cols="8">

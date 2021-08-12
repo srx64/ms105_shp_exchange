@@ -1,17 +1,17 @@
 <template>
-  <v-form v-model="valid">
+  <v-form>
     <v-row>
-      <v-col cols="12" md="6">
+      <v-col :cols="12" md="6">
         <v-text-field v-model="userInfo.firstName" :error-messages="firstNameErrors" label="Имя" required />
       </v-col>
 
-      <v-col cols="12" md="6">
+      <v-col :cols="12" md="6">
         <v-text-field v-model="userInfo.lastname" :error-messages="lastNameErrors" label="Фамилия" required />
       </v-col>
-      <v-col cols="12">
+      <v-col :cols="12">
         <v-text-field v-model="userInfo.login" :error-messages="loginErrors" label="Логи" required />
       </v-col>
-      <v-col cols="12">
+      <v-col :cols="12">
         <v-text-field v-model="userInfo.email" :error-messages="emailErrors" label="E-mail" required />
       </v-col>
     </v-row>
@@ -52,11 +52,10 @@ export default {
   computed: {
     userInfo () {
       return {
-        login: '',
-        email: '',
-        lastName: '',
-        firstName: '',
-        password: ''
+        login: this.$auth.user.username || '',
+        email: this.$auth.user.email || '',
+        lastName: this.$auth.user.last_name || '',
+        firstName: this.$auth.user.first_name || ''
       }
     },
     loginErrors () {

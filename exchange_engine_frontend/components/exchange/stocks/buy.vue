@@ -13,7 +13,7 @@
       </v-card-title>
       <v-card-text>
         <v-row>
-          <v-col cols="12">
+          <v-col :cols="12">
             <v-card eleva tion="0" outlined>
               <v-card-text class="pl-4 pr-4 pt-2 pb-2">
                 <v-row no-gutters>
@@ -29,7 +29,7 @@
               </v-card-text>
             </v-card>
           </v-col>
-          <v-col cols="12">
+          <v-col :cols="12">
             <v-card outlined class="">
               <v-card-text class="">
                 <v-row no-gutters>
@@ -52,7 +52,7 @@
               </v-card-text>
             </v-card>
           </v-col>
-          <v-col cols="12">
+          <v-col :cols="12">
             <v-select v-model="select" :items="items" label="Тип заявки" outlined />
             <v-form v-if="select == 0">
               <v-text-field v-model="amount" type="number" min="1" outlined label="Колическво" />

@@ -38,13 +38,18 @@ export default {
     ListGroupStocks: () => import('@/components/exchange/portfolio/ListGroupStocks.v2.vue')
   },
   layout: 'app',
+  async fetch () {
+    await this.$store.dispatch('FETCH_PORTFOLIO')
+  },
   computed: {
     ...mapGetters({
       listStockPortfolio: 'GET_PORTFOLIO'
     })
   },
   activated () {
-    this.$store.dispatch('FETCH_PORTFOLIO')
+    if (this.$fetchState.timestamp <= Date.now() - 60000) {
+      this.$fetch()
+    }
   }
 }
 

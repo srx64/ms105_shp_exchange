@@ -13,6 +13,9 @@
             <nuxt-link to="/exchange" class="ex-nav-item">
               Биржа
             </nuxt-link>
+            <nuxt-link to="/exchange/ranking" class="ex-nav-item">
+              Рейтинг
+            </nuxt-link>
           </v-col>
           <v-col cols="auto" class="ex-nav-other">
             <div class="ex-nav-other-item">
@@ -33,7 +36,7 @@
               </template>
               <v-list nav>
                 <v-list-item-group color="primary">
-                  <v-list-item>
+                  <v-list-item disabled>
                     <v-list-item-title>Темная тема</v-list-item-title>
                   </v-list-item>
                   <v-list-item>

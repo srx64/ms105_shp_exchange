@@ -17,7 +17,7 @@
               :headers="headers"
               :items="listStoks"
               :page.sync="page"
-
+              elevation="0"
               hide-default-footer
               class="elevation-1"
               @page-count="pageCount = $event"

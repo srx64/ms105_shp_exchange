@@ -42,7 +42,7 @@ export default {
       try {
         this.$axios.get('/api/v1/candles/' + id + '/1')
           .then((response) => {
-            commit('SET_CANDLES', response.data.data)
+            commit('SET_CANDLES', response.data.sort((a, b) => (a.date < b.date && -1) || (a.date > b.date && 1) || 0))
           })
         resolve()
       } catch (err) {

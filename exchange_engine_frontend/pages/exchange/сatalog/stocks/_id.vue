@@ -17,7 +17,9 @@
                 {{ stock.price | numeral('0,0.00') }}₮
               </div>
               <div class="text-body-1 ma-0 green--text darken-1 text-no-wrap">
-                <v-icon x-small color="green">mdi-arrow-up</v-icon> 1 084,12 ₮ (1,42 %)
+                <v-icon x-small color="green">
+                  mdi-arrow-up
+                </v-icon> 1 084,12 ₮ (1,42 %)
               </div>
             </div>
           </div>

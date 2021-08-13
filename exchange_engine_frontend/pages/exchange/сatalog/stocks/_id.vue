@@ -49,7 +49,7 @@
               </v-card>
             </v-col>
             <v-col v-if="stocks_portfolio!=undefined" cols="12">
-              <sellStock :stocks_portfolio="stocks_portfolio" />
+              <sellStock :stocks_portfolio="stocks_portfolio" :stock="stock" />
             </v-col>
             <v-col :cols="[stocks_portfolio!=undefined ? 12 : 12]" sm="12">
               <buyStock :stock="stock" />

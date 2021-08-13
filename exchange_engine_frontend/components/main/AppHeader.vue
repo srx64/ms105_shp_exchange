@@ -31,7 +31,7 @@
             <v-menu offset-y>
               <template #activator="{ on, attrs }">
                 <div v-bind="attrs" class="ex-avatar" v-on="on">
-                  <img src="https://hsto.org/files/1b8/5c6/cf7/1b85c6cf74404c72b7a976de6cc9b972.jpg" alt="">
+                  <img :src="$auth.user.avatar" alt="">
                 </div>
               </template>
               <v-list nav>

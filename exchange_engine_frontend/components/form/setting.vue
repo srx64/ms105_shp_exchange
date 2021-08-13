@@ -1,12 +1,15 @@
 <template>
   <v-form>
     <v-row>
+      <v-col :cols="12">
+        <v-file-input accept="image/*" v-model="selectedFile" />
+      </v-col>
       <v-col :cols="12" md="6">
         <v-text-field v-model="userInfo.firstName" :error-messages="firstNameErrors" label="Имя" required />
       </v-col>
 
       <v-col :cols="12" md="6">
-        <v-text-field v-model="userInfo.lastname" :error-messages="lastNameErrors" label="Фамилия" required />
+        <v-text-field v-model="userInfo.lastName" :error-messages="lastNameErrors" label="Фамилия" required />
       </v-col>
       <v-col :cols="12">
         <v-text-field v-model="userInfo.login" :error-messages="loginErrors" label="Логи" required />
@@ -22,18 +25,32 @@
 </template>
 
 <script>
-import { validationMixin } from 'vuelidate'
-import { required, email } from 'vuelidate/lib/validators'
+import {
+  validationMixin
+} from 'vuelidate'
+import {
+  required,
+  email
+} from 'vuelidate/lib/validators'
 
 export default {
   mixins: [validationMixin],
 
   validations: {
     userInfo: {
-      login: { required },
-      email: { required, email },
-      lastName: { required },
-      firstName: { required }
+      login: {
+        required
+      },
+      email: {
+        required,
+        email
+      },
+      lastName: {
+        required
+      },
+      firstName: {
+        required
+      }
     }
 
   },
@@ -46,7 +63,9 @@ export default {
   },
 
   data: () => ({
-    showPassword: false
+    showPassword: false,
+    url: '',
+    selectedFile: null
   }),
 
   computed: {
@@ -60,44 +79,62 @@ export default {
     },
     loginErrors () {
       const errors = []
-      if (!this.$v.userInfo.login.$dirty) { return errors }
-      !this.$v.userInfo.login.required && errors.push('Введите логин')
+      if (!this.$v.userInfo.login.$dirty) {
+        return errors
+      }!this.$v.userInfo.login.required && errors.push('Введите логин')
       return errors
     },
     emailErrors () {
       const errors = []
-      if (!this.$v.userInfo.email.$dirty) { return errors }
-      !this.$v.userInfo.email.email && errors.push('Введите корректный e-mail')
-      !this.$v.userInfo.email.required && errors.push('Введите e-mail')
+      if (!this.$v.userInfo.email.$dirty) {
+        return errors
+      }!this.$v.userInfo.email.email && errors.push('Введите корректный e-mail')
+      !this.$v.userInfo.email.required &&
+          errors.push('Введите e-mail')
       return errors
     },
     lastNameErrors () {
       const errors = []
-      if (!this.$v.userInfo.lastName.$dirty) { return errors }
-      !(/^([a-zа-яё]+)$/i.test(this.userInfo.lastName)) && errors.push('Фамилия может содержать только буквы алфавита')
+      if (!this.$v.userInfo.lastName.$dirty) {
+        return errors
+      }
+      !(/^([a-zа-яёA-ZА-ЯЁ]+)$/i.test(this.userInfo.lastName)) && errors.push('Фамилия может содержать только буквы алфавита')
       !this.$v.userInfo.lastName.required && errors.push('Введите фамилию')
       return errors
     },
     firstNameErrors () {
       const errors = []
-      if (!this.$v.userInfo.firstName.$dirty) { return errors }
-      !(/^([a-zа-яё]+)$/i.test(this.userInfo.firstName)) && errors.push('Имя может содержать только буквы алфавита')
+      if (!this.$v.userInfo.firstName.$dirty) {
+        return errors
+      }
+      !(/^([a-zа-яёA-ZА-ЯЁ]+)$/i.test(this.userInfo.firstName)) && errors.push('Имя может содержать только буквы алфавита')
       !this.$v.userInfo.firstName.required && errors.push('Введите имя')
       return errors
     }
   },
 
   methods: {
+    onFile () {
+      this.url = URL.createObjectURL(this.selectedFile)
+      const fd = new FormData()
+      fd.append('file', this.selectedFile, this.selectedFile.name)
+      this.$axios.patch('api/v1/profile/', fd)
+        .then((res) => {
+          console.log(res, fd)
+        })
+    },
     submit () {
       this.$v.$touch()
       if (this.$v.$invalid) {
         console.log('ERROR')
       } else {
+        this.onFile()
         this.submitForm(this.userInfo)
       }
     }
   }
 }
+
 </script>
 
 <style>

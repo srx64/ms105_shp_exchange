@@ -79,7 +79,7 @@
 
 <script>
 export default {
-  props: ['stocks_portfolio'],
+  props: ['stocks_portfolio', 'stock'],
   data: () => ({
     dialog: false,
     model: '',
@@ -103,11 +103,19 @@ export default {
   }),
   methods: {
     trade () {
-      this.$store.commit({
-        type: 'showSnackbar',
-        text: 'Вы создали заявку'
+      this.$axios.post('orders/add', {
+        stock: this.stock.name.toString(),
+        type: 1,
+        amount: this.amount,
+        ratio: this.ratio,
+        price: this.limit_order ? this.price : 0
       })
-
+        .then((response) => {
+          console.log(response)
+        })
+        .catch((err) => {
+          console.log(err)
+        })
       this.dialog = false
     }
   }

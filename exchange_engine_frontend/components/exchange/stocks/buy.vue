@@ -104,8 +104,7 @@ export default {
   }),
   methods: {
     trade () {
-      const urlTrade = this.select === 2 ? 'trading/leverage/' : 'orders/add'
-      this.$axios.post(urlTrade, {
+      this.$axios.post('orders/add', {
         stock: this.stock.name.toString(),
         type: 0,
         amount: this.amount,

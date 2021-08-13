@@ -20,7 +20,11 @@ export default {
   methods: {
     submit (info) {
       try {
-        console.log(info)
+        this.$axios.patch('api/v1/profile/', {
+          first_name: info.first_name,
+          last_name: info.last_name,
+          email: info.email
+        })
       } catch {
         console.log('error')
       }

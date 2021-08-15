@@ -1,12 +1,14 @@
 <template>
-  <form>
+  <form ref="form">
     <v-text-field
       v-model="userInfo.username"
       :error-messages="usernameErrors"
       label="Логин"
       required
+      @keyup.enter="$refs.password.focus"
     />
     <v-text-field
+      ref="password"
       v-model="userInfo.password"
       :error-messages="passwordErrors"
       label="Пароль"
@@ -14,6 +16,7 @@
       :type="showPassword ? 'text' : 'password'"
       :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
       @click:append="showPassword = !showPassword"
+      @keyup.enter="submit"
     />
 
     <v-btn

@@ -7,38 +7,46 @@
       required
       @input="$v.userInfo.username.$touch()"
       @blur="$v.userInfo.username.$touch()"
+      @keyup.enter="$refs.email.focus"
     />
     <v-text-field
+      ref="email"
       v-model="userInfo.email"
       :error-messages="emailErrors"
       label="E-mail"
       required
       @input="$v.userInfo.email.$touch()"
       @blur="$v.userInfo.email.$touch()"
+      @keyup.enter="$refs.lastName.focus"
     />
     <v-row>
       <v-col>
         <v-text-field
+          ref="lastName"
           v-model="userInfo.lastName"
           :error-messages="lastNameErrors"
           label="Фамилия"
           required
           @input="$v.userInfo.lastName.$touch()"
           @blur="$v.userInfo.lastName.$touch()"
+          @keyup.enter="$refs.firstName.focus"
         />
       </v-col>
       <v-col>
         <v-text-field
+          ref="firstName"
           v-model="userInfo.firstName"
           :error-messages="firstNameErrors"
           label="Имя"
           required
           @input="$v.userInfo.firstName.$touch()"
           @blur="$v.userInfo.firstName.$touch()"
+          @keyup.enter="$refs.password.focus"
         />
       </v-col>
     </v-row>
     <v-text-field
+      ref="password"
       v-model="userInfo.password"
       :error-messages="passwordErrors"
       label="Пароль"
@@ -48,8 +56,10 @@
       @click:append="showPassword = !showPassword"
       @input="$v.userInfo.password.$touch()"
       @blur="$v.userInfo.password.$touch()"
+      @keyup.enter="$refs.repeatPassword.focus"
     />
     <v-text-field
+      ref="repeatPassword"
       v-model="userInfo.repeatPassword"
       :error-messages="repeatPasswordErrors"
       label="Повторите пароль"
@@ -59,6 +69,7 @@
       @click:append="showPassword = !showPassword"
       @input="$v.userInfo.repeatPassword.$touch()"
       @blur="$v.userInfo.repeatPassword.$touch()"
+      @keyup.enter="submit"
     />
     <v-btn
       class="mr-4"

@@ -2,7 +2,7 @@
   <v-form>
     <v-row>
       <v-col :cols="12">
-        <v-file-input accept="image/*" v-model="selectedFile" />
+        <v-file-input v-model="selectedFile" accept="image/*" />
       </v-col>
       <v-col :cols="12" md="6">
         <v-text-field v-model="userInfo.firstName" :error-messages="firstNameErrors" label="Имя" required />

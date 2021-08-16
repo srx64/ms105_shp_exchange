@@ -123,7 +123,7 @@ class AddOrderView(APIView):
         commissionses = Settings.objects.filter(name='commission').last()
         commissions = commissionses.data['percent']
         flag = False
-        admin = User.objects.filter(username='admin')
+        admins = User.objects.get(username='admin')
         if Portfolio.objects.filter(user=user, stock=stock).exists() and \
             Portfolio.objects.get(user=user, stock=stock).count > 0:
             flag = True
@@ -148,7 +148,7 @@ class AddOrderView(APIView):
                     elif type == 1 and portfolio.count >= order.amount and not portfolio.is_debt:
                         portfolio.count -= order.amount
                         user.balance += (order.amount * stock.price) * (1 - commissions)
-                        admin.balance += (order.amount * stock.price) * commissions
+                        admins.balance += (order.amount * stock.price) * commissions
 
                     elif type == 1 and portfolio.count == 0 and not portfolio.is_debt:
                         if (setting is None or setting.data['is_active']) or not setting.data['is_active']:
@@ -166,7 +166,7 @@ class AddOrderView(APIView):
                         if setting.data['is_active']:
                             if (order.amount - portfolio.count) * order.price <= 100000 and order.amount * order.price - abs(portfolio.short_balance) <= 0:
                                 user.balance += (portfolio.count * stock.price) * (1 - commissions)  # цена на данный момент
-                                admin.balance += (portfolio.count * stock.price) * commissions
+                                admins.balance += (portfolio.count * stock.price) * commissions
                                 portfolio.is_debt = True
                                 portfolio.count = portfolio.count - order.amount
                                 portfolio.short_balance -= portfolio.count * stock.price
@@ -187,12 +187,12 @@ class AddOrderView(APIView):
 
                     elif type == 0 and portfolio.is_debt and portfolio.count < -order.amount:
                         user.balance += ((100000 - abs(portfolio.short_balance)) - order.amount * stock.price) * (1 - commissions)
-                        admin.balance += ((100000 - abs(portfolio.short_balance)) - order.amount * stock.price) * commissions
+                        admins.balance += ((100000 - abs(portfolio.short_balance)) - order.amount * stock.price) * commissions
                         portfolio.count += order.amount
 
                     elif type == 0 and portfolio.is_debt and portfolio.count == -order.amount:
                         user.balance += ((100000 - abs(portfolio.short_balance)) - order.amount * stock.price) * (1 - commissions)
-                        admin.balance += ((100000 - abs(portfolio.short_balance)) - order.amount * stock.price) * commissions
+                        admins.balance += ((100000 - abs(portfolio.short_balance)) - order.amount * stock.price) * commissions
                         portfolio.count = 0
                         portfolio.is_debt = False
                         portfolio.short_balance = -100000
@@ -200,7 +200,7 @@ class AddOrderView(APIView):
                     elif type == 0 and portfolio.is_debt and portfolio.count > -order.amount:
                         if (order.amount + portfolio.count) * order.price <= user.balance:
                             user.balance += ((100000 - abs(portfolio.short_balance)) - abs(portfolio.count) * stock.price) * (1 - commissions)
-                            admin.balance += ((100000 - abs(portfolio.short_balance)) - abs(portfolio.count) * stock.price) * commissions
+                            admins.balance += ((100000 - abs(portfolio.short_balance)) - abs(portfolio.count) * stock.price) * commissions
                             portfolio.count += order.amount
                             portfolio.is_debt = False
                             portfolio.short_balance = -100000
@@ -214,7 +214,7 @@ class AddOrderView(APIView):
                     user.save()
                     order.save()
                     portfolio.save()
-
+                    admins.save()
                 self.margin_call(user)
                 sred = portfolio.count
                 portfolio.aver_price = ((portfolio.aver_price * (sred - order.amount)

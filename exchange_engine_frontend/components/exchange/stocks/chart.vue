@@ -58,6 +58,7 @@
 import { mapGetters } from 'vuex'
 
 export default {
+  name: 'ChartVUE',
   data: () => ({
     select_chart: 1,
     selectedCandlesType: 0,

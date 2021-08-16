@@ -2,12 +2,12 @@
   <v-main>
     <v-container>
       <v-row class="pt-5">
-        <v-col cols="12">
+        <v-col :cols="12">
           <nuxt-link to="/exchange/сatalog/stocks">
             <v-icon>mdi-chevron-left</v-icon>Акции
           </nuxt-link>
         </v-col>
-        <v-col cols="12">
+        <v-col :cols="12">
           <div style="display: flex;justify-content: space-between;">
             <h1 class="text-h4 text-xl-h3 text-truncate">
               {{ stock.name }}
@@ -24,15 +24,15 @@
             </div>
           </div>
         </v-col>
-        <v-col cols="8">
+        <v-col :cols="8">
           <chart />
         </v-col>
-        <v-col cols="4">
+        <v-col :cols="4">
           <h1 v-if="stocks_portfolio!=undefined">
             В портфеле
           </h1>
           <v-row class="align-center justify-end">
-            <v-col v-if="stocks_portfolio!=undefined" cols="12">
+            <v-col v-if="stocks_portfolio!=undefined" :cols="12">
               <v-card outlined elevation="0" class="pa-2 mt-8 mb-8">
                 <v-card-text class="pb-0">
                   <v-row class="flex-sm-row">
@@ -48,7 +48,7 @@
                 </v-card-text>
               </v-card>
             </v-col>
-            <v-col v-if="stocks_portfolio!=undefined" cols="12">
+            <v-col v-if="stocks_portfolio!=undefined" :cols="12">
               <sellStock :stocks_portfolio="stocks_portfolio" :stock="stock" />
             </v-col>
             <v-col :cols="[stocks_portfolio!=undefined ? 12 : 12]" sm="12">

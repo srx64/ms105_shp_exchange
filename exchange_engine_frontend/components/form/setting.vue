@@ -128,7 +128,9 @@ export default {
       if (this.$v.$invalid) {
         console.log('ERROR')
       } else {
-        this.onFile()
+        if (!(this.selectedFile === null)) {
+          this.onFile()
+        }
         this.submitForm(this.userInfo)
       }
     }

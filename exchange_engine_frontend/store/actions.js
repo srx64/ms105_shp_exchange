@@ -83,5 +83,22 @@ export default {
         reject(err)
       }
     })
+  },
+  FETCH_ORDERS ({
+    state,
+    commit,
+    dispatch
+  }) {
+    return new Promise((resolve, reject) => {
+      try {
+        this.$axios.get('api/v1/orders/')
+          .then((response) => {
+            commit('SET_ORDERS', response.data)
+          })
+        resolve()
+      } catch (err) {
+        reject(err)
+      }
+    })
   }
 }

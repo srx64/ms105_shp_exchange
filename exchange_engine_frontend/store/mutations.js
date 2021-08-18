@@ -13,5 +13,8 @@ export default {
   },
   SET_RATING: (state, data) => {
     state.rating = data
+  },
+  SET_ORDERS: (state, data) => {
+    state.orders = data.sort((a, b) => new Date(b.date_closed) - new Date(a.date_closed))
   }
 }

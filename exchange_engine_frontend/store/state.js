@@ -3,5 +3,6 @@ export default () => ({
   stock: {},
   portfolio: [],
   list_stoks: [],
-  rating: []
+  rating: [],
+  orders: []
 })

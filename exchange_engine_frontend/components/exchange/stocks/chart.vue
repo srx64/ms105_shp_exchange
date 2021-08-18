@@ -24,7 +24,7 @@
           <span class="hidden-sm-and-down">60м</span>
         </v-btn>
       </v-btn-toggle>
-      <apexchart height="450" type="candlestick" :options="options" :series="series" />
+      <apexchart v-if="!(series === null)" height="450" type="candlestick" :options="options" :series="series" />
     </div>
     <div v-else>
       <v-btn-toggle v-model="selection">
@@ -48,7 +48,14 @@
         </v-btn>
       </v-btn-toggle>
       <div id="chart-timeline">
-        <apexchart ref="chart" type="area" height="450" :options="chartOptions" :series="series2" />
+        <apexchart
+          v-if="!(series2 === null)"
+          ref="chart"
+          type="area"
+          height="450"
+          :options="chartOptions"
+          :series="series2"
+        />
       </div>
     </div>
   </div>

@@ -4,16 +4,16 @@
       <h1>Рейтинг</h1>
       {{ ratingList }}
       <div>
-        <div v-for="n in 20" v-bind:key="n" style="padding: 10px;margin-bottom: 15px;background: white;border-radius: 10px">
+        <div v-for="n in 20" :key="n" style="padding: 10px;margin-bottom: 15px;background: white;border-radius: 10px">
           <v-row>
             <v-col :cols="'auto'">
-              <v-avatar color="primary" size="40"></v-avatar>
+              <v-avatar color="primary" size="40" />
             </v-col>
             <v-col>
               NAME
             </v-col>
             <v-col class="d-flex align-center text-center" :cols="2">
-              {{n}}
+              {{ n }}
             </v-col>
           </v-row>
         </div>

@@ -17,11 +17,11 @@
             </v-list-item-avatar>
             <div>
               <div>{{ security.stock.name }}</div>
-              <div>{{ security.count + ' шт.' }}</div>
+              <div>{{ security.count + ' шт.' }} • {{ security.stock.price | numeral('0,0.00') }}₮</div>
             </div>
           </div>
           <div class="item--info">
-            <div> {{ security.stock.price | numeral('0,0.00') }}₮</div>
+            <div>{{ security.stock.price * security.count | numeral('0,0.00') }}₮</div>
             <div>↑ {{ (security.stock.price - security.aver_price) | numeral('0,0.00') }} ₮ ({{ ((security.stock.price - security.aver_price) / security.stock.price * 100)| numeral('0.00') }} %)</div>
           </div>
         </div>

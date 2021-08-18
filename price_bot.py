@@ -1,5 +1,6 @@
 import os
 import time
+from datetime import timedelta
 from math import sin, pi
 
 from django.utils import timezone
@@ -112,6 +113,16 @@ class HandlingFunctions:
             return setting
         elif Settings.objects.filter(stock_id=stock_id, name='algo_quotes'):
             setting = Settings.objects.filter(stock_id=stock_id, name='algo_quotes').last()
+            return setting
+        return None
+
+    @staticmethod
+    def get_future_quotes_generation(stock_id):
+        if Settings.objects.filter(stock_id=stock_id, name='future_generation_quotes'):
+            setting = Settings.objects.filter(stock_id=stock_id, name='future_generation_quotes').last()
+            return setting
+        elif Settings.objects.filter(stock_id=-1, name='future_generation_quotes'):
+            setting = Settings.objects.filter(stock_id=-1, name='future_generation_quotes').last()
             return setting
         return None
 
@@ -403,27 +414,57 @@ class PriceBot:
         self.files = next(os.walk('data/'))[2]
         self.figures = Figures()
 
+    def generate_by_type(self, stock):
+        generation_type = self.general_data[stock.pk - 1][0]
+        if generation_type == 'table':
+            print('Генерируем по странной таблице для', stock.name)
+            self.table_method(stock)
+        elif generation_type == 'formula':
+            print('Генерируем по формулам для', stock.name)
+            self.formula_method(stock)
+        elif generation_type == 'default':
+            print('Генерируем стандартным методом для', stock.name)
+            self.default_method(stock)
+        else:
+            logging.warning(
+                f'Неверно указан тип генерации для инструмента с названием {stock.name},'
+                f' генерация котировок не производится'
+            )
+
+    def update_data(self):
+        self.current_line += 1
+        self.general_data = HandlingFunctions.update_generation_type(self.general_data, self.current_line)
+
     def main_loop(self):
         while True:
             for stock in Stocks.objects.all():
-                generation_type = self.general_data[stock.pk - 1][0]
-                if generation_type == 'table':
-                    print('Генерируем по странной таблице для', stock.name)
-                    self.table_method(stock)
-                elif generation_type == 'formula':
-                    print('Генерируем по формулам для', stock.name)
-                    self.formula_method(stock)
-                elif generation_type == 'default':
-                    print('Генерируем стандартным методом для', stock.name)
-                    self.default_method(stock)
-                else:
-                    logging.warning(
-                        f'Неверно указан тип генерации для инструмента с названием {stock.name},'
-                        f' генерация котировок не производится'
-                    )
+                self.generate_future_quotes(stock)
+                self.generate_by_type(stock)
             time.sleep(HandlingFunctions.get_timer())
-            self.current_line += 1
-            self.general_data = HandlingFunctions.update_generation_type(self.general_data, self.current_line)
+            self.update_data()
+
+    def generate_future_quotes(self, stock):
+        setting = HandlingFunctions.get_future_quotes_generation(stock.pk)
+        global STOCKS_LIST
+        shift = setting.data['time']
+        stocks = list(STOCKS_LIST)
+        start = setting.date
+        end = start + timedelta(minutes=shift)
+        current = start
+        if setting is not None and shift is not None and shift > 0:
+            while current < end:
+                if setting.stock_id == -1:
+                    for current_stock in stocks:
+                        self.generate_by_type(current_stock)
+                        self.update_data()
+                        if current_stock == stocks[-1]:
+                            current += timedelta(seconds=HandlingFunctions.get_timer())
+                elif setting.stock_id > 0:
+                    self.generate_by_type(stock)
+                    self.update_data()
+                    current += timedelta(seconds=HandlingFunctions.get_timer())
+            setting.data['time'] = 0
+            setting.save()
 
     def formula_method(self, stock):
         if HandlingFunctions.generation_available(stock, self.user, self.amount, self.figures):

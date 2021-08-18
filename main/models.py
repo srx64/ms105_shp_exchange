@@ -504,6 +504,7 @@ class Settings(models.Model):
     description = models.TextField(default='')
     stock_id = models.IntegerField(default=0)
     data = models.JSONField()
+    date = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
         return f'{self.description}: {self.data}'

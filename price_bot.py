@@ -163,17 +163,16 @@ class HandlingFunctions:
 
     @staticmethod
     def generate_orders(user, stock, price, AMOUNT, line=-1):
-        Order.objects.create(user=user, stock=stock, type=True, price=price, amount=AMOUNT, is_closed=True)
-        Order.objects.create(user=user, stock=stock, type=False, price=price, amount=AMOUNT, is_closed=True)
-        Order.objects.create(user=user, stock=stock, type=True, price=price, amount=AMOUNT * 10, is_closed=False)
-        Order.objects.create(user=user, stock=stock, type=False, price=price, amount=AMOUNT * 10, is_closed=False)
-        Quotes.objects.create(stock=stock, price=price, line=line)
+        # Order.objects.create(user=user, stock=stock, type=True, price=price, amount=AMOUNT, is_closed=True)
+        # Order.objects.create(user=user, stock=stock, type=False, price=price, amount=AMOUNT, is_closed=True)
+        # Order.objects.create(user=user, stock=stock, type=True, price=price, amount=AMOUNT * 10, is_closed=False)
+        # Order.objects.create(user=user, stock=stock, type=False, price=price, amount=AMOUNT * 10, is_closed=False)
+        # Quotes.objects.create(stock=stock, price=price, line=line)
         stock.price = price
         stock.save()
         portfolio, created = Portfolio.objects.get_or_create(user=user, stock=stock)
         portfolio.count = 100000
         portfolio.save()
-        # print('Something was made')
 
     @staticmethod
     def limits_check(stock_id):
@@ -307,26 +306,13 @@ class Tendencies:
         stocks = list(STOCKS_LIST)
         if HandlingFunctions.get_settings(stock.id) is not None:
             setting = HandlingFunctions.get_settings(stock.id)
-            if setting.data['start_after_time'] is not None:
-                if setting.data['start_after_time'] > 0:
-                    setting.data['start_after_time'] -= t
-                elif setting.data['duration'] is not None:
-                    if setting.data['duration'] > 0:
-                        if setting.data['type'] is not None:
-                            coefficient = setting.data['coefficient']
-                            f_type = setting.data['type']
-                            figure = Figures.get_figure(figures, f_type)
-                            price = figure(last_price, stock.id) * coefficient
-                            HandlingFunctions.generate_orders(user, stock, price, AMOUNT, t)
-                            if setting.stock_id > 0 or stock == stocks[-1]:
-                                setting.data['duration'] -= t
-                    elif setting.data['duration'] <= 0:
-                        return False
-            elif setting.data['coefficient'] is not None and setting.data['type'] is None:
-                return False
-            elif setting.data['duration'] is not None:
-                if setting.data['duration'] > 0:
-                    if setting.data['type'] is not None:
+            if setting.data['type'] is not None:
+                if setting.data['start_after_time'] is not None:
+                    if setting.data['start_after_time'] > 0 and setting.stock_id > 0 or stock == stocks[-1]:
+                        setting.data['start_after_time'] -= t
+                if setting.data['duration'] is not None:
+                    if setting.data['duration'] > 0 and (setting.data['start_after_time'] is None
+                                                         or setting.data['start_after_time'] <= 0):
                         coefficient = setting.data['coefficient']
                         f_type = setting.data['type']
                         figure = Figures.get_figure(figures, f_type)
@@ -334,14 +320,15 @@ class Tendencies:
                         HandlingFunctions.generate_orders(user, stock, price, AMOUNT, t)
                         if setting.stock_id > 0 or stock == stocks[-1]:
                             setting.data['duration'] -= t
-                elif setting.data['duration'] <= 0:
-                    return False
-            elif setting.data['coefficient'] is not None and setting.data['type'] is None:
-                return False
-
+                        setting.save()
+                        return True
+            elif setting.data['start_after_time'] > 0 or setting.data['duration'] > 0:
+                if setting.data['start_after_time'] > 0:
+                    setting.data['start_after_time'] = 0
+                if setting.data['duration'] > 0:
+                    setting.data['duration'] = 0
             setting.save()
-            return True
-        return False
+            return False
 
 
 class Figures:
